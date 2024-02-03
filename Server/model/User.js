@@ -20,6 +20,7 @@ const UserSchema = new Schema(
     },
     introduction: {
       type: String,
+      default: ""
     },
     profilePicture: {
       type: String,
@@ -30,6 +31,10 @@ const UserSchema = new Schema(
       type: Number,
       default: 0,
     },
+    verify: {
+      type: Schema.Types.Boolean,
+      default: false
+    }
   },
   { timestamps: true, collection: "User" }
 );
