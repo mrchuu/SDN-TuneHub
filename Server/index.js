@@ -18,5 +18,5 @@ app.listen(port, async () => {
   } catch (error) {
     console.log(`Something went wrong: ${error.message}`);
   }
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running onn http://localhost:${port}`);
 });
