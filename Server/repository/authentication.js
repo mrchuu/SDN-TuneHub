@@ -28,7 +28,7 @@ const addUser = async ({
       introduction: introduction,
       profilePicture: profilePicture,
     });
-    return result;
+    return result._doc;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -63,7 +63,19 @@ const getUserById = async (userId) => {
     if (!existingUser) {
       throw new Error("Not found!!");
     }
-    return existingUser;
+    return existingUser._doc;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+const getUserByEmail = async (email) => {
+  try {
+    const existingUser = await User.findOne({ email: email }).exec();
+
+    if (!existingUser) {
+      throw new Error("Email Not found ! Consider Signing up or click on forgot password to reset your password");
+    }
+    return existingUser._doc;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -72,5 +84,6 @@ export default {
   authenticate,
   addUser,
   verifyUser,
-  getUserById
+  getUserById,
+  getUserByEmail,
 };

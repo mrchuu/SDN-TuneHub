@@ -2,10 +2,16 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { AuthenticationRouter } from "./routes/index.js";
 const app = express();
 dotenv.config();
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true, // Allow cookies and other credentials to be sent
+};
+app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {

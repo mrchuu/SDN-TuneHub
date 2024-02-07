@@ -50,5 +50,7 @@ export default function ConfirmSignUp() {
     }
   }, [token]);
 
-  return <div className="w-full h-screen bg-primaryBg"></div>;
+  return (<div className="w-full h-screen bg-primaryBg flex items-center justify-center">
+    <h1 className="text-textSecondary text-center text-4xl">Verify your account</h1>
+  </div>);
 }

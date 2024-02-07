@@ -4,14 +4,14 @@ module.exports = {
   theme: {
     extend: {
       backgroundColor: {
-        sideBarBg: "#0a1228",
-        primaryBg: "#151D30",
-        activeSideBar: "#1c2a4d",
-        PinkPrimary: "#E57F94",
+        sideBarBg: "#eaebe4",
+        primaryBg: "#eaebe4",
+        activeSideBar: "#e3e0ca",
+        OrangePrimary: "#f2785c",
       },
       textColor: {
-        PinkPrimary: "#E57F94",
-        textSecondary: "#A5A5A5",
+        OrangePrimary: "#f2785c",
+        textSecondary: "#353535",
       },
       borderColor: {
         sideBarBorder: "#0a1228",

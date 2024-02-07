@@ -39,7 +39,7 @@ const sendConfirmEmail = async (email, userId) => {
       },
       process.env.JWT_SECRET_KEY,
       {
-        expiresIn: "1h",
+        expiresIn: "1m",
       }
     );
     const url = `${process.env.CLIENT_URI}confirmSignUp/${confirmToken}`;

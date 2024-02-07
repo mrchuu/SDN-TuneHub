@@ -5,6 +5,7 @@ import { FaHome, FaSearch, FaChartBar, FaPlus, FaUser } from "react-icons/fa";
 import { MdLibraryMusic } from "react-icons/md";
 import { LuChevronLast, LuChevronFirst } from "react-icons/lu";
 import { createContext, useEffect, useState } from "react";
+import { BsSoundwave } from "react-icons/bs";
 export const expandedContext = createContext();
 export default function SideBar() {
   const [expanded, setExpanded] = useState(window.innerWidth > 768);
@@ -33,9 +34,9 @@ export default function SideBar() {
               expanded ? "w-36" : "w-0"
             }`}
           >
-            <img src={logo} className="w-10 mr-3" alt="logo" />
-            <h3 className="text-white font-bold text-xl">Tune</h3>
-            <h3 className="text-PinkPrimary font-bold text-xl">Hub</h3>
+            <BsSoundwave color="#ff5e3a" size={33}/>
+            <h3 className="text-textSecondary font-bold text-xl">Tune</h3>
+            <h3 className="text-OrangePrimary font-bold text-xl">Hub</h3>
           </div>
           <button
             className="p-1.5 rounded-lg hover:bg-activeSideBar"
@@ -51,16 +52,16 @@ export default function SideBar() {
         <expandedContext.Provider value={{ expanded }}>
           <ul className="flex-col px-3">
             <SideBarItem
-              icon={<FaHome size={22} color="#A5A5A5" />}
+              icon={<FaHome size={22} className="text-textSecondary" />}
               text={"Homepage"}
               active
             />
             <SideBarItem
-              icon={<FaSearch size={22} color="#A5A5A5" />}
+              icon={<FaSearch size={22} className="text-textSecondary" />}
               text={"Explore"}
             />
             <SideBarItem
-              icon={<FaChartBar size={22} color="#A5A5A5" />}
+              icon={<FaChartBar size={22} className="text-textSecondary" />}
               text={"Leaderboard"}
             />
           </ul>
@@ -113,7 +114,7 @@ export default function SideBar() {
                   >
                     it's easy !! We'll help
                   </p>
-                  <button className="bg-PinkPrimary px-5 py-2 my-2 rounded-lg text-white hover:text-slate-950">
+                  <button className="bg-OrangePrimary px-5 py-2 my-2 rounded-lg text-white hover:text-slate-950">
                     Create playlist
                   </button>
                 </div>
@@ -194,7 +195,7 @@ export default function SideBar() {
                 >
                   We'll keep you updated on latest release
                 </p>
-                <button className="bg-PinkPrimary px-5 py-2 my-2 rounded-lg text-white hover:text-slate-950">
+                <button className="bg-OrangePrimary px-5 py-2 my-2 rounded-lg text-white hover:text-slate-950">
                   Browse artists
                 </button>
               </div> */}

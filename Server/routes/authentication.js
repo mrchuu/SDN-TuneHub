@@ -1,7 +1,15 @@
 import { AuthenticationController } from "../controller/index.js";
 import express from "express";
 const authenticationRouter = express.Router();
-authenticationRouter.post("/", AuthenticationController.authenticate);
+authenticationRouter.post("/login", AuthenticationController.login);
+authenticationRouter.get("/user", AuthenticationController.getUserInfo);
 authenticationRouter.post("/signup", AuthenticationController.signUp);
-authenticationRouter.patch("/verify/:token", AuthenticationController.verifyUser);
+authenticationRouter.patch(
+  "/verify/:token",
+  AuthenticationController.verifyUser
+);
+authenticationRouter.get(
+  "/refreshToken",
+  AuthenticationController.refreshToken
+);
 export default authenticationRouter;
