@@ -13,14 +13,10 @@ const songDTO = new Schema({
   price: {
     type: Number,
   },
-  description: {
-    type: String,
-  },
 });
 
 const albumDTO = new Schema({
   albumId: { type: Schema.Types.ObjectId },
-  description: { type: String, required: true },
   album_name: { type: String, required: true },
   album_cover: { type: String, required: true },
   price: { type: Number, required: true },
@@ -32,15 +28,22 @@ const ArtistSchema = new Schema(
       type: String,
       required: true,
     },
-    song_uploads: [songDTO],
+    song_uploads: {
+      type: [songDTO],
+      default: []
+    },
     view_count: {
       type: Number,
-      required: true,
+      default: 0
     },
-    albums: [albumDTO],
+    albums: {
+      type: [albumDTO],
+      default: []
+    },
     followers: {
-      type: Schema.Types.ObjectId,
+      type: [Schema.Types.ObjectId],
       ref: "User",
+      default: []
     },
   },
   { timestamps: true, collection: "Artist" }

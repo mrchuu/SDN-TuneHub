@@ -43,18 +43,25 @@ const UserSchema = new Schema(
       default:
         "https://res.cloudinary.com/djzdhtdpj/image/upload/v1704269768/tempAvatar_juqb4s.jpg",
     },
-    playlist_created: [playlistDTO],
-    playlist_created: [songDTO],
+    playlist_created: {
+      type: [playlistDTO],
+      default: []
+    },
+    playlist_created: {
+      type: [songDTO],
+      default: []
+    },
     artist_followed: {
-      type: Schema.Types.ObjectId,
+      type: [Schema.Types.ObjectId],
       ref: "Artist",
+      default: []
     },
     balance: {
       type: Number,
       default: 0,
     },
   },
-  { timestamps: true, collection: "User" }
+  { timestamps: true, collection: "Users" }
 );
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.model("Users", UserSchema);
 export default User;
