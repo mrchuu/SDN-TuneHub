@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { expandedContext } from "./SideBar.js";
+import { useSelector } from "react-redux";
 export default function SideBarItem({ icon, text, active, alert }) {
-  const { expanded } = useContext(expandedContext);
+  const expanded = useSelector((state) => state.sideBar.expanded);
   return (
     <li
       className={`relative font-medium
