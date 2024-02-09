@@ -109,14 +109,14 @@ const login = async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       path: "/",
-      expires: new Date(Date.now() + 30 * 1000),
+      expires: new Date(Date.now() + 60 * 60 * 1000),
       sameSite: "lax",
       secure: false,
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       path: "/",
-      expires: new Date(Date.now() + 60 * 1000),
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       sameSite: "lax",
       secure: false,
     });
@@ -152,17 +152,23 @@ const refreshToken = async (req, res) => {
         .json({ error: "No cookie for refreshToken was provided" });
     }
     const decodedToken = verifyToken(req, res, token);
-    const accessToken = jwt.sign({ userId: decodedToken.userId }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1min",
-    });
+    const accessToken = jwt.sign(
+      { userId: decodedToken.userId },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1hr",
+      }
+    );
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       path: "/",
-      expires: new Date(Date.now() + 30 * 1000),
+      expires: new Date(Date.now() + 60 * 60 * 1000),
       sameSite: "lax",
       secure: false,
     });
-    return res.status(200).json({message: "accessToken has been succesfully refreshed!"})
+    return res
+      .status(200)
+      .json({ message: "accessToken has been succesfully refreshed!" });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -173,5 +179,5 @@ export default {
   verifyUser,
   login,
   getUserInfo,
-  refreshToken
+  refreshToken,
 };

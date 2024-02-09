@@ -4,15 +4,18 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { StyledEngineProvider } from "@mui/material/styles";
-import store from "./redux/store.js";
+import { store, persistor } from "./redux/store.js";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <StyledEngineProvider injectFirst>
-        <App />
-      </StyledEngineProvider>
+      <PersistGate persistor={persistor}>
+        <StyledEngineProvider injectFirst>
+          <App />
+        </StyledEngineProvider>
+      </PersistGate>
     </Provider>
   </React.StrictMode>
 );

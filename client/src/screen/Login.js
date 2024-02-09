@@ -10,9 +10,13 @@ import SERVER_URL from "../config.js";
 import "../style/login.css";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+
 export default function Login() {
   const controls = useAnimation();
   const navigate = useNavigate();
+  const auth = useSelector((state) => state.auth.userInfo);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -124,38 +128,44 @@ export default function Login() {
               here
             </Link>
           </h4>
-          <FormControl
+          <form
             style={{ paddingTop: "30px" }}
-            className="w-full flex-col gap-6"
+            className="w-full"
+            onSubmit={(e) => {
+              handleSubmit(e);
+            }}
           >
-            <TextField
-              required
-              label="email address"
-              name="email"
-              onChange={(e) => {
-                handleChange(e);
-              }}
-              color="warning"
-            />
-            <TextField
-              required
-              type="password"
-              label="password"
-              name="password"
-              onChange={(e) => {
-                handleChange(e);
-              }}
-              color="warning"
-            />
-            <button
-              className="bg-OrangePrimary rounded-md py-3 shadow-md"
-              onClick={(e) => {
-                handleSubmit(e);
-              }}
-            >
-              Login
-            </button>
-          </FormControl>
+            <FormControl className="w-full gap-6 flex-col">
+              <TextField
+                required
+                label="email address"
+                name="email"
+                onChange={(e) => {
+                  handleChange(e);
+                }}
+                color="warning"
+              />
+              <TextField
+                required
+                type="password"
+                label="password"
+                name="password"
+                onChange={(e) => {
+                  handleChange(e);
+                }}
+                color="warning"
+              />
+              <button
+                className="bg-OrangePrimary rounded-md py-3 shadow-md"
+                type="submit"
+                onClick={(e) => {
+                  handleSubmit(e);
+                }}
+              >
+                Login
+              </button>
+            </FormControl>
+          </form>
           <h4 className="text-textSecondary pt-2">
             Forgot password ? Reset{" "}
             <Link to={"/"} className="text-blue-600 underline text-md">
@@ -239,7 +249,7 @@ export default function Login() {
       <div className="md:w-4/6 w-0 bg-cover bg-[url('https://volna.volkovdesign.com/img/home/slide1.jpg')] bg-center">
         <div className="w-full h-screen backdrop-filter backdrop-brightness-50 py-14 px-14">
           <p className="typingText text-OrangePrimary text-4xl font-medium">
-            Welcome back
+            Welcome back {isLoggedIn && auth.first_name + " " + auth.last_name}
           </p>
           <p className="w-3/5 typingText text-neutral-300 text-base font-light">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse

@@ -2,25 +2,23 @@ import { useEffect, useRef, useState } from "react";
 import DefaultTemplate from "../template/DefaultTemplate";
 import SERVER_URL from "../config.js";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PerformRequest from "../utilities/PerformRequest.js";
+import { useDispatch, useSelector } from "react-redux";
+import { login, logOut } from "../redux/auth.js";
 export default function HomePage() {
-  // const playerRef = useRef(null);
-  const [userName, setUserName] = useState("");
   const navigate = useNavigate();
   const hasMounted = useRef(false);
-
+  const auth = useSelector((state) => state.auth.userInfo);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const dispatch = useDispatch();
+  const { OriginalRequest } = PerformRequest();
   useEffect(() => {
     const fetchData = async () => {
       if (hasMounted.current) {
-        const result = await PerformRequest.OriginalRequest(
-          "auth/user",
-          navigate,
-          "GET"
-        );
-        console.log(result);
+        const result = await OriginalRequest("auth/user", navigate, "GET");
         if (result) {
-          setUserName(`${result.first_name} ${result.last_name}`);
+          dispatch(login(result));
         }
       } else {
         hasMounted.current = true;
@@ -28,6 +26,7 @@ export default function HomePage() {
     };
     fetchData();
   }, [hasMounted]);
+
   // const [isPlaying, setIsPlaying] = useState(false);
 
   // const handleProgress = (progress) => {
@@ -44,7 +43,7 @@ export default function HomePage() {
   // };
   return (
     <DefaultTemplate>
-      <div className="w-full bg-primaryBg flex items-center justify-center">
+      <div className="w-full min-h-screen flex items-center justify-center">
         {/* <audio src="http://localhost:5000/api/getSong" controls />
         <ReactPlayer
           ref={playerRef}
@@ -55,9 +54,21 @@ export default function HomePage() {
           onPlay={handlePlay}
           onPause={() => setIsPlaying(false)}
         /> */}
-        {userName.length > 0 && (
-          <h4 className="text-textSecondary text-center ">Hello {userName}</h4>
+        {isLoggedIn ? (
+          <h4 className="text-textSecondary text-center ">
+            Hello {`${auth.first_name} ${auth.last_name}`}
+          </h4>
+        ) : (
+          <></>
         )}
+        <Link to={"/login"}>Login</Link>
+        <button
+          onClick={(e) => {
+            dispatch(logOut());
+          }}
+        >
+          log out
+        </button>
       </div>
     </DefaultTemplate>
   );

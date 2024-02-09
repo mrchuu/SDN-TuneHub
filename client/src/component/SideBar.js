@@ -1,17 +1,19 @@
-import { Button } from "@mui/material";
-import logo from "../assets/images/images.png";
 import SideBarItem from "./SideBarItem";
 import { FaHome, FaSearch, FaChartBar, FaPlus, FaUser } from "react-icons/fa";
 import { MdLibraryMusic } from "react-icons/md";
 import { LuChevronLast, LuChevronFirst } from "react-icons/lu";
 import { createContext, useEffect, useState } from "react";
 import { BsSoundwave } from "react-icons/bs";
-export const expandedContext = createContext();
+import { useDispatch, useSelector } from "react-redux";
+import { toogleExpand } from "../redux/sideBar.js";
 export default function SideBar() {
-  const [expanded, setExpanded] = useState(window.innerWidth > 768);
+  // const [expanded, setExpanded] = useState(window.innerWidth > 768);
+  const expanded = useSelector((state) => state.sideBar.expanded);
+  const dispatch = useDispatch();
   useEffect(() => {
     const handleResize = () => {
-      setExpanded(window.innerWidth > 768);
+      // setExpanded(window.innerWidth > 768);
+      dispatch(toogleExpand(window.innerWidth > 768));
     };
 
     handleResize();
@@ -23,8 +25,8 @@ export default function SideBar() {
   }, []);
   return (
     <div
-      className={`h-screen bg-sideBarBg overflow-hidden transition-all ${
-        expanded ? "w-72" : "w-20"
+      className={`h-screen fixed top-0 left-0 bg-sideBarBg overflow-hidden transition-all ${
+        expanded ? "w-60" : "w-20"
       }`}
     >
       <nav className="h-full flex flex-col border-r shadow-lg border-sideBarBorder">
@@ -34,13 +36,13 @@ export default function SideBar() {
               expanded ? "w-36" : "w-0"
             }`}
           >
-            <BsSoundwave color="#ff5e3a" size={33}/>
+            <BsSoundwave color="#ff5e3a" size={33} />
             <h3 className="text-textSecondary font-bold text-xl">Tune</h3>
             <h3 className="text-OrangePrimary font-bold text-xl">Hub</h3>
           </div>
           <button
             className="p-1.5 rounded-lg hover:bg-activeSideBar"
-            onClick={(e) => setExpanded(!expanded)}
+            onClick={(e) => dispatch(toogleExpand(!expanded))}
           >
             {expanded ? (
               <LuChevronFirst className="text-textSecondary" size={32} />
@@ -49,7 +51,7 @@ export default function SideBar() {
             )}
           </button>
         </div>
-        <expandedContext.Provider value={{ expanded }}>
+ 
           <ul className="flex-col px-3">
             <SideBarItem
               icon={<FaHome size={22} className="text-textSecondary" />}
@@ -95,7 +97,7 @@ export default function SideBar() {
             </div>
             <div
               className={`max-h-44 overflow-hidden transition-all ${
-                expanded ? "w-60" : "w-0 hidden"
+                expanded ? "w-full" : "w-0 hidden"
               }`}
               style={{ overflowY: "auto" }}
             >
@@ -114,7 +116,9 @@ export default function SideBar() {
                   >
                     it's easy !! We'll help
                   </p>
-                  <button className="bg-OrangePrimary px-5 py-2 my-2 rounded-lg text-white hover:text-slate-950">
+                  <button
+                    className={`bg-OrangePrimary w-full py-2 my-2 rounded-lg text-white hover:text-slate-950`}
+                  >
                     Create playlist
                   </button>
                 </div>
@@ -126,41 +130,7 @@ export default function SideBar() {
                   />
                   &nbsp;<span>The Weeknd</span>
                 </div>
-                <div className="flex items-center my-2">
-                  <img
-                    className="w-10 rounded-full border-slate-600  border-2"
-                    src="https://yt3.googleusercontent.com/QiI-c4cFyRPD0qVwTQooC3dlgJqHA_t6CpEAv818om-mqL9bqNDL4L_qXQVXx_eY76D_7cLD=s900-c-k-c0x00ffffff-no-rj"
-                  />
-                  &nbsp;<span>The Weeknd</span>
-                </div>
-                <div className="flex items-center my-2">
-                  <img
-                    className="w-10 rounded-full border-slate-600  border-2"
-                    src="https://yt3.googleusercontent.com/QiI-c4cFyRPD0qVwTQooC3dlgJqHA_t6CpEAv818om-mqL9bqNDL4L_qXQVXx_eY76D_7cLD=s900-c-k-c0x00ffffff-no-rj"
-                  />
-                  &nbsp;<span>The Weeknd</span>
-                </div>
-                <div className="flex items-center my-2">
-                  <img
-                    className="w-10 rounded-full border-slate-600  border-2"
-                    src="https://yt3.googleusercontent.com/QiI-c4cFyRPD0qVwTQooC3dlgJqHA_t6CpEAv818om-mqL9bqNDL4L_qXQVXx_eY76D_7cLD=s900-c-k-c0x00ffffff-no-rj"
-                  />
-                  &nbsp;<span>The Weeknd</span>
-                </div>
-                <div className="flex items-center my-2">
-                  <img
-                    className="w-10 rounded-full border-slate-600  border-2"
-                    src="https://yt3.googleusercontent.com/QiI-c4cFyRPD0qVwTQooC3dlgJqHA_t6CpEAv818om-mqL9bqNDL4L_qXQVXx_eY76D_7cLD=s900-c-k-c0x00ffffff-no-rj"
-                  />
-                  &nbsp;<span>The Weeknd</span>
-                </div>
-                <div className="flex items-center my-2">
-                  <img
-                    className="w-10 rounded-full border-slate-600  border-2"
-                    src="https://yt3.googleusercontent.com/QiI-c4cFyRPD0qVwTQooC3dlgJqHA_t6CpEAv818om-mqL9bqNDL4L_qXQVXx_eY76D_7cLD=s900-c-k-c0x00ffffff-no-rj"
-                  />
-                  &nbsp;<span>The Weeknd</span>
-                </div>
+                
               </div> */}
               </div>
               {/* <div style={{ height: "1000px" }}></div> */}
@@ -172,7 +142,7 @@ export default function SideBar() {
                   &nbsp;
                   <span
                     className={`overflow-hidden transition-all ${
-                      expanded ? "w-32" : "w-0 hidden"
+                      expanded ? "w-52" : "w-0 hidden"
                     }`}
                   >
                     Followed Artists
@@ -182,7 +152,7 @@ export default function SideBar() {
             </div>
             <div
               className={`max-h-44 overflow-hidden transition-all ${
-                expanded ? "w-60" : "w-0 hidden"
+                expanded ? "w-full" : "w-0 hidden"
               }`}
               style={{ overflowY: "auto" }}
             >
@@ -247,7 +217,6 @@ export default function SideBar() {
               </div>
             </div>
           </div>
-        </expandedContext.Provider>
       </nav>
     </div>
   );

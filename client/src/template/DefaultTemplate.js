@@ -1,10 +1,20 @@
+import { useSelector } from "react-redux";
+import Header from "../component/Header";
 import SideBar from "../component/SideBar";
 
 export default function DefaultTemplate({ title, children }) {
+  const expanded = useSelector((state) => state.sideBar.expanded);
   return (
-    <div className="w-full min-h-screen flex flex-row">
+    <div className="h-full flex flex-row">
       <SideBar />
-      {children}
+      <div
+        className={`w-full bg-primaryBg ${
+          window.innerWidth > 768 ? (expanded ? "ml-60" : "ml-20") : "ml-20"
+        }`}
+      >
+        <Header />
+        {children}
+      </div>
     </div>
   );
 }
