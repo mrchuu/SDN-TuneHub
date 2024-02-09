@@ -82,10 +82,15 @@ const verifyUser = async (req, res) => {
 };
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    // const { email, password } = req.body;
     console.log(req.body);
-    const existingUser = await AuthenticateRepository.getUserByEmail(email);
-    const passwordMatch = bcrypt.compareSync(password, existingUser.password);
+    const existingUser = await AuthenticateRepository.getUserByEmail(
+      req.body.email
+    );
+    const passwordMatch = bcrypt.compareSync(
+      req.body.password,
+      existingUser.password
+    );
     if (!passwordMatch) {
       return res.status(400).json({ error: "Bad Credential" });
     }
@@ -106,6 +111,7 @@ const login = async (req, res) => {
         expiresIn: "1w",
       }
     );
+    const { createdAt, updatedAt, ...filterdUser } = existingUser;
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       path: "/",
@@ -122,7 +128,7 @@ const login = async (req, res) => {
     });
     return res
       .status(200)
-      .json({ message: "Login successfully! Welcome back" });
+      .json({ message: "Login successfully! Welcome back", data: filterdUser });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -173,6 +179,15 @@ const refreshToken = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const logOut = async (req, res) => {
+  try {
+    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken");
+    return res.status(200).json({ message: "Tokens have been cleared" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 export default {
   authenticate,
   signUp,
@@ -180,4 +195,5 @@ export default {
   login,
   getUserInfo,
   refreshToken,
+  logOut,
 };

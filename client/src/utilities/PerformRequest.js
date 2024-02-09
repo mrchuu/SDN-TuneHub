@@ -19,12 +19,18 @@ export default function PerformRequest() {
     const response = await fetch(`${SERVER_URL}${url}`, requestOption);
     const data = await response.json();
     if (response.ok) {
+      console.log(data.message);
+      if(data.message){
+        console.log(data.message);
+        toast.success(data.message)
+      }
       return data;
     } else {
       if (response.status === 401) {
         return RefreshToken(url, navigate, method, body);
       } else {
-        console.log(data.error);
+        // console.log(data.error);
+        toast.error(data.error)
       }
     }
   };

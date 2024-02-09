@@ -13,8 +13,8 @@ const playlistDTO = new Schema({
 });
 
 const songDTO = new Schema({
-    songId: { type: Schema.Types.ObjectId },
-  });
+  songId: { type: Schema.Types.ObjectId },
+});
 
 const UserSchema = new Schema(
   {
@@ -37,6 +37,7 @@ const UserSchema = new Schema(
     },
     introduction: {
       type: String,
+      default: ""
     },
     profile_picture: {
       type: String,
@@ -45,21 +46,25 @@ const UserSchema = new Schema(
     },
     playlist_created: {
       type: [playlistDTO],
-      default: []
+      default: [],
     },
     playlist_created: {
       type: [songDTO],
-      default: []
+      default: [],
     },
     artist_followed: {
       type: [Schema.Types.ObjectId],
       ref: "Artist",
-      default: []
+      default: [],
     },
     balance: {
       type: Number,
       default: 0,
     },
+    verify: {
+      type: Schema.Types.Boolean,
+      default: false,
+    }
   },
   { timestamps: true, collection: "Users" }
 );

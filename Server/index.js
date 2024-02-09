@@ -7,7 +7,8 @@ import { AuthenticationRouter } from "./routes/index.js";
 const app = express();
 dotenv.config();
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: "http://localhost:3000",
+  methods: "PUT, POST, GET, DELETE, OPTIONS",
   credentials: true, // Allow cookies and other credentials to be sent
 };
 app.use(cors(corsOptions));

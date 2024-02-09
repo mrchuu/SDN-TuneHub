@@ -12,4 +12,5 @@ authenticationRouter.get(
   "/refreshToken",
   AuthenticationController.refreshToken
 );
+authenticationRouter.get("/logOut", AuthenticationController.logOut);
 export default authenticationRouter;

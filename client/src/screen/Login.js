@@ -10,13 +10,16 @@ import SERVER_URL from "../config.js";
 import "../style/login.css";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import PerformRequest from "../utilities/PerformRequest.js";
+import { login } from "../redux/auth.js";
 export default function Login() {
   const controls = useAnimation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth.userInfo);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const { OriginalRequest } = PerformRequest();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -28,44 +31,14 @@ export default function Login() {
     }));
     console.log(loginData);
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      toast.promise(
-        (async () => {
-          //add some delay here
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          console.log(loginData);
-          const response = await fetch(`${SERVER_URL}auth/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify(loginData),
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            //   navigate("/login")
-            throw new Error(errorData.error);
-          }
-
-          const data = await response.json();
-          navigate("/");
-          return data;
-        })(),
-        {
-          loading: "Loging in ...",
-          success: (data) => `${data.message}`,
-          error: (err) => `${err.toString()}`,
-        },
-        {
-          success: {
-            duration: 5000,
-          },
-        }
-      );
+      const data = await OriginalRequest("auth/login", navigate, "POST", loginData);
+      if (data) {
+        dispatch(login(data.data));
+        navigate("/")
+      }
     } catch (error) {
       console.log(error.message);
     }

@@ -10,7 +10,7 @@ export default function Header() {
       <Link to={"/login"} className="mr-14">
         {isLoggedIn ? (
           <div>
-            <img src={userInfo.profilePicture} className="w-14 rounded-full border-orange-200 shadow-lg border-2"/>
+            <img src={userInfo.profile_picture} className="w-14 rounded-full border-orange-200 shadow-lg border-2"/>
           </div>
         ) : (
           <button className="bg-OrangePrimary px-8 py-2 rounded-full text-textSecondary text-xl hover:text-white">
