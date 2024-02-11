@@ -19,10 +19,9 @@ export default function PerformRequest() {
     const response = await fetch(`${SERVER_URL}${url}`, requestOption);
     const data = await response.json();
     if (response.ok) {
-      console.log(data.message);
-      if(data.message){
-        console.log(data.message);
-        toast.success(data.message)
+      console.log(response.status);
+      if (data.message) {
+        toast.success(data.message);
       }
       return data;
     } else {
@@ -30,7 +29,7 @@ export default function PerformRequest() {
         return RefreshToken(url, navigate, method, body);
       } else {
         // console.log(data.error);
-        toast.error(data.error)
+        toast.error(data.error);
       }
     }
   };
@@ -59,5 +58,5 @@ export default function PerformRequest() {
       }
     }
   };
-  return {OriginalRequest}
+  return { OriginalRequest };
 }

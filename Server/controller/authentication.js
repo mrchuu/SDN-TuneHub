@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { sendConfirmEmail } from "../utils/mailTransport.js";
-import verifyToken from "../middleware/verifyToken.js";
+
 const authenticate = async (req, res) => {
   try {
     const result = await AuthenticateRepository.authenticate();
@@ -63,6 +63,7 @@ const verifyUser = async (req, res) => {
   try {
     const token = req.params.token;
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log(decodedToken);
     const { userId } = decodedToken;
 
     const result = await AuthenticateRepository.verifyUser(userId);
@@ -135,13 +136,9 @@ const login = async (req, res) => {
 };
 const getUserInfo = async (req, res) => {
   try {
-    const token = req.cookies.accessToken;
-    if (!token) {
-      return res
-        .status(401)
-        .json({ error: "No cookie for accessToken was provided" });
-    }
-    const decodedToken = verifyToken(req, res, token);
+    
+    const decodedToken = req.decodedToken;
+    console.log(decodedToken);
     const user = await AuthenticateRepository.getUserById(decodedToken.userId);
     const { password, createdAt, updatedAt, ...filterdUser } = user;
     return res.status(200).json(filterdUser);

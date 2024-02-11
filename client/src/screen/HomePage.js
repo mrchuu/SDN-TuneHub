@@ -15,6 +15,20 @@ export default function HomePage() {
   const dispatch = useDispatch();
   const { OriginalRequest } = PerformRequest();
   const { performLogOut } = LogOut();
+  useEffect(() => {
+    const fetchData = async () => {
+      if (hasMounted.current) {
+        const result = await OriginalRequest("auth/user", navigate, "GET");
+        if (result) {
+          dispatch(login(result));
+          console.log(result);
+        }
+      } else {
+        hasMounted.current = true;
+      }
+    };
+    fetchData();
+  }, [hasMounted]);
 
   // const [isPlaying, setIsPlaying] = useState(false);
 
@@ -50,7 +64,6 @@ export default function HomePage() {
         ) : (
           <></>
         )}
-        <Link to={"/login"}>Login</Link>
         <button
           onClick={(e) => {
             performLogOut(e);
