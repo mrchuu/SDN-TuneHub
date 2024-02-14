@@ -8,7 +8,7 @@ export default function DefaultTemplate({ title, children }) {
     <div className="h-full flex flex-row">
       <SideBar />
       <div
-        className={`w-full bg-primaryBg transition-all ${
+        className={`w-full bg-light60 dark:bg-dark60 transition-all ${
           window.innerWidth > 768 ? (expanded ? "ml-60" : "ml-20") : "ml-20"
         }`}
       >

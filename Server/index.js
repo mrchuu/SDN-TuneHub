@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { AuthenticationRouter } from "./routes/index.js";
+import "./utils/google-oauth2.js"
 const app = express();
 dotenv.config();
 const corsOptions = {

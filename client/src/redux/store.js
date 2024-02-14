@@ -5,18 +5,20 @@ import {
 } from "@reduxjs/toolkit";
 import authReducer from "./auth.js";
 import sideBarReducer from "./sideBar.js";
+import themeReducer from "./theme.js"
 import storage from "redux-persist/lib/storage";
 import { persistStore, persistReducer } from "redux-persist";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"],
+  whitelist: ["auth", "theme"],
 };
 const rootReducer = combineReducers({
   auth: authReducer,
   sideBar: sideBarReducer,
+  theme: themeReducer
 });
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer, themeReducer);
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>

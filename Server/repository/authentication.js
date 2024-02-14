@@ -73,7 +73,7 @@ const getUserByEmail = async (email) => {
     const existingUser = await User.findOne({ email: email }).exec();
 
     if (!existingUser) {
-      throw new Error("Email Not found ! Consider Signing up or click on forgot password to reset your password");
+      throw new Error("Email Not found ! Consider Signing up");
     }
     return existingUser._doc;
   } catch (error) {
