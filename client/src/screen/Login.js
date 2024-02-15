@@ -52,6 +52,8 @@ export default function Login() {
   };
   const postGoogleAuth = async (token) => {
     try {
+      //a reusable fetch function, the body is optional, 
+      //other parameters are uri, navigate hook, and the method of the reques
       const data = await OriginalRequest("auth/googlelogin", navigate, "POST", {
         token: token,
       });
