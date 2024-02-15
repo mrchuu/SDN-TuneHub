@@ -13,6 +13,7 @@ const persistConfig = {
   storage,
   whitelist: ["auth", "theme"],
 };
+//them vao sau khi viet xong slice
 const rootReducer = combineReducers({
   auth: authReducer,
   sideBar: sideBarReducer,

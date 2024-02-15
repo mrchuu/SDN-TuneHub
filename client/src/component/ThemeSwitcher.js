@@ -17,24 +17,18 @@ export default function ThemeSwitcher() {
     }
   }, [theme]);
   return (
-    <div>
-      <input
-        type="checkbox"
-        class="checkbox"
-        id="checkbox"
-        onChange={(e) => {
-          console.log(e.currentTarget.checked);
+    <div className="flex items-center">
+      <button
+        onClick={(e) => {
           dispatch(toogleTheme());
         }}
-      />
-      <label
-        for="checkbox"
-        class="checkbox-label border-light10 border-2 dark:border-dark10"
       >
-        <FaSun color="#da8f66" />
-        <FaMoon color="#F2785C" />
-        <span class="ball"></span>
-      </label>
+        {theme ? (
+          <FaSun size={24} color="#da8f66" />
+        ) : (
+          <FaMoon size={22} color="#F2785C" />
+        )}
+      </button>
     </div>
   );
 }

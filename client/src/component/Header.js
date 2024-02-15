@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import { FaCircleUser } from "react-icons/fa6";
 import { IoLogOut } from "react-icons/io5";
+import { IoIosNotifications } from "react-icons/io";
 import Logout from "../utilities/LogOut.js";
 export default function Header() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -32,10 +33,10 @@ export default function Header() {
     <div className="flex items-center justify-end pt-5">
       {/* <FaCogs size={35} className="mr-8" color="#f2785c" /> */}
       <ThemeSwitcher />
-
+      <IoIosNotifications className="text-light10 ml-5" size={28} />
       <div>
         {isLoggedIn ? (
-          <div className="mr-14 ml-8">
+          <div className="mr-10 ml-5">
             <img
               src={userInfo.profile_picture}
               className="w-14 rounded-full border-orange-200 dark:bg-dark10 shadow-lg border-2"
@@ -75,8 +76,8 @@ export default function Header() {
             </Menu>
           </div>
         ) : (
-          <Link to={"/login"} className="mr-14 ml-8">
-            <button className="bg-light10 dark:bg-dark10 px-8 py-2 rounded-full text-textSecondary text-xl hover:text-white">
+          <Link to={"/login"} className="mr-10 ml-5">
+            <button className="bg-light10 dark:bg-dark10 px-6 py-2 rounded-full text-textSecondary text-md hover:text-white">
               Login
             </button>
           </Link>
