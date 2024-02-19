@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-
+import Artist from "./Artist.js";
+import Album from "./Album.js";
 const userDTO = new Schema({
     userId: { type: Schema.Types.ObjectId },
   });

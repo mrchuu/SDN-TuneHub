@@ -19,9 +19,6 @@ export default function Header() {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const [anchorProfile, setAnchorProfile] = useState(null);
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
-  useState(()=>{
-    console.log(userInfo);
-  })
   const openMenu = (e) => {
     setOpenProfileMenu(true);
     setAnchorProfile(e.currentTarget);
@@ -41,7 +38,7 @@ export default function Header() {
           <div className="mr-10 ml-5">
             <img
               src={userInfo.profile_picture}
-              className="w-14 rounded-full border-orange-200 dark:bg-dark10 shadow-lg border-2"
+              className="w-14 h-14 object-center object-cover rounded-full border-orange-200 dark:bg-dark10 shadow-lg border-2"
               onClick={(e) => {
                 openMenu(e);
               }}

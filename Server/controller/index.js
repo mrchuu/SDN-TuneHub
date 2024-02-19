@@ -1,3 +1,3 @@
 import AuthenticationController from "./authentication.js";
-
-export { AuthenticationController };
+import SongController from "./song.js"
+export { AuthenticationController, SongController };
