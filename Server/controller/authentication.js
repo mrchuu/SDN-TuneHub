@@ -3,7 +3,29 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { sendConfirmEmail } from "../utils/mailTransport.js";
+import jwksClient from "jwks-rsa";
+import User from "../model/RegisteredUser.js";
 
+const client = jwksClient({
+  jwksUri: "https://www.googleapis.com/oauth2/v3/certs",
+  requestHeaders: {
+    "user-agent": "some-user-agent",
+  },
+  timeout: 30000, // Defaults to 30s
+});
+
+const getKey = async (header, callback) => {
+  try {
+    // console.log(header);
+    const key = await client.getSigningKey(header.kid);
+    console.log(key);
+    const signingKey = key.getPublicKey();
+    callback(null, signingKey);
+  } catch (error) {
+    console.log(error);
+    callback(error);
+  }
+};
 const authenticate = async (req, res) => {
   try {
     const result = await AuthenticateRepository.authenticate();
@@ -21,9 +43,9 @@ const signUp = async (req, res) => {
       password,
       confirmPassword,
       introduction,
-      profilePicture,
+      profilePicture
     } = req.body;
-
+    console.log(req.body.profilePicture);
     if (
       firstName.length == 0 ||
       lastName.length == 0 ||
@@ -39,7 +61,12 @@ const signUp = async (req, res) => {
         .status(400)
         .json({ error: "Password does not match confirm password" });
     }
-
+    const existingUser = await AuthenticateRepository.getUserByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ error: "Email is taken" });
+    }
+    // console.log(req.file);
+    // const profilePicture = (await req.file) ? req.file.path : null;
     const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUND));
     const hashedPassword = bcrypt.hashSync(password, salt);
     const newUser = await AuthenticateRepository.addUser({
@@ -52,7 +79,8 @@ const signUp = async (req, res) => {
     });
     await sendConfirmEmail(email, newUser._id);
     return res.status(201).json({
-      data: "Sign up successfully, go to your email to confirm signing up. The email will expire in an hour",
+      message:
+        "Sign up successfully, go to your email to confirm signing up. The email will expire in an hour",
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -88,6 +116,9 @@ const login = async (req, res) => {
     const existingUser = await AuthenticateRepository.getUserByEmail(
       req.body.email
     );
+    if (!existingUser) {
+      return res.status(400).json({ error: "No email found" });
+    }
     const passwordMatch = bcrypt.compareSync(
       req.body.password,
       existingUser.password
@@ -112,7 +143,8 @@ const login = async (req, res) => {
         expiresIn: "1w",
       }
     );
-    const { createdAt, updatedAt, ...filterdUser } = existingUser;
+    const { createdAt, updatedAt, password, ...filterdUser } =
+      existingUser._doc;
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       path: "/",
@@ -136,7 +168,6 @@ const login = async (req, res) => {
 };
 const getUserInfo = async (req, res) => {
   try {
-    
     const decodedToken = req.decodedToken;
     console.log(decodedToken);
     const user = await AuthenticateRepository.getUserById(decodedToken.userId);
@@ -185,6 +216,117 @@ const logOut = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+const oauth2GoogleAuthentication = async (req, res) => {
+  try {
+    const oauth2Result = await req.user;
+    if (oauth2Result && oauth2Result.error) {
+      return res.status(400).json({ error: oauth2Result.error });
+    }
+    const accessToken = jwt.sign(
+      { userId: oauth2Result._id },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1hr",
+      }
+    );
+    const refreshToken = jwt.sign(
+      { userId: oauth2Result._id },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1w",
+      }
+    );
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      path: "/",
+      expires: new Date(Date.now() + 60 * 60 * 1000),
+      sameSite: "lax",
+      secure: false,
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      path: "/",
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      sameSite: "lax",
+      secure: false,
+    });
+    // res.json({ message: "Login Successful, welcome back", data: oauth2Result });
+    return res.redirect("http://localhost:3000/oauth2Redirect");
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const googleLogin = async (req, res) => {
+  try {
+    const token = req.body.token;
+    if (!token) {
+      return res
+        .status(400)
+        .json({ error: "No Token was provided, please try again" });
+    }
+    jwt.verify(
+      token,
+      getKey,
+      { algorithms: ["RS256"] },
+      async (err, decodedToken) => {
+        if (err) {
+          return res.status(401).json({ error: "Invalid token" });
+        }
+
+        try {
+          const existingUser = await AuthenticateRepository.getUserByEmail(
+            decodedToken.email
+          );
+
+          const accessToken = jwt.sign(
+            { userId: existingUser._id },
+            process.env.JWT_SECRET_KEY,
+            {
+              expiresIn: "1hr",
+            }
+          );
+
+          const refreshToken = jwt.sign(
+            { userId: existingUser._id },
+            process.env.JWT_SECRET_KEY,
+            {
+              expiresIn: "1w",
+            }
+          );
+
+          const { createdAt, updatedAt, password, ...filteredUser } =
+            existingUser;
+
+          res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            path: "/",
+            expires: new Date(Date.now() + 60 * 60 * 1000),
+            sameSite: "lax",
+            secure: false,
+          });
+
+          res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            path: "/",
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            sameSite: "lax",
+            secure: false,
+          });
+
+          return res.status(200).json({
+            message: "Login successfully! Welcome back",
+            data: filteredUser,
+          });
+        } catch (error) {
+          return res.status(500).json({ error: error.message });
+        }
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export default {
   authenticate,
   signUp,
@@ -193,4 +335,6 @@ export default {
   getUserInfo,
   refreshToken,
   logOut,
+  oauth2GoogleAuthentication,
+  googleLogin,
 };
