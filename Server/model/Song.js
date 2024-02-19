@@ -23,7 +23,7 @@ const songSchema = new Schema(
     },
     album: {
       type: Schema.Types.ObjectId,
-      ref: "Album",
+      ref: "album",
     },
     preview_start_time: {
       type: Number,

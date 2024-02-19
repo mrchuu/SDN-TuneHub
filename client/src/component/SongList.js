@@ -44,7 +44,7 @@ export default function SongList() {
                   </div>
                 </div>
               </td>
-              <td className="w-5/12">{}</td>
+              <td className="w-5/12">{song.album ? "album" : ""}</td>
               <td className="w-1/12">03:30</td>
             </tr>
           ))}
