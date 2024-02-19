@@ -19,7 +19,9 @@ export default function Header() {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const [anchorProfile, setAnchorProfile] = useState(null);
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
-
+  useState(()=>{
+    console.log(userInfo);
+  })
   const openMenu = (e) => {
     setOpenProfileMenu(true);
     setAnchorProfile(e.currentTarget);

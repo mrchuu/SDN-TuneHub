@@ -26,7 +26,7 @@ const addUser = async ({
       email: email,
       password: hashedPassword,
       introduction: introduction,
-      profilePicture: profilePicture,
+      profile_picture: profilePicture,
     });
     return result._doc;
   } catch (error) {
@@ -63,7 +63,7 @@ const getUserById = async (userId) => {
     if (!existingUser) {
       throw new Error("Not found!!");
     }
-    return existingUser._doc;
+    return existingUser;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -71,11 +71,7 @@ const getUserById = async (userId) => {
 const getUserByEmail = async (email) => {
   try {
     const existingUser = await User.findOne({ email: email }).exec();
-
-    if (!existingUser) {
-      throw new Error("Email Not found ! Consider Signing up");
-    }
-    return existingUser._doc;
+    return existingUser;
   } catch (error) {
     throw new Error(error.message);
   }

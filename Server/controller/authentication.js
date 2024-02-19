@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { sendConfirmEmail } from "../utils/mailTransport.js";
 import jwksClient from "jwks-rsa";
+import User from "../model/RegisteredUser.js";
+
 const client = jwksClient({
   jwksUri: "https://www.googleapis.com/oauth2/v3/certs",
   requestHeaders: {
@@ -41,9 +43,9 @@ const signUp = async (req, res) => {
       password,
       confirmPassword,
       introduction,
-      profilePicture,
+      profilePicture
     } = req.body;
-
+    console.log(req.body.profilePicture);
     if (
       firstName.length == 0 ||
       lastName.length == 0 ||
@@ -59,7 +61,12 @@ const signUp = async (req, res) => {
         .status(400)
         .json({ error: "Password does not match confirm password" });
     }
-
+    const existingUser = await AuthenticateRepository.getUserByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ error: "Email is taken" });
+    }
+    // console.log(req.file);
+    // const profilePicture = (await req.file) ? req.file.path : null;
     const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUND));
     const hashedPassword = bcrypt.hashSync(password, salt);
     const newUser = await AuthenticateRepository.addUser({
@@ -72,7 +79,8 @@ const signUp = async (req, res) => {
     });
     await sendConfirmEmail(email, newUser._id);
     return res.status(201).json({
-      data: "Sign up successfully, go to your email to confirm signing up. The email will expire in an hour",
+      message:
+        "Sign up successfully, go to your email to confirm signing up. The email will expire in an hour",
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -108,6 +116,9 @@ const login = async (req, res) => {
     const existingUser = await AuthenticateRepository.getUserByEmail(
       req.body.email
     );
+    if (!existingUser) {
+      return res.status(400).json({ error: "No email found" });
+    }
     const passwordMatch = bcrypt.compareSync(
       req.body.password,
       existingUser.password
@@ -132,7 +143,8 @@ const login = async (req, res) => {
         expiresIn: "1w",
       }
     );
-    const { createdAt, updatedAt, password, ...filterdUser } = existingUser;
+    const { createdAt, updatedAt, password, ...filterdUser } =
+      existingUser._doc;
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       path: "/",

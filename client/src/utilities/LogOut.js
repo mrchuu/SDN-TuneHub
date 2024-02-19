@@ -7,7 +7,7 @@ export default function LogOut() {
   const navigate = useNavigate();
   const {OriginalRequest} = PerformRequest()
   const clearToken = async () => {
-    await OriginalRequest("auth/logOut", navigate, "GET")
+    await OriginalRequest("auth/logOut", "GET")
   };
   const clearAuthInfo = () => {
     dispatch(logOut());

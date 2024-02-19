@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
   sideBar: sideBarReducer,
   theme: themeReducer
 });
-const persistedReducer = persistReducer(persistConfig, rootReducer, themeReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
