@@ -13,6 +13,7 @@ export default function HomePage() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
   const { OriginalRequest } = PerformRequest();
+  const { performLogOut } = LogOut();
   // useEffect(() => {
   //   const fetchData = async () => {
   //     if (hasMounted.current) {
