@@ -27,7 +27,7 @@ export default function HomePage() {
   //   };
   //   fetchData();
   // }, [hasMounted]);
-
+  //troi dat dung hoa
   // const [isPlaying, setIsPlaying] = useState(false);
 
   // const handleProgress = (progress) => {
@@ -45,16 +45,7 @@ export default function HomePage() {
   return (
     <DefaultTemplate>
       <div className="w-full min-h-screen flex items-center justify-center">
-        {/* <audio src="http://localhost:5000/api/getSong" controls />
-        <ReactPlayer
-          ref={playerRef}
-          url="http://localhost:5000/api/getSong"
-          controls
-          onProgress={handleProgress}
-          playing={isPlaying}
-          onPlay={handlePlay}
-          onPause={() => setIsPlaying(false)}
-        /> */}
+      
         {isLoggedIn ? (
           <h4 className="text-textSecondary text-center ">
             Hello {`${auth.first_name} ${auth.last_name}`}
