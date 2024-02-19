@@ -45,7 +45,6 @@ const signUp = async (req, res) => {
       introduction,
       profilePicture
     } = req.body;
-    console.log(req.body.profilePicture);
     if (
       firstName.length == 0 ||
       lastName.length == 0 ||
