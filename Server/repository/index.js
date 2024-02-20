@@ -1,3 +1,4 @@
 import AuthenticateRepository from "./authentication.js";
 import SongRepository from "./Song.js";
-export { AuthenticateRepository, SongRepository};
+import SongStreamRepository from "./songStream.js";
+export { AuthenticateRepository, SongRepository, SongStreamRepository};

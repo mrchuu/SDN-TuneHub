@@ -3,7 +3,7 @@ import PerformRequest from "../utilities/PerformRequest";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { setCurrentSong } from "../redux/player";
+import { setCurrentSong, toogleIsPlaying } from "../redux/player.js";
 export default function SongList() {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
@@ -38,7 +38,10 @@ export default function SongList() {
             <tr
               className="border-b border-neutral-300 hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group"
               key={song._id}
-              onClick={(e)=>{dispatch(setCurrentSong(song))}}
+              onClick={(e) => {
+                dispatch(setCurrentSong(song));
+                dispatch(toogleIsPlaying());
+              }}
             >
               <td className="w-1/12 text-center">{index + 1}</td>
               <td className="w-5/12 py-2">

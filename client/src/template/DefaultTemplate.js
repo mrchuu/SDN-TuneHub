@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import Header from "../component/Header";
 import SideBar from "../component/SideBar";
-import Player from "../component/Player";
+import ActionBar from "../component/ActionBar.js"
 
 export default function DefaultTemplate({ title, children }) {
   const expanded = useSelector((state) => state.sideBar.expanded);
@@ -18,7 +18,7 @@ export default function DefaultTemplate({ title, children }) {
           {children}
         </div>
       </div>
-      <Player/>
+      <ActionBar/>
     </div>
   );
 }
