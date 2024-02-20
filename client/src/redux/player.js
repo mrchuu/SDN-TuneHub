@@ -9,7 +9,7 @@ export const playerSlice = createSlice({
 
   reducers: {
     toogleIsPlaying: (state, action) => {
-      state.isPlaying = state.isPlaying ? false : true;
+      state.isPlaying = action.payload
     },
     setCurrentSong: (state, action) => {
       state.currentSong = { ...state.currentSong, ...action.payload };
@@ -18,6 +18,7 @@ export const playerSlice = createSlice({
       state.volume = action.payload;
       // console.log(state.volume);
     },
+    
   },
 });
 export const { toogleIsPlaying, setCurrentSong, changeVolume } =

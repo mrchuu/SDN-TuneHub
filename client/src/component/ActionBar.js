@@ -8,6 +8,7 @@ import { AiFillAppstore } from "react-icons/ai";
 import { changeVolume } from "../redux/player.js";
 import ReactPlayer from "react-player";
 import { useEffect } from "react";
+import Player from "./Player.js";
 export default function ActionBar() {
   const dispatch = useDispatch();
   const currentSong = useSelector((state) => state.player.currentSong);
@@ -46,6 +47,7 @@ export default function ActionBar() {
         )}
       </div>
       <div className="playerAction h-full px-4 flex-col w-6/12">
+        <Player />
         <div className="action flex items-center justify-between w-3/12 mx-auto pt-3 pb-1">
           <IoPlaySkipBackSharp
             className="text-light10 dark:text-dark10"
@@ -65,17 +67,6 @@ export default function ActionBar() {
         </div>
       </div>
       <div className="userAction h-full px-4 flex items-center w-3/12 justify-end">
-        <div className="hidden">
-          {currentSong._id && (
-            <ReactPlayer
-              url={`http://localhost:9999/api/songs/streamSong/${currentSong._id}`}
-              controls
-              width="100%"
-              height="50px"
-              playing={isPlaying}
-            />
-          )}
-        </div>
         <div className="flex items-center w-5/12 mr-5">
           <IoMdVolumeHigh
             className="text-light10 dark:text-dark10 mr-3"

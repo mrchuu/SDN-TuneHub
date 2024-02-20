@@ -40,7 +40,7 @@ export default function SongList() {
               key={song._id}
               onClick={(e) => {
                 dispatch(setCurrentSong(song));
-                dispatch(toogleIsPlaying());
+                dispatch(toogleIsPlaying(true));
               }}
             >
               <td className="w-1/12 text-center">{index + 1}</td>
