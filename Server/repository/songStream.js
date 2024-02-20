@@ -1,10 +1,11 @@
-import SongStream from "../model/SongStream";
+import SongStream from "../model/SongStream.js";
 const addSongStreamm = async ({ userId, songId }) => {
   try {
-    SongStream.create({
+    const songStream = await SongStream.create({
       song: songId,
       user: userId,
     });
+    return songStream
   } catch (error) {
     throw new Error(error.message)
   }
