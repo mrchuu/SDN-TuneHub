@@ -5,6 +5,7 @@ import Login from "./screen/Login";
 import ConfirmSignUp from "./screen/ConfirmSignUp";
 import { Toaster } from "react-hot-toast";
 import SignUp from "./screen/SignUp";
+import Explore from "./screen/Explore";
 import Oauth2Redirect from "./screen/Oauth2Redirect";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/explore" element={<Explore />} />
         <Route path="/confirmSignUp/:token" element={<ConfirmSignUp />} />
       </Routes>
     </BrowserRouter>

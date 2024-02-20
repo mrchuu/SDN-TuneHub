@@ -66,6 +66,7 @@ export default function SideBar() {
               <FaHome size={22} className="text-lightText dark:text-darkText" />
             }
             text={"Homepage"}
+            url={"/"}
             active
           />
           <SideBarItem
@@ -76,6 +77,7 @@ export default function SideBar() {
               />
             }
             text={"Explore"}
+            url={"/explore"}
           />
           <SideBarItem
             icon={
@@ -85,6 +87,7 @@ export default function SideBar() {
               />
             }
             text={"Leaderboard"}
+            url={"/leaderboard"}
           />
         </ul>
         <hr
