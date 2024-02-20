@@ -32,7 +32,7 @@ export default function Header() {
     <div className="flex items-center justify-end pt-5">
       {/* <FaCogs size={35} className="mr-8" color="#f2785c" /> */}
       <ThemeSwitcher />
-      <IoIosNotifications className="text-light10 ml-5" size={28} />
+      <IoIosNotifications className="text-light10 dark:text-dark10 ml-5" size={28} />
       <div>
         {isLoggedIn ? (
           <div className="mr-10 ml-5">

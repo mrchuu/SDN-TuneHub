@@ -6,6 +6,7 @@ import {
 import authReducer from "./auth.js";
 import sideBarReducer from "./sideBar.js";
 import themeReducer from "./theme.js"
+import playerReducer from "./player.js"
 import storage from "redux-persist/lib/storage";
 import { persistStore, persistReducer } from "redux-persist";
 const persistConfig = {
@@ -17,7 +18,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   sideBar: sideBarReducer,
-  theme: themeReducer
+  theme: themeReducer,
+  player: playerReducer
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({

@@ -25,6 +25,10 @@ const songSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "album",
     },
+    file_name: {
+      type: String,
+      required: true
+    },
     preview_start_time: {
       type: Number,
     },

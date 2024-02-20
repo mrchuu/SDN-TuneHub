@@ -25,7 +25,7 @@ export default function SideBar() {
   }, []);
   return (
     <div
-      className={`h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-10 ${
+      className={` h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-10 ${
         expanded ? "w-60" : "w-20"
       }`}
     >
@@ -118,13 +118,13 @@ export default function SideBar() {
             </div>
           </div>
           <div
-            className={`max-h-44 overflow-hidden transition-all ${
+            className={`max-h-40 overflow-hidden transition-all ${
               expanded ? "w-full" : "w-0 hidden"
             }`}
             style={{ overflowY: "auto" }}
           >
             <div className="px-3 mt-2">
-              <div className="bg-light30 dark:bg-dark30 py-2 px-3 text-textSecondary font-medium rounded-md  ">
+              {/* <div className="bg-light30 dark:bg-dark30 py-2 px-3 text-textSecondary font-medium rounded-md  ">
                 <span
                   className={`overflow-hidden transition-all text-lightText dark:text-darkText ${
                     expanded ? "w-32" : "w-0 hidden"
@@ -140,21 +140,55 @@ export default function SideBar() {
                 >
                   Create playlist
                 </button>
-              </div>
-              {/* <div className="px-3 text-textSecondary text-sm font-medium">
-                <div className="flex items-center my-2">
+              </div> */}
+              <div className="px-3 text-textSecondary text-sm font-medium">
+                <div className="flex items-center mb-3">
                   <img
-                    className="w-10 rounded-full border-slate-600  border-2"
+                    className="w-10 h-10 rounded-full border-slate-600  border-2"
                     src="https://yt3.googleusercontent.com/QiI-c4cFyRPD0qVwTQooC3dlgJqHA_t6CpEAv818om-mqL9bqNDL4L_qXQVXx_eY76D_7cLD=s900-c-k-c0x00ffffff-no-rj"
                   />
                   &nbsp;<span>The Weeknd</span>
                 </div>
-                
-              </div> */}
+                <div className="flex items-center mb-3">
+                  <img
+                    className="w-10 h-10 rounded-full border-slate-600  border-2"
+                    src="https://i.pinimg.com/originals/f5/43/d0/f543d0c69e43ce9f9ac9cb7b0023b2f0.jpg"
+                  />
+                  &nbsp;<span>Aurora</span>
+                </div>
+                <div className="flex items-center mb-3">
+                  <img
+                    className="w-10 h-10 rounded-full border-slate-600  border-2"
+                    src="https://www.rollingstone.com/wp-content/uploads/2018/06/eric-clapton-documentary-radio-interview-bbc-listen-read-5fcacf6b-b855-4bff-baa6-35beef77bdc6.jpg"
+                  />
+                  &nbsp;<span>Eric Clapton</span>
+                </div>
+                <div className="flex items-center mb-3">
+                  <img
+                    className="w-10 h-10 rounded-full border-slate-600  border-2"
+                    src="https://asset-2.tstatic.net/tribunnews/foto/bank/images/two-door-cinema-club-asdfg-etrg.jpg"
+                  />
+                  &nbsp;<span>Two Door Cinema Club</span>
+                </div>
+                <div className="flex items-center mb-3">
+                  <img
+                    className="w-10 h-10 rounded-full border-slate-600  border-2"
+                    src="https://rnbstellar.com/wp-content/uploads/2021/03/stellar-35.jpg"
+                  />
+                  &nbsp;<span>Stellar</span>
+                </div>
+                <div className="flex items-center mb-3">
+                  <img
+                    className="w-10 h-10 rounded-full border-slate-600  border-2"
+                    src="https://i.scdn.co/image/ab6761610000e5eb7da39dea0a72f581535fb11f"
+                  />
+                  &nbsp;<span>Artic Monkeys</span>
+                </div>
+              </div>
             </div>
             {/* <div style={{ height: "1000px" }}></div> */}
           </div>
-          <div className="px-3 mt-2 text-lightText dark:text-darkText">
+          <div className="px-3 text-lightText dark:text-darkText">
             <div className="font-medium text-textSecondary py-2 px-3">
               <div className="flex items-center">
                 <FaUser size={22} />
@@ -170,7 +204,7 @@ export default function SideBar() {
             </div>
           </div>
           <div
-            className={`max-h-44 overflow-hidden transition-all ${
+            className={`max-h-40 overflow-hidden transition-all ${
               expanded ? "w-full" : "w-0 hidden"
             }`}
             style={{ overflowY: "auto" }}
@@ -190,42 +224,42 @@ export default function SideBar() {
               </div> */}
 
               <div className="px-3 text-textSecondary text-sm font-medium">
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-3">
                   <img
                     className="w-10 h-10 rounded-full border-slate-600  border-2"
                     src="https://yt3.googleusercontent.com/QiI-c4cFyRPD0qVwTQooC3dlgJqHA_t6CpEAv818om-mqL9bqNDL4L_qXQVXx_eY76D_7cLD=s900-c-k-c0x00ffffff-no-rj"
                   />
                   &nbsp;<span>The Weeknd</span>
                 </div>
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-3">
                   <img
                     className="w-10 h-10 rounded-full border-slate-600  border-2"
                     src="https://i.pinimg.com/originals/f5/43/d0/f543d0c69e43ce9f9ac9cb7b0023b2f0.jpg"
                   />
                   &nbsp;<span>Aurora</span>
                 </div>
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-3">
                   <img
                     className="w-10 h-10 rounded-full border-slate-600  border-2"
                     src="https://www.rollingstone.com/wp-content/uploads/2018/06/eric-clapton-documentary-radio-interview-bbc-listen-read-5fcacf6b-b855-4bff-baa6-35beef77bdc6.jpg"
                   />
                   &nbsp;<span>Eric Clapton</span>
                 </div>
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-3">
                   <img
                     className="w-10 h-10 rounded-full border-slate-600  border-2"
                     src="https://asset-2.tstatic.net/tribunnews/foto/bank/images/two-door-cinema-club-asdfg-etrg.jpg"
                   />
                   &nbsp;<span>Two Door Cinema Club</span>
                 </div>
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-3">
                   <img
                     className="w-10 h-10 rounded-full border-slate-600  border-2"
                     src="https://rnbstellar.com/wp-content/uploads/2021/03/stellar-35.jpg"
                   />
                   &nbsp;<span>Stellar</span>
                 </div>
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-3">
                   <img
                     className="w-10 h-10 rounded-full border-slate-600  border-2"
                     src="https://i.scdn.co/image/ab6761610000e5eb7da39dea0a72f581535fb11f"
@@ -237,6 +271,9 @@ export default function SideBar() {
           </div>
         </div>
       </nav>
+      <div className="h-20">
+
+      </div>
     </div>
   );
 }
