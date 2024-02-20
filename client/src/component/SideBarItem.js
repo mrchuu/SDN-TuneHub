@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { expandedContext } from "./SideBar.js";
 import { useSelector } from "react-redux";
-export default function SideBarItem({ icon, text, active, alert }) {
+import { Outlet, Link } from "react-router-dom";
+export default function SideBarItem({ icon, text, active, alert, url }) {
   const expanded = useSelector((state) => state.sideBar.expanded);
   return (
     <li
@@ -13,7 +14,7 @@ export default function SideBarItem({ icon, text, active, alert }) {
             : "hover:bg-light30 hover:dark:bg-dark30 text-lightText dark:text-darkText"
         }`}
     >
-      <a href="/ada" className="flex items-center py-2 px-3 my-1">
+      <Link to={url} className="flex items-center py-2 px-3 my-1">
         <div>{icon}</div>
         <span
           className={`overflow-hidden transition-all ${
@@ -22,7 +23,7 @@ export default function SideBarItem({ icon, text, active, alert }) {
         >
           &nbsp;{text}
         </span>
-      </a>
-    </li>
+      </Link>
+    </li> 
   );
 }
