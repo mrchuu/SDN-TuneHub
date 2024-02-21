@@ -1,11 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import { FaRegHeart } from "react-icons/fa";
 import { IoPlaySkipForwardSharp, IoPlaySkipBackSharp } from "react-icons/io5";
-import { MdOutlinePlayCircle } from "react-icons/md";
+import { FaPlayCircle, FaPauseCircle } from "react-icons/fa";
 import { IoMdVolumeHigh } from "react-icons/io";
 import { Slider } from "@mui/material";
 import { AiFillAppstore } from "react-icons/ai";
-import { changeVolume } from "../redux/player.js";
+import {
+  changeVolume,
+  toogleIsPlaying,
+  updateProgress,
+} from "../redux/player.js";
 import ReactPlayer from "react-player";
 import { useEffect } from "react";
 import Player from "./Player.js";
@@ -14,6 +18,7 @@ export default function ActionBar() {
   const currentSong = useSelector((state) => state.player.currentSong);
   const isPlaying = useSelector((state) => state.player.isPlaying);
   const volumne = useSelector((state) => state.player.volume);
+  const progress = useSelector((state) => state.player.progress);
   useEffect(() => {
     console.log("song changed");
   }, [currentSong._id]);
@@ -51,19 +56,42 @@ export default function ActionBar() {
         <div className="action flex items-center justify-between w-3/12 mx-auto pt-3 pb-1">
           <IoPlaySkipBackSharp
             className="text-light10 dark:text-dark10"
-            size={35}
+            size={30}
           />
-          <MdOutlinePlayCircle
-            className="text-light10 dark:text-dark10"
-            size={40}
-          />
+          {isPlaying ? (
+            <FaPauseCircle
+              className="text-light10 dark:text-dark10 cursor-pointer"
+              size={35}
+              onClick={(e) => {
+                dispatch(toogleIsPlaying(false));
+              }}
+            />
+          ) : (
+            <FaPlayCircle
+              className="text-light10 dark:text-dark10 cursor-pointer"
+              size={35}
+              onClick={(e) => {
+                dispatch(toogleIsPlaying(true));
+              }}
+            />
+          )}
           <IoPlaySkipForwardSharp
             className="text-light10 dark:text-dark10"
-            size={35}
+            size={30}
           />
         </div>
-        <div className="progress w-9/12 mx-auto bg-light60 dark:bg-dark60 h-2 rounded-lg border-2 border-slate-500/30">
-          <div className="progress w-9/12  bg-light10 dark:bg-dark10 h-full rounded-lg"></div>
+        <div className="progress w-9/12 mx-auto">
+          <Slider
+            aria-label="progress"
+            value={(progress * 100) / currentSong.duration}
+            key={progress}
+            onChange={(e) => {
+              dispatch(
+                updateProgress((e.target.value * currentSong.duration) / 100)
+              );
+            }}
+            className="text-light10"
+          />
         </div>
       </div>
       <div className="userAction h-full px-4 flex items-center w-3/12 justify-end">

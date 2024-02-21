@@ -42,6 +42,10 @@ const songSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Artist",
     },
+    duration: {
+      type: Number,
+      required: true
+    },
     purchased_user: [userDTO],
   },
   { timestamps: true, collection: "Song" }

@@ -1,17 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { useDispatch, useSelector } from "react-redux";
-import { toogleIsPlaying } from "../redux/player.js";
+import { toogleIsPlaying, updateProgress } from "../redux/player.js";
 import PerformRequest from "../utilities/PerformRequest.js";
 export default function Player() {
   const dispatch = useDispatch();
   const currentSong = useSelector((state) => state.player.currentSong);
   const isPlaying = useSelector((state) => state.player.isPlaying);
+  const progress = useSelector((state) => state.player.progress);
   const playerRef = useRef(null);
   const { OriginalRequest } = PerformRequest();
   const [apiCalled, setApiCalled] = useState(false);
   const handleProgress = async (e) => {
-    console.log(playerRef.current.getCurrentTime());
+    dispatch(updateProgress(playerRef.current.getCurrentTime()));
     if (Math.floor(playerRef.current.getCurrentTime()) > 10 && !apiCalled) {
       try {
         const data = await OriginalRequest(
@@ -31,6 +32,12 @@ export default function Player() {
   useEffect(() => {
     setApiCalled(false);
   }, [currentSong._id]);
+  // useEffect(() => {
+  //   if (playerRef && playerRef.current) {
+  //     console.log(progress);
+  //     playerRef.current.seekTo(progress);
+  //   }
+  // }, [progress, playerRef]);
   return (
     <div className="hidden">
       {currentSong._id && (

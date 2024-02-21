@@ -5,6 +5,7 @@ export const playerSlice = createSlice({
     isPlaying: false,
     currentSong: {},
     volume: 50,
+    progress: 0
   },
 
   reducers: {
@@ -18,9 +19,11 @@ export const playerSlice = createSlice({
       state.volume = action.payload;
       // console.log(state.volume);
     },
-    
+    updateProgress: (state, action) =>{
+      state.progress = action.payload
+    }
   },
 });
-export const { toogleIsPlaying, setCurrentSong, changeVolume } =
+export const { toogleIsPlaying, setCurrentSong, changeVolume, updateProgress } =
   playerSlice.actions;
 export default playerSlice.reducer;
