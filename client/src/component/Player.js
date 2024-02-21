@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { useDispatch, useSelector } from "react-redux";
-import { toogleIsPlaying, updateProgress } from "../redux/player.js";
+import { toogleIsPlaying, updateProgress, finishSong } from "../redux/player.js";
 import PerformRequest from "../utilities/PerformRequest.js";
 export default function Player() {
   const dispatch = useDispatch();
@@ -26,10 +26,10 @@ export default function Player() {
         console.log(error);
       }
     }
-    // if (Math.floor(playerRef.current.getCurrentTime()) < 10 && apiCalled) {
-    //   setApiCalled(false);
-    // }
   };
+  const handleSongEnd = (e) =>{
+    dispatch(finishSong())
+  }
   useEffect(() => {
     setApiCalled(false);
   }, [currentSong._id]);
@@ -54,6 +54,9 @@ export default function Player() {
             handleProgress(e);
           }}
           volume={volume/100}
+          onEnded={(e)=>{
+            handleSongEnd(e)
+          }}
         />
       )}
     </div>

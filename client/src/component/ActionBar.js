@@ -4,11 +4,12 @@ import { IoPlaySkipForwardSharp, IoPlaySkipBackSharp } from "react-icons/io5";
 import { FaPlayCircle, FaPauseCircle } from "react-icons/fa";
 import { IoMdVolumeHigh } from "react-icons/io";
 import { Slider } from "@mui/material";
-import { AiFillAppstore } from "react-icons/ai";
+import { MdOutlineQueueMusic } from "react-icons/md";
 import {
   changeVolume,
   toogleIsPlaying,
   updateProgress,
+  toogleQueue
 } from "../redux/player.js";
 import ReactPlayer from "react-player";
 import { useEffect } from "react";
@@ -19,9 +20,10 @@ export default function ActionBar() {
   const isPlaying = useSelector((state) => state.player.isPlaying);
   const volumne = useSelector((state) => state.player.volume);
   const progress = useSelector((state) => state.player.progress);
+  const showBox = useSelector((state) => state.player.showBox);
   useEffect(() => {
     console.log("song changed");
-  }, [currentSong._id]);
+  }, [currentSong]);
   return (
     <div className="bg-light30 dark:bg-dark30 w-full h-20 fixed bottom-0 z-50 flex items-center justify-between px-4">
       <div className="songInfo h-full px-4 flex items-center w-3/12 ">
@@ -109,9 +111,12 @@ export default function ActionBar() {
             className="text-light10"
           />
         </div>
-        <AiFillAppstore
+        <MdOutlineQueueMusic
           size={25}
-          className="text-light10 dark:text-dark10 mr-3"
+          className={`${showBox ? "text-white bg-light10 dark:bg-dark10" : "text-light10 dark:text-dark10"} mr-3 rounded-sm`}
+          onClick={(e)=>{
+            dispatch(toogleQueue())
+          }}
         />
       </div>
     </div>

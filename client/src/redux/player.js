@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
+import { IoMdInformationCircle } from "react-icons/io";
 export const playerSlice = createSlice({
   name: "auth",
   initialState: {
@@ -7,12 +9,13 @@ export const playerSlice = createSlice({
     volume: 50,
     progress: 0,
     songQueue: [],
-    queueIndex: 0
+    queueIndex: 0,
+    showBox: false,
   },
 
   reducers: {
     toogleIsPlaying: (state, action) => {
-      state.isPlaying = action.payload
+      state.isPlaying = action.payload;
     },
     setCurrentSong: (state, action) => {
       state.currentSong = { ...state.currentSong, ...action.payload };
@@ -21,27 +24,68 @@ export const playerSlice = createSlice({
       state.volume = action.payload;
       // console.log(state.volume);
     },
-    updateProgress: (state, action) =>{
-      state.progress = action.payload
+    updateProgress: (state, action) => {
+      state.progress = action.payload;
     },
-    addSongToQueue: (state, action) =>{
-      state.songQueue = [...state.songQueue, action.payload]
+    addSongToQueue: (state, action) => {
+      const existingSong = state.songQueue.find(
+        (song) => song._id == action.payload._id
+      );
+      if (existingSong) {
+        toast("Song Already In Queue", {
+          icon: (
+            <IoMdInformationCircle className="text-light10 dark:text-dark10" />
+          ),
+        });
+      } else {
+        state.songQueue.push(action.payload);
+        toast.success("Song Added To Queue");
+      }
+      if (!state.currentSong._id) {
+        state.currentSong = state.songQueue[state.queueIndex];
+        state.isPlaying = true;
+      }
     },
-    removeSongFromQueue: (state, action) =>{
-      state.songQueue.filter((item) => item.id !== action.payload)
+    removeSongFromQueue: (state, action) => {
+      state.songQueue.splice(action.payload, 1);
+      if (state.queueIndex > action.payload) {
+        state.queueIndex--;
+      } else {
+        if (state.queueIndex === action.payload) {
+          if (state.songQueue.length > 0) {
+            state.currentSong = state.songQueue[action.payload];
+          } else {
+            state.currentSong = {};
+          }
+        }
+      }
     },
-    setQueueIndex: (state, action) =>{
+    setQueueIndex: (state, action) => {
+      console.log(action.payload);
       state.queueIndex = action.payload;
     },
-    finishSong: (state, action) =>{
-      if(state.queueIndex+2< state.songQueue.length){
-        state.queueIndex += 1;
-        state.currentSong = state.songQueue[state.queueIndex]
+    finishSong: (state, action) => {
+      if (state.queueIndex + 2 <= state.songQueue.length) {
+        state.isPlaying = true;
+        state.queueIndex++;
+        state.currentSong = state.songQueue[state.queueIndex];
       }
-    } 
+    },
+    toogleQueue: (state, action) => {
+      state.showBox = state.showBox ? false : true;
+    },
   },
 });
 //hehe
-export const { toogleIsPlaying, setCurrentSong, changeVolume, updateProgress } =
-  playerSlice.actions;
+export const {
+  toogleIsPlaying,
+  setCurrentSong,
+  changeVolume,
+  updateProgress,
+  finishSong,
+  addSongToQueue,
+  removeSongFromQueue,
+  setQueueIndex,
+  toogleQueue
+} = playerSlice.actions;
 export default playerSlice.reducer;

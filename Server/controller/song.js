@@ -1,4 +1,3 @@
-
 import {
   AuthenticateRepository,
   SongRepository,
@@ -8,6 +7,7 @@ import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
+import jwt from "jsonwebtoken";
 const getAllSongs = async (req, res) => {
   try {
     const songList = await SongRepository.getAllSongs();
@@ -65,7 +65,6 @@ const addStreamSong = async (req, res) => {
     let userId;
     if (token) {
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      req.decodedToken = decodedToken;
       const existingUser = await AuthenticateRepository.getUserById(
         decodedToken.userId
       );

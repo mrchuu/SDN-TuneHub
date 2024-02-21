@@ -1,7 +1,8 @@
 import { useSelector } from "react-redux";
 import Header from "../component/Header";
 import SideBar from "../component/SideBar";
-import ActionBar from "../component/ActionBar.js"
+import ActionBar from "../component/ActionBar.js";
+import SongQueue from "../component/SongQueue.js";
 
 export default function DefaultTemplate({ title, children }) {
   const expanded = useSelector((state) => state.sideBar.expanded);
@@ -18,7 +19,8 @@ export default function DefaultTemplate({ title, children }) {
           {children}
         </div>
       </div>
-      <ActionBar/>
+      <SongQueue />
+      <ActionBar />
     </div>
   );
 }
