@@ -1,20 +1,24 @@
 import mongoose, { Schema } from "mongoose";
-import User from "./RegisteredUser";
 
-const userDTO = new Schema(
-  {
-    userId: { type: Schema.Types.ObjectId },
-  },
-  { _id: false }
-);
-const songDTO = new Schema({
-  songId: { type: Schema.Types.ObjectId },
-});
+// const userDTO = new Schema(
+//   {
+//     userId: { type: Schema.Types.ObjectId },
+//   }
+// );
+// const songDTO = new Schema({
+//   songId: { type: Schema.Types.ObjectId },
+// });
 
 const SongStreamSchema = new Schema(
   {
-    user: userDTO,
-    song: songDTO,
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true
+    },
+    song: {
+      type: Schema.Types.ObjectId,
+      required: true
+    }
   },
   { timestamps: true, collection: "SongStream" }
 );

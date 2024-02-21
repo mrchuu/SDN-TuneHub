@@ -27,8 +27,12 @@ app.use((req, res, next) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use("/api/auth", AuthenticationRouter);
+<<<<<<< HEAD
 app.use("/song", SongRouter);
 
+=======
+app.use("/api/songs", SongRouter)
+>>>>>>> 07f4aacd64dec7345e4a33fe9961a79cdb895fe7
 app.use(
   "/upload/image",
   express.static(path.join(__dirname, `upload`, "image"))
