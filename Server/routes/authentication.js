@@ -2,8 +2,6 @@ import { AuthenticationController } from "../controller/index.js";
 import express from "express";
 import verifyToken from "../middleware/verifyToken.js";
 import passport from "passport";
-import { upload } from "../utils/multer.js";
-import { login } from "../middleware/validator.js";
 const authenticationRouter = express.Router();
 authenticationRouter.post("/login", AuthenticationController.login);
 authenticationRouter.get(

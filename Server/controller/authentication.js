@@ -116,7 +116,7 @@ const login = async (req, res) => {
       req.body.email
     );
     if (!existingUser) {
-      return res.status(400).json({ error: "No email found" });
+      return res.status(400).json({ error: "Email not found" });
     }
     const passwordMatch = bcrypt.compareSync(
       req.body.password,
@@ -276,7 +276,9 @@ const googleLogin = async (req, res) => {
           const existingUser = await AuthenticateRepository.getUserByEmail(
             decodedToken.email
           );
-
+          if (!existingUser) {
+            return res.status(400).json({ error: "Email not found" });
+          }
           const accessToken = jwt.sign(
             { userId: existingUser._id },
             process.env.JWT_SECRET_KEY,
@@ -294,7 +296,7 @@ const googleLogin = async (req, res) => {
           );
 
           const { createdAt, updatedAt, password, ...filteredUser } =
-            existingUser;
+            existingUser._doc;
 
           res.cookie("accessToken", accessToken, {
             httpOnly: true,

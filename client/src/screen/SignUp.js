@@ -45,10 +45,14 @@ export default function SignUp() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updateSignupData = {...signUpData};
-    updateSignupData.profilePicture = imageSrc
+    const updateSignupData = { ...signUpData };
+    updateSignupData.profilePicture = imageSrc;
     try {
-      const data = await OriginalRequest(`auth/signup`, "POST", updateSignupData);
+      const data = await OriginalRequest(
+        `auth/signup`,
+        "POST",
+        updateSignupData
+      );
     } catch (error) {
       console.log(error);
     }
@@ -98,7 +102,7 @@ export default function SignUp() {
           >
             <img
               src={imageSrc}
-              className="w-20 h-auto rounded-full mx-auto mb-5"
+              className="w-20 h-20 rounded-full mx-auto mb-5 object-cover object-center"
             />
             <FormControl className="w-full gap-2 flex-col">
               <div className="flex items-center justify-between">

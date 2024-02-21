@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-
+import User from "./RegisteredUser.js";
+import Album from "./Album.js";
 const songDTO = new Schema({
   songId: { type: Schema.Types.ObjectId },
   song_name: {
@@ -30,21 +31,18 @@ const ArtistSchema = new Schema(
     },
     song_uploads: {
       type: [songDTO],
-      default: []
-    },
-    view_count: {
-      type: Number,
-      default: 0
+      default: [],
     },
     albums: {
       type: [albumDTO],
-      default: []
+      default: [],
     },
     followers: {
       type: [Schema.Types.ObjectId],
       ref: "User",
-      default: []
+      default: [],
     },
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true, collection: "Artist" }
 );
