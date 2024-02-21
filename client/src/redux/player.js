@@ -41,6 +41,7 @@ export const playerSlice = createSlice({
     } 
   },
 });
+//hehe
 export const { toogleIsPlaying, setCurrentSong, changeVolume, updateProgress } =
   playerSlice.actions;
 export default playerSlice.reducer;
