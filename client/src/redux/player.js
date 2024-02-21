@@ -5,7 +5,9 @@ export const playerSlice = createSlice({
     isPlaying: false,
     currentSong: {},
     volume: 50,
-    progress: 0
+    progress: 0,
+    songQueue: [],
+    queueIndex: 0
   },
 
   reducers: {
@@ -21,7 +23,22 @@ export const playerSlice = createSlice({
     },
     updateProgress: (state, action) =>{
       state.progress = action.payload
-    }
+    },
+    addSongToQueue: (state, action) =>{
+      state.songQueue = [...state.songQueue, action.payload]
+    },
+    removeSongFromQueue: (state, action) =>{
+      state.songQueue.filter((item) => item.id !== action.payload)
+    },
+    setQueueIndex: (state, action) =>{
+      state.queueIndex = action.payload;
+    },
+    finishSong: (state, action) =>{
+      if(state.queueIndex+2< state.songQueue.length){
+        state.queueIndex += 1;
+        state.currentSong = state.songQueue[state.queueIndex]
+      }
+    } 
   },
 });
 export const { toogleIsPlaying, setCurrentSong, changeVolume, updateProgress } =

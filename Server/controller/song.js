@@ -15,7 +15,6 @@ const getAllSongs = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-let currentStream; // Variable to hold the current stream
 
 const streamSong = async (req, res) => {
   try {
@@ -33,7 +32,9 @@ const streamSong = async (req, res) => {
     if (fs.existsSync(filePath)) {
       const { is_exclusive, preview_start_time, preview_end_time } =
         existingSong;
-        console.log(is_exclusive + " " + preview_end_time + " " + preview_start_time);
+      console.log(
+        is_exclusive + " " + preview_end_time + " " + preview_start_time
+      );
       if (is_exclusive) {
         const ffmpegCmd = ffmpeg(filePath)
           .setStartTime(preview_start_time)
@@ -42,12 +43,11 @@ const streamSong = async (req, res) => {
           .format("mp3");
         res.setHeader("Content-Type", "audio/mpeg");
         ffmpegCmd.pipe(res, { end: true });
-      }else{
+      } else {
         const fileStream = fs.createReadStream(filePath);
-      res.setHeader("Content-Type", "audio/mpeg");
-      fileStream.pipe(res);
+        res.setHeader("Content-Type", "audio/mpeg");
+        fileStream.pipe(res);
       }
-      
     } else {
       return res.status(500).json({
         error: "File not found, please contact with the artist or the admin!",
@@ -60,20 +60,27 @@ const streamSong = async (req, res) => {
 
 const addStreamSong = async (req, res) => {
   try {
-    const decodedToken = req.decodedToken;
-    const existingUser = await AuthenticateRepository.getUserById(
-      decodedToken.userId
-    );
-    if (!existingUser) {
-      return res.status(400).json({ error: "User was not found" });
+    const token = req.cookies.accessToken;
+    let userId;
+    if (token) {
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      req.decodedToken = decodedToken;
+      const existingUser = await AuthenticateRepository.getUserById(
+        decodedToken.userId
+      );
+      if (!existingUser) {
+        return res.status(400).json({ error: "User was not found" });
+      }
+      userId = existingUser._id;
     }
+
     const songId = req.params.songId;
     const existingSong = await SongRepository.getSongsById(songId);
     if (!existingSong) {
       return res.status(400).json({ error: "Song was not found" });
     }
     const songStream = SongStreamRepository.addSongStreamm({
-      userId: existingUser._id,
+      userId: userId,
       songId: existingSong._id,
     });
     return res.status(201).json({ result: "song stream added" });

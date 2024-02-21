@@ -7,6 +7,7 @@ export default function Player() {
   const dispatch = useDispatch();
   const currentSong = useSelector((state) => state.player.currentSong);
   const isPlaying = useSelector((state) => state.player.isPlaying);
+  const volume = useSelector((state) => state.player.volume);
   const progress = useSelector((state) => state.player.progress);
   const playerRef = useRef(null);
   const { OriginalRequest } = PerformRequest();
@@ -52,6 +53,7 @@ export default function Player() {
           onProgress={(e) => {
             handleProgress(e);
           }}
+          volume={volume/100}
         />
       )}
     </div>

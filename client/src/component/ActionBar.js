@@ -23,7 +23,7 @@ export default function ActionBar() {
     console.log("song changed");
   }, [currentSong._id]);
   return (
-    <div className="bg-light30 dark:bg-dark30 w-full h-20 fixed bottom-0 z-50 flex items-center justify-between">
+    <div className="bg-light30 dark:bg-dark30 w-full h-20 fixed bottom-0 z-50 flex items-center justify-between px-4">
       <div className="songInfo h-full px-4 flex items-center w-3/12 ">
         {currentSong.cover_image ? (
           <img

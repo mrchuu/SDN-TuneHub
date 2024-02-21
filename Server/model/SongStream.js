@@ -13,7 +13,7 @@ const SongStreamSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
-      required: true
+      default: null
     },
     song: {
       type: Schema.Types.ObjectId,
