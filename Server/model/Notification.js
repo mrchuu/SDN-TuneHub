@@ -1,8 +1,6 @@
 import mongoose, { Schema } from "mongoose";
+import User from "./RegisteredUser.js";
 
-const userDTO = new Schema({
-    userId: { type: Schema.Types.ObjectId },
-});
 
 const NotificationSchema = new Schema(
   {
@@ -10,7 +8,7 @@ const NotificationSchema = new Schema(
         type: String,
         require: true
     },
-    user: userDTO
+    user: { type: Schema.Types.ObjectId }
   },
   { timestamps: true,collection: "Notification" }
 );
