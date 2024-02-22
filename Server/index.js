@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { AuthenticationRouter } from "./routes/index.js";
+import { AuthenticationRouter, LeaderBoardRouter } from "./routes/index.js";
 import "./utils/google-oauth2.js";
 import path from "path";
 import { dirname } from "path";
@@ -31,6 +31,8 @@ app.use(
   "/upload/image",
   express.static(path.join(__dirname, `upload`, "image"))
 );
+app.use("/leaderboard", LeaderBoardRouter);
+
 const port = process.env.PORT || 9999;
 const MONGODB_URI = process.env.MONGODB_URI;
 app.listen(port, async () => {

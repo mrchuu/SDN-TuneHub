@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import User from "./RegisteredUser";
 
 const userDTO = new Schema(
   {
