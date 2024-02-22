@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import SongList from "../component/SongList";
 import ArtistTemplate from "../template/ArtistTemplate";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -37,7 +38,7 @@ function a11yProps(index) {
 }
 export default function ArtistUpload() {
   const [value, setValue] = useState(0);
-
+  const theme = useSelector((state) => state.theme.theme);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -48,28 +49,35 @@ export default function ArtistUpload() {
           UPLOAD
         </h4>
         <div>
-          <Box sx={{ borderBottom: 1, borderColor: "rgb(255, 255, 255, 0.5)" }}>
+          <Box
+            sx={{
+              borderBottom: 1,
+              borderColor: theme
+                ? "rgb(255, 255, 255, 0.5)"
+                : "rgb(0, 0, 0, 0.3)",
+            }}
+          >
             <Tabs
               value={value}
               onChange={handleChange}
               aria-label="basic tabs example"
             >
               <Tab
-                label="Item One"
+                label="Single"
                 sx={{
-                  color: "#FFFFFF",
+                  color: theme ? "#ADADAD" : "#717171",
                   "&.Mui-selected": {
-                    color: "#DA8F66",
+                    color: theme ? "#DA8F66" : "#F2785C",
                   },
                 }}
                 {...a11yProps(0)}
               />
               <Tab
-                label="Item Two"
+                label="Album"
                 sx={{
-                  color: "#FFFFFF",
+                  color: theme ? "#ADADAD" : "#717171",
                   "&.Mui-selected": {
-                    color: "#DA8F66",
+                    color: theme ? "#DA8F66" : "#F2785C",
                   },
                 }}
                 {...a11yProps(1)}
@@ -77,10 +85,10 @@ export default function ArtistUpload() {
             </Tabs>
           </Box>
           <CustomTabPanel value={value} index={0}>
-            Item One
+            <div className="h-10 w-full bg-dark10"></div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            Item Two
+            Album
           </CustomTabPanel>
         </div>
       </div>
