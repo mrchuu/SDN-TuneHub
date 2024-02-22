@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-
+import Artist from "./Artist.js";
+import Album from "./Album.js";
 const userDTO = new Schema({
     userId: { type: Schema.Types.ObjectId },
   });
@@ -22,7 +23,11 @@ const songSchema = new Schema(
     },
     album: {
       type: Schema.Types.ObjectId,
-      ref: "Album",
+      ref: "album",
+    },
+    file_name: {
+      type: String,
+      required: true
     },
     preview_start_time: {
       type: Number,
@@ -36,6 +41,10 @@ const songSchema = new Schema(
     artist: {
       type: Schema.Types.ObjectId,
       ref: "Artist",
+    },
+    duration: {
+      type: Number,
+      required: true
     },
     purchased_user: [userDTO],
   },

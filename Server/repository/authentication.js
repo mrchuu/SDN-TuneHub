@@ -69,7 +69,6 @@ const getUserById = async (userId) => {
   try {
     console.log(userId);
     const existingUser = await User.findById(userId).exec();
-    console.log(existingUser);
     if (!existingUser) {
       throw new Error("Not found!!");
     }

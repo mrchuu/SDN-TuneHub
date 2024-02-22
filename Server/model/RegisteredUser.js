@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-
+import Artist from "./Artist.js";
 const playlistDTO = new Schema({
   playlistId: {
     type: Schema.Types.ObjectId,
@@ -68,5 +68,5 @@ const UserSchema = new Schema(
   },
   { timestamps: true, collection: "Users" }
 );
-const User = mongoose.model("Users", UserSchema);
+const User = mongoose.model("User", UserSchema);
 export default User;
