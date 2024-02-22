@@ -159,7 +159,7 @@ export default function Login() {
           </form>
           <h4 className="text-textSecondary pt-2">
             Forgot password ? Reset{" "}
-            <Link to={"/"} className="text-blue-600 underline text-md">
+            <Link to={"/forgot-password"} className="text-blue-600 underline text-md">
               here
             </Link>
           </h4>
