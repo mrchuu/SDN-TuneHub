@@ -7,6 +7,8 @@ import { Toaster } from "react-hot-toast";
 import SignUp from "./screen/SignUp";
 import Explore from "./screen/Explore";
 import Oauth2Redirect from "./screen/Oauth2Redirect";
+import ArtistDashBoard from "./screen/ArtistDashBoard";
+import ArtistUpload from "./screen/ArtistUpload";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/artist/dashboard" element={<ArtistDashBoard/>}/>
+        <Route path="/artist/upload" element={<ArtistUpload/>}/>
         <Route path="/confirmSignUp/:token" element={<ConfirmSignUp />} />
       </Routes>
     </BrowserRouter>
