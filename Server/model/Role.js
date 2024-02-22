@@ -1,18 +1,17 @@
 import mongoose, { Schema } from "mongoose";
-import User from './RegisteredUser'
+import User from './RegisteredUser.js'
 
 const RoleSchema = new Schema(
   {
-    name: {
+    role_name: {
       type: String,
       require: true,
       unique: true,
     },
-    user: [
-      {
+    user: {
         type: Schema.Types.ObjectId,
-      },
-    ],
+        ref: "User",
+    },
   },
   { timestamps: true, collection: "Role" }
 );

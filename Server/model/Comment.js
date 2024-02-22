@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import User from "./RegisteredUser";
-import Song from "./Song";
+import User from "./RegisteredUser.js";
+import Song from "./Song.js";
 
 const CommentSchema = new Schema(
   {
