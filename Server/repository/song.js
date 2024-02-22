@@ -1,32 +1,31 @@
 import Song from "../model/Song.js";
-
-const searchSongByName = async (name) => {
-  try {
-    const foundSongs = await Song.find({
-      song_name: { $regex: name, $options: "i" },
-    }).exec();
-
-    if (foundSongs.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "No songs found with the provided name" });
+import SongStreamRepository from "./songStream.js";
+const getAllSongs = async () =>{
+    try {
+        const songList = await Song.find().populate('artist').populate('album').exec();
+        return songList;
+    } catch (error) {
+        throw new Error(error.message)
     }
-
-    return foundSongs;
-  } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-const getSongs = async () => {
-  try {
-    const foundSongs = await Song.find({}).exec();
-    return foundSongs;
-  } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
+}
+const getSongsById = async (songId) =>{
+    try {
+        const existingSong = await Song.findById(songId).populate('artist').populate('album').exec();
+        return existingSong
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
+const streamSong = async (songId, userId) =>{
+    try {
+        const songStream = await SongStreamRepository.addSongStreamm({userId:userId, songId:songId});
+        return songStream;
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
 export default {
-  searchSongByName,getSongs
-};
+    getAllSongs,
+    streamSong,
+    getSongsById
+}
