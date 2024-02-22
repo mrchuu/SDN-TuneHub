@@ -1,5 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 import Artist from "./Artist.js";
+import Playlist from './Playlist.js'
+import Song from "./Song.js";
+
 const playlistDTO = new Schema({
   playlistId: {
     type: Schema.Types.ObjectId,
@@ -10,10 +13,6 @@ const playlistDTO = new Schema({
   play_list_cover: {
     type: String,
   },
-});
-
-const songDTO = new Schema({
-  songId: { type: Schema.Types.ObjectId },
 });
 
 const UserSchema = new Schema(
@@ -49,7 +48,7 @@ const UserSchema = new Schema(
       default: [],
     },
     playlist_created: {
-      type: [songDTO],
+      type: [{ type: Schema.Types.ObjectId }],
       default: [],
     },
     artist_followed: {

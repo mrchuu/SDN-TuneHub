@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import Artist from './Artist'
 
 const PromotionPostSchema = new Schema(
   {

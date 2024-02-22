@@ -1,4 +1,6 @@
 import mongoose, { Schema } from "mongoose";
+import Song from "./Song";
+import User from "./RegisteredUser";
 
 const songDTO = new Schema({
   songId: { type: Schema.Types.ObjectId },
@@ -12,9 +14,6 @@ const songDTO = new Schema({
   }
 });
 
-const userDTO = new Schema({
-  userId: { type: Schema.Types.ObjectId },
-});
 
 const albumSchema = new Schema(
   {
@@ -26,7 +25,7 @@ const albumSchema = new Schema(
     description: {
         type: String
     },
-    purchasers: [userDTO],
+    purchasers: [{ type: Schema.Types.ObjectId }],
     album_cover: {
         type: String
     },

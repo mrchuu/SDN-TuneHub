@@ -1,20 +1,12 @@
 import mongoose, { Schema } from "mongoose";
-
-const userDTO = new Schema({
-  userId: { type: Schema.Types.ObjectId },
-});
-const songDTO = new Schema({
-  songId: { type: Schema.Types.ObjectId },
-});
-const commentDTO = new Schema({
-    commentId: {type: Schema.Types.ObjectId},
-})
+import User from "./RegisteredUser";
+import Song from "./Song";
 
 const CommentSchema = new Schema(
   {
-    user: userDTO,
-    songId: songDTO,
-    parent_comment: commentDTO,
+    user: { type: Schema.Types.ObjectId },
+    songId: { type: Schema.Types.ObjectId },
+    parent_comment: { type: Schema.Types.ObjectId },
     content: {
       type: String,
     },

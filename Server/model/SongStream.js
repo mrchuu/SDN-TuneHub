@@ -1,4 +1,6 @@
 import mongoose, { Schema } from "mongoose";
+import Song from "./Song";
+import User from "./RegisteredUser";
 
 // const userDTO = new Schema(
 //   {

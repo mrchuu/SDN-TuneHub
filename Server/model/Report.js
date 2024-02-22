@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import Song from "./Song";
 
 const songDTO = new Schema({
   songId: {type: Schema.Types.ObjectId},
