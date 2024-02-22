@@ -1,6 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 import User from "./RegisteredUser.js";
 import Album from "./Album.js";
+import Song from "./Song.js";
+
 const songDTO = new Schema({
   songId: { type: Schema.Types.ObjectId },
   song_name: {

@@ -1,9 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import Artist from "./Artist.js";
 import Album from "./Album.js";
-const userDTO = new Schema({
-    userId: { type: Schema.Types.ObjectId },
-  });
 
 const songSchema = new Schema(
   {
@@ -27,7 +24,7 @@ const songSchema = new Schema(
     },
     file_name: {
       type: String,
-      required: true
+      required: true,
     },
     preview_start_time: {
       type: Number,
@@ -44,9 +41,9 @@ const songSchema = new Schema(
     },
     duration: {
       type: Number,
-      required: true
+      required: true,
     },
-    purchased_user: [userDTO],
+    purchased_user: [{ type: Schema.Types.ObjectId }],
   },
   { timestamps: true, collection: "Song" }
 );
