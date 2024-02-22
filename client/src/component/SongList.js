@@ -3,12 +3,31 @@ import PerformRequest from "../utilities/PerformRequest";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { setCurrentSong, toogleIsPlaying } from "../redux/player.js";
+import { FaRegHeart } from "react-icons/fa";
+import {
+  setCurrentSong,
+  toogleIsPlaying,
+  addSongToQueue,
+} from "../redux/player.js";
+import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
+import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 export default function SongList() {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
   const hasMounted = useRef(false);
+  const [songMenuAnchor, setSongMenuAnchor] = useState(null);
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [songInAction, setSongInAction] = useState(null);
+  const closeMenu = (e, song) => {
+    setMenuIsOpen(false);
+    setSongMenuAnchor(null);
+  };
+  const openMenu = (e, song) => {
+    setSongInAction(song);
+    setMenuIsOpen(true);
+    setSongMenuAnchor(e.currentTarget);
+  };
   useEffect(() => {
     const fetch = async () => {
       if (hasMounted.current) {
@@ -65,12 +84,61 @@ export default function SongList() {
                 {song.album ? "album" : ""}
               </td>
               <td className="w-1/12">
-                <IoEllipsisHorizontal />
+                <IoEllipsisHorizontal
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openMenu(e, song);
+                  }}
+                />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <Menu
+        open={menuIsOpen}
+        anchorEl={songMenuAnchor}
+        onClose={closeMenu}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+        autoFocus={false}
+      >
+        <MenuItem>
+          <ListItemIcon>
+            <FaRegHeart
+              className="text-light10 dark:text-dark10 mt-1"
+              size={18}
+            />
+            <ListItemText>&nbsp;Add To Favorite</ListItemText>
+          </ListItemIcon>
+        </MenuItem>
+        <MenuItem
+          className="flex items-center"
+          onClick={(e) => {
+            console.log(songInAction);
+            dispatch(addSongToQueue(songInAction));
+            closeMenu(e)
+          }}
+        >
+          <ListItemIcon>
+            <MdOutlineQueueMusic
+              size={22}
+              className="text-light10 dark:text-dark10 mr-3"
+            />
+            <ListItemText className="text-right">Queue Song</ListItemText>
+          </ListItemIcon>
+        </MenuItem>
+        <MenuItem className="flex items-center">
+          <ListItemIcon>
+            <MdLibraryMusic
+              size={20}
+              className="text-light10 dark:text-dark10 mr-3"
+            />
+            <ListItemText className="text-right">Add To Playlist</ListItemText>
+          </ListItemIcon>
+        </MenuItem>
+      </Menu>
     </div>
   );
 }
