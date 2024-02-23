@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { AuthenticationRouter, SongRouter } from "./routes/index.js";
+import { AuthenticationRouter, GenreRouter, SongRouter } from "./routes/index.js";
 import "./utils/google-oauth2.js";
 import path from "path";
 import { dirname } from "path";
@@ -28,6 +28,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use("/api/auth", AuthenticationRouter);
 app.use("/api/songs", SongRouter)
+app.use("/api/genres", GenreRouter)
 app.use(
   "/upload/image",
   express.static(path.join(__dirname, `upload`, "image"))

@@ -5,7 +5,7 @@ export default function ArtistTemplate({ title, children }) {
   const expanded = useSelector((state) => state.sideBar.expanded);
   return (
     <div className="h-full flex-col">
-      <div className="h-full flex flex-row mb-20">
+      <div className="h-full flex flex-row">
         <ArtistSideBar/>
         <div
           className={`w-full bg-light60 dark:bg-dark60 transition-all ${
