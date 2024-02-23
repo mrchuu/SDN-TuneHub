@@ -1,4 +1,5 @@
 import AuthenticationController from "./authentication.js";
 import SongController from "./song.js"
 import GenreController from "./genre.js";
-export { AuthenticationController, SongController, GenreController };
+import ArtistController from "./artist.js"
+export { AuthenticationController, SongController, GenreController, ArtistController };

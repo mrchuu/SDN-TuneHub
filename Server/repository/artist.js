@@ -1,4 +1,4 @@
-import Artist from "../model/Artist";
+import Artist from "../model/Artist.js";
 const findArtistByName = async (searchInput) => {
   try {
     return await Artist.find({
@@ -8,3 +8,6 @@ const findArtistByName = async (searchInput) => {
     throw new Error(error.message);
   }
 };
+export default {
+    findArtistByName
+}
