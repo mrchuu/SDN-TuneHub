@@ -37,8 +37,44 @@ const streamSong = async (songId, userId) => {
     throw new Error(error.message);
   }
 };
+const uploadSong = async ({
+  song_name,
+  genre,
+  participated_artist,
+  isExclusive,
+  price,
+  album,
+  file_name,
+  preview_start_time,
+  preview_end_time,
+  cover_image,
+  artist,
+  duration,
+}) => {
+  console.log(artist);
+  try {
+    const result = Song.create({
+      song_name,
+      genre,
+      participated_artist,
+      is_exclusive: isExclusive,
+      price,
+      album,
+      file_name,
+      preview_start_time,
+      preview_end_time,
+      cover_image,
+      artist: artist,
+      duration,
+    });
+    return result._doc;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   getAllSongs,
   streamSong,
   getSongsById,
+  uploadSong
 };

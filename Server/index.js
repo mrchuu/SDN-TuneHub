@@ -20,10 +20,10 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json({limit: '10mb'}));
 app.use(express.urlencoded({ extended: true }));
-app.use((req, res, next) => {
-  res.charset = "UTF-8";
-  next();
-});
+// app.use((req, res, next) => {
+//   res.charset = "UTF-8";
+//   next();
+// });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use("/api/auth", AuthenticationRouter);

@@ -10,7 +10,6 @@ export const artistUploadSlice = createSlice({
       state.genres = action.payload;
     },
     setSongInfo: (state, action) => {
-      console.log(action.payload.name+": "+action.payload.value);
       const updateSongInfo = { ...state.songInfo, [action.payload.name]: action.payload.value };
       state.songInfo = updateSongInfo
       console.log(updateSongInfo);

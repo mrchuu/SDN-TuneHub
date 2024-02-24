@@ -184,7 +184,7 @@ const refreshToken = async (req, res) => {
         .status(401)
         .json({ error: "No cookie for refreshToken was provided" });
     }
-    const decodedToken = verifyToken(req, res, token);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const accessToken = jwt.sign(
       { userId: decodedToken.userId },
       process.env.JWT_SECRET_KEY,

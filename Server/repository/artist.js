@@ -8,6 +8,14 @@ const findArtistByName = async (searchInput) => {
     throw new Error(error.message);
   }
 };
+const findArtistByUserId = async (userId) => {
+  try {
+    return await Artist.findOne({userId: userId}).exec();
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
-    findArtistByName
+    findArtistByName,
+    findArtistByUserId
 }

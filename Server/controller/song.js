@@ -1,5 +1,5 @@
-
 import {
+  ArtistRepository,
   AuthenticateRepository,
   SongRepository,
   SongStreamRepository,
@@ -9,6 +9,8 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 import jwt from "jsonwebtoken";
+import formidable from "formidable";
+import { log } from "console";
 const getAllSongs = async (req, res) => {
   try {
     const songList = await SongRepository.getAllSongs();
@@ -89,8 +91,76 @@ const addStreamSong = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const uploadSong = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const { userId } = decodedToken;
+    const form = formidable({ maxFileSize: 10 * 1024 * 1024 });
+    form.parse(req, async (err, fields, files) => {
+      if (err) {
+        console.error("Error parsing form data:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      // Access parsed form data
+      const songName = fields.songName;
+      const genre = fields.genre;
+      const participatedArtists = fields.participatedArtists;
+      const duration = fields.duration;
+      const isExclusive = fields.isExclusive;
+      const previewStart = fields.previewStart;
+      const previewEnd = fields.previewEnd;
+      const price = fields.price;
+
+      // Access the uploaded files
+      const coverImage = fields.coverImage;
+      const audioFile = files.audioFile;
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+
+      // Assuming audioFile is an array (you might need to adjust based on your structure)
+      const uploadedFile = audioFile[0];
+      console.log(uploadedFile.originalFilename);
+      const newFileName = Date.now() + uploadedFile.originalFilename;
+      if (uploadedFile) {
+        console.log(uploadedFile.filepath);
+        const newPath = path.join(
+          __dirname,
+          "..",
+          `upload`,
+          "audio",
+          newFileName
+        );
+        fs.copyFileSync(uploadedFile.filepath, newPath);
+        fs.unlinkSync(uploadedFile.filepath);
+      }
+      const artistResult = await ArtistRepository.findArtistByUserId(userId);
+      if (!artistResult) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+      console.log(artistResult);
+      const result = await SongRepository.uploadSong({
+        song_name: songName[0],
+        genre: genre[0],
+        participated_artist: participatedArtists,
+        isExclusive: isExclusive[0] === "true",
+        price: parseInt(price[0]),
+        file_name: newFileName,
+        preview_start_time: parseInt(previewStart[0]),
+        preview_end_time: parseInt(previewEnd[0]),
+        cover_image: coverImage[0],
+        artist: artistResult._id,
+        duration: parseInt(duration[0]),
+      });
+      return res.status(201).json({ message: "song uploaded successfully!!" });
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 export default {
   getAllSongs,
   streamSong,
   addStreamSong,
+  uploadSong,
 };
