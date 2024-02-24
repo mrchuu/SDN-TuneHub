@@ -1,5 +1,4 @@
 import DefaultTemplate from "../template/DefaultTemplate";
-import { FaSearch } from "react-icons/fa";
 
 function Explore() {
   const artist = [
@@ -59,19 +58,6 @@ function Explore() {
   return (
     <DefaultTemplate>
       <div className="w-full min-h-screen items-center justify-center">
-        <form className="fixed top-4 ml-16 flex items-center bg-opacity-80 border border-gray-300 rounded-full px-4 py-1 w-1/3">
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-full outline-none bg-transparent"
-          />
-          <button
-            type="submit"
-            className="ml-2 bg-gray-800 text-white rounded-full p-2"
-          >
-            <FaSearch />
-          </button>
-        </form>
         <div className="container mx-auto">
           <h1 className="text-2xl p-4 font-bold">Genrer</h1>
         </div>

@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { FaCogs } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { useLocation } from "react-router-dom";
+import Search from "./Search.js";
 import {
   Divider,
   ListItemIcon,
@@ -28,12 +30,20 @@ export default function Header() {
     setAnchorProfile(null);
   };
   const { performLogOut } = Logout();
+
+  const location = useLocation();
+  const currentPath = location.pathname;
+
   return (
     <div className="flex items-center justify-end pt-5">
       {/* <FaCogs size={35} className="mr-8" color="#f2785c" /> */}
+      {currentPath === "/explore" ? <Search /> : null}
       <ThemeSwitcher />
-      <IoIosNotifications className="text-light10 dark:text-dark10 ml-5" size={28} />
-      <div>
+      <IoIosNotifications
+        className="text-light10 dark:text-dark10 ml-5"
+        size={28}
+      />
+      <div className="justify-end">
         {isLoggedIn ? (
           <div className="mr-10 ml-5">
             <img

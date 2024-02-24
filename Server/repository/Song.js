@@ -43,9 +43,8 @@ const searchSongByName = async (name) => {
       song_name: { $regex: name, $options: "i" },
     })
       .populate("artist", "_id artist_name")
-      .select("_id")
-      .select("song_name")
-      .select("cover_image");
+      .select("_id song_name cover_image")
+      .limit(10);
 
     if (foundSongs.length === 0) {
         throw new Error("No songs found with the provided name");
