@@ -75,10 +75,19 @@ const getUserByEmail = async (email) => {
     throw new Error(error.message);
   }
 };
+const findByEmail = async (email) => {
+  return await User.findOne({ email: email }).exec();
+};
+
+const generateResetToken = async (userId) => {
+  return jwt.sign({ userId }, process.env.RESET_TOKEN_SECRET, { expiresIn: '1h' });
+};
 export default {
   authenticate,
   addUser,
   verifyUser,
   getUserById,
   getUserByEmail,
+  findByEmail,
+  generateResetToken
 };

@@ -4,7 +4,9 @@ import { BsSoundwave } from 'react-icons/bs';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import { FormControl, TextField } from '@mui/material';
+import PerformRequest from '../utilities/PerformRequest';
 const ForgotPassword = () => {
+  const { OriginalRequest } = PerformRequest();
   const [email, setEmail] = useState({ email: "" });
   const handleChange = (e) => {
     setEmail({ ...email, [e.target.name]: e.target.value });
@@ -12,8 +14,12 @@ const ForgotPassword = () => {
   }
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Gửi yêu cầu khôi phục mật khẩu với email đã nhập
-    console.log('Đã gửi yêu cầu khôi phục mật khẩu với email:', email);
+    try {
+      // Gọi hàm OriginalRequest để gửi yêu cầu gửi email đặt lại mật khẩu
+      OriginalRequest("auth/forgot-password", "POST", email);
+    } catch (error) {
+      console.error("Failed to send password reset email:", error);
+    }
   };
 
   return (
