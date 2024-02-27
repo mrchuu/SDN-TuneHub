@@ -6,4 +6,9 @@ songRouter.get("/getAll", verifyToken, SongController.getAllSongs);
 songRouter.get("/streamSong/:songId", SongController.streamSong);
 songRouter.post("/addSongStream/:songId", SongController.addStreamSong);
 songRouter.post("/uploadSingle", verifyToken,SongController.uploadSong);
+songRouter.get("/search/:nameKey", SongController.searchSongByName);
+songRouter.post(
+  "/addSongStream/:songId",
+  SongController.addStreamSong
+);
 export default songRouter;

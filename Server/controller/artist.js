@@ -9,6 +9,16 @@ const findByName = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+const searchArtistByName = async (req, res) => {
+  try {
+    const songs = await ArtistRepository.searchArtistByName(req.params.nameKey);
+    res.status(201).json(songs);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export default {
-    findByName
-}
+  findByName,
+  searchArtistByName,
+};

@@ -8,7 +8,6 @@ const getAllSongs = async () => {
       .populate("album")
       .select("_id")
       .select("song_name")
-      .select("artist")
       .select("cover_image")
       .select("duration")
       .select("is_exclusive")
@@ -74,10 +73,30 @@ const uploadSong = async ({
   } catch (error) {
     throw new Error(error.message);
   }
+}
+const searchSongByName = async (name) => {
+  try {
+    const foundSongs = await Song.find({
+      song_name: { $regex: name, $options: "i" },
+    })
+      .populate("artist", "_id artist_name")
+      .select("_id song_name cover_image")
+      .limit(10);
+
+    // if (foundSongs.length === 0) {
+    //     throw new Error("No songs found with the provided name");
+    // }
+
+    return foundSongs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
+
 export default {
   getAllSongs,
   streamSong,
   getSongsById,
-  uploadSong
+  uploadSong,
+  searchSongByName,
 };

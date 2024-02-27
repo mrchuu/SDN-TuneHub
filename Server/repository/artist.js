@@ -10,12 +10,28 @@ const findArtistByName = async (searchInput) => {
 };
 const findArtistByUserId = async (userId) => {
   try {
-    return await Artist.findOne({userId: userId}).exec();
+    return await Artist.findOne({ userId: userId }).exec();
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const searchArtistByName = async (name) => {
+  try {
+    const foundArtist = await Artist.find({
+      artist_name: { $regex: name, $options: "i" },
+    }).select("_id artist_name");
+
+    if (foundArtist.length == 0) {
+      throw new Error("No artist found with the provided name");
+    }
+    return foundArtist;
   } catch (error) {
     throw new Error(error.message);
   }
 };
 export default {
-    findArtistByName,
-    findArtistByUserId
-}
+  findArtistByName,
+  findArtistByUserId,
+  searchArtistByName,
+};
