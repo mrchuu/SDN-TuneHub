@@ -170,7 +170,7 @@ const login = async (req, res) => {
 const getUserInfo = async (req, res) => {
   try {
     const decodedToken = req.decodedToken;
-    console.log(decodedToken);
+    // console.log(decodedToken);
     const user = await AuthenticateRepository.getUserById(decodedToken.userId);
     const { password, createdAt, updatedAt, ...filterdUser } = user;
     return res.status(200).json(filterdUser);

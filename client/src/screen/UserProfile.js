@@ -171,7 +171,7 @@ export default function UserProfile() {
         <DefaultTemplate>
             <div className="w-full min-h-screen">
                 <div className="profile-contain">
-                    <div className="profile-header bg-light30 dark:bg-dark30">
+                    <div className="profile-header">
                         {/* <div className="profile-back">
                             <Link className="flex items-center" to={"/"}>
                                 <MdOutlineKeyboardBackspace size={30} />
