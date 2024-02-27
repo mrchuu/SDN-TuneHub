@@ -9,6 +9,8 @@ import Explore from "./screen/Explore";
 import Oauth2Redirect from "./screen/Oauth2Redirect";
 import UserProfile from "./screen/UserProfile";
 import ForgotPassword from "./screen/ForgotPassword";
+import ArtistDashBoard from "./screen/ArtistDashBoard";
+import ArtistUpload from "./screen/ArtistUpload";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/artist/dashboard" element={<ArtistDashBoard/>}/>
+        <Route path="/artist/upload" element={<ArtistUpload/>}/>
         <Route path="/confirmSignUp/:token" element={<ConfirmSignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword/>}/>
         <Route path="/profile" element={<UserProfile/>}/>

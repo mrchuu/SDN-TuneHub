@@ -88,8 +88,19 @@ const addStreamSong = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+const searchSongByName = async (req, res) => {
+  try {
+    const songs = await SongRepository.searchSongByName(req.params.nameKey);
+    res.status(201).json(songs);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export default {
   getAllSongs,
   streamSong,
   addStreamSong,
+  searchSongByName,
 };

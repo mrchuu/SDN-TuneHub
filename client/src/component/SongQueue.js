@@ -13,7 +13,7 @@ export default function SongQueue() {
   const songQueue = useSelector((state) => state.player.songQueue);
   const showBox = useSelector((state) => state.player.showBox);
   return (
-    <div className={`w-72 h-96 bg-light30 dark:bg-dark30 border border-light10/30 dark:border-dark10/40 fixed bottom-28 right-5 rounded-md  z-50 shadow-lg py-1 ${showBox ? "" : "hidden"}`}>
+    <div className={`w-72 h-96 bg-light30 dark:bg-dark30 border border-light10/30 dark:border-dark10/40 fixed bottom-28 right-5 rounded-sm z-50 shadow-lg py-1 ${showBox ? "" : "hidden"}`}>
       <h4 className="px-4 text-lightText dark:text-darkText font-semibold">
         Song Queue
       </h4>
