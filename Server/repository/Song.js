@@ -1,4 +1,5 @@
 import Song from "../model/Song.js";
+import { SongRepository } from "./index.js";
 import SongStreamRepository from "./songStream.js";
 const getAllSongs = async () => {
   try {
@@ -9,7 +10,8 @@ const getAllSongs = async () => {
       .select("song_name")
       .select("artist")
       .select("cover_image")
-      .select("duration");
+      .select("duration")
+      .select("is_exclusive")
     return songList;
   } catch (error) {
     throw new Error(error.message);
@@ -37,6 +39,7 @@ const streamSong = async (songId, userId) => {
     throw new Error(error.message);
   }
 };
+
 const uploadSong = async ({
   song_name,
   genre,

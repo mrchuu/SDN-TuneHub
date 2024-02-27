@@ -11,7 +11,13 @@ const songSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Genre",
     },
-    participated_artist: [{ type: Schema.Types.ObjectId, ref: "Artist" }],
+    participated_artist: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Artist",
+        default: [],
+      },
+    ],
     price: {
       type: Number,
     },

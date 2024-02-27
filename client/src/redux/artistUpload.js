@@ -3,7 +3,9 @@ export const artistUploadSlice = createSlice({
   name: "artistUpload",
   initialState: {
     genres: [],
-    songInfo: {},
+    songInfo: {
+      participatedArtists: []
+    },
   },
   reducers: {
     setGenres: (state, action) => {

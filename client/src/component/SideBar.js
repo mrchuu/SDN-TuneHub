@@ -6,9 +6,11 @@ import { createContext, useEffect, useState } from "react";
 import { BsSoundwave } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { toogleExpand } from "../redux/sideBar.js";
+
 export default function SideBar() {
   // const [expanded, setExpanded] = useState(window.innerWidth > 768);
   const expanded = useSelector((state) => state.sideBar.expanded);
+  const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
   useEffect(() => {
     const handleResize = () => {
@@ -213,20 +215,34 @@ export default function SideBar() {
             style={{ overflowY: "auto" }}
           >
             <div className="px-3 mt-2">
-              {/* <div className="bg-activeSideBar py-2 px-3 text-textSecondary font-medium rounded-md  ">
-                <span>Find some artist to follow</span>
-                <p
-                  className="text-xs"
-                  style={{ color: "RGB(126 ,126 ,126, 0.7)" }}
-                >
-                  We'll keep you updated on latest release
-                </p>
-                <button className="bg-OrangePrimary px-5 py-2 my-2 rounded-lg text-white hover:text-slate-950">
-                  Browse artists
-                </button>
-              </div> */}
+              {!userInfo.artist_followed ||
+              userInfo?.artist_followed?.length === 0 ? (
+                <div className="bg-light30 py-2 px-3 font-medium rounded-md dark:bg-dark30">
+                  <span className="text-lightText dark:text-darkText">
+                    Find some artist to follow
+                  </span>
+                  <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
+                    We'll keep you updated on latest release
+                  </p>
+                  <button className="bg-light10 dark:bg-dark10 px-5 py-2 my-2 rounded-lg text-white hover:text-slate-950">
+                    Browse artists
+                  </button>
+                </div>
+              ) : (
+                <div className="px-3 text-textSecondary text-sm font-medium">
+                  {userInfo.artist_followed.map((artist) => (
+                    <div className="flex items-center mb-3" key={artist._id}>
+                      <img
+                        className="w-10 h-10 rounded-full border-slate-600  border-2"
+                        src={artist.userId.profile_picture}
+                      />
+                      &nbsp;<span>{artist.artist_name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-              <div className="px-3 text-textSecondary text-sm font-medium">
+              {/* <div className="px-3 text-textSecondary text-sm font-medium">
                 <div className="flex items-center mb-3">
                   <img
                     className="w-10 h-10 rounded-full border-slate-600  border-2"
@@ -269,14 +285,12 @@ export default function SideBar() {
                   />
                   &nbsp;<span>Artic Monkeys</span>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
       </nav>
-      <div className="h-20">
-
-      </div>
+      <div className="h-20"></div>
     </div>
   );
 }

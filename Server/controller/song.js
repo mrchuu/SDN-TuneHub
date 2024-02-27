@@ -10,7 +10,6 @@ import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 import jwt from "jsonwebtoken";
 import formidable from "formidable";
-import { log } from "console";
 const getAllSongs = async (req, res) => {
   try {
     const songList = await SongRepository.getAllSongs();
@@ -32,14 +31,22 @@ const streamSong = async (req, res) => {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
     const filePath = path.resolve(__dirname, "..", `upload`, "audio", fileName);
-
+    const token = req.cookies.accessToken;
+    let userId;
+    if (token) {
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const existingUser = await AuthenticateRepository.getUserById(
+        decodedToken.userId
+      );
+      if (!existingUser) {
+        return res.status(400).json({ error: "User was not found" });
+      }
+      userId = existingUser._id;
+    }
     if (fs.existsSync(filePath)) {
       const { is_exclusive, preview_start_time, preview_end_time } =
         existingSong;
-      console.log(
-        is_exclusive + " " + preview_end_time + " " + preview_start_time
-      );
-      if (is_exclusive) {
+      if (is_exclusive && userId && !existingSong.purchased_user.includes(userId)) {
         const ffmpegCmd = ffmpeg(filePath)
           .setStartTime(preview_start_time)
           .setDuration(preview_end_time - preview_start_time)
@@ -98,32 +105,34 @@ const uploadSong = async (req, res) => {
     const form = formidable({ maxFileSize: 10 * 1024 * 1024 });
     form.parse(req, async (err, fields, files) => {
       if (err) {
-        console.error("Error parsing form data:", err);
-        return res.status(500).json({ error: "Internal Server Error" });
+        throw new Error(err.message);
       }
-
-      // Access parsed form data
-      const songName = fields.songName;
-      const genre = fields.genre;
-      const participatedArtists = fields.participatedArtists;
-      const duration = fields.duration;
-      const isExclusive = fields.isExclusive;
-      const previewStart = fields.previewStart;
-      const previewEnd = fields.previewEnd;
-      const price = fields.price;
-
+      const songName = fields.songName ? fields.songName[0] : null;
+      const genre = fields.genre ? fields.genre : null;
+      const participatedArtists =
+        fields.participatedArtists[0] !== ""
+          ? fields.participatedArtists
+          : null;
+      const duration = fields.duration ? parseInt(fields.duration[0]) : null;
+      const isExclusive = fields.isExclusive
+        ? fields.isExclusive[0] === "true"
+        : false;
+      const previewStart = fields.previewStart
+        ? parseInt(fields.previewStart[0])
+        : null;
+      const previewEnd = fields.previewEnd
+        ? parseInt(fields.previewEnd[0])
+        : null;
+      const price = fields.price ? parseInt(fields.price[0]) : null;
       // Access the uploaded files
-      const coverImage = fields.coverImage;
+      const coverImage = fields.coverImage ? fields.coverImage[0] : null;
       const audioFile = files.audioFile;
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = dirname(__filename);
-
       // Assuming audioFile is an array (you might need to adjust based on your structure)
       const uploadedFile = audioFile[0];
-      console.log(uploadedFile.originalFilename);
       const newFileName = Date.now() + uploadedFile.originalFilename;
       if (uploadedFile) {
-        console.log(uploadedFile.filepath);
         const newPath = path.join(
           __dirname,
           "..",
@@ -136,21 +145,21 @@ const uploadSong = async (req, res) => {
       }
       const artistResult = await ArtistRepository.findArtistByUserId(userId);
       if (!artistResult) {
-        return res.status(403).json({ error: "Unauthorized" });
+        throw new Error("Unauthorized");
       }
-      console.log(artistResult);
+      console.log(participatedArtists);
       const result = await SongRepository.uploadSong({
-        song_name: songName[0],
-        genre: genre[0],
+        song_name: songName,
+        genre: genre,
         participated_artist: participatedArtists,
-        isExclusive: isExclusive[0] === "true",
-        price: parseInt(price[0]),
+        isExclusive: isExclusive,
+        price: price,
         file_name: newFileName,
-        preview_start_time: parseInt(previewStart[0]),
-        preview_end_time: parseInt(previewEnd[0]),
-        cover_image: coverImage[0],
+        preview_start_time: previewStart,
+        preview_end_time: previewEnd,
+        cover_image: coverImage,
         artist: artistResult._id,
-        duration: parseInt(duration[0]),
+        duration: duration,
       });
       return res.status(201).json({ message: "song uploaded successfully!!" });
     });

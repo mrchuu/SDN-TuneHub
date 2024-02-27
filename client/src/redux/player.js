@@ -86,6 +86,6 @@ export const {
   addSongToQueue,
   removeSongFromQueue,
   setQueueIndex,
-  toogleQueue
+  toogleQueue,
 } = playerSlice.actions;
 export default playerSlice.reducer;

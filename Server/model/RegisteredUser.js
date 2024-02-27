@@ -63,6 +63,10 @@ const UserSchema = new Schema(
     verify: {
       type: Schema.Types.Boolean,
       default: false,
+    },
+    songs_purchased: {
+      type: [Schema.Types.ObjectId],
+      default: []
     }
   },
   { timestamps: true, collection: "Users" }
