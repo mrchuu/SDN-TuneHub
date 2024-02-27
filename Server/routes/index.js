@@ -1,3 +1,4 @@
 import AuthenticationRouter from "./authentication.js";
 import SongRouter from "./song.js"
-export { AuthenticationRouter, SongRouter };
+import ArtistRouter from "./artist.js"
+export { AuthenticationRouter, SongRouter, ArtistRouter };
