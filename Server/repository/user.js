@@ -3,7 +3,7 @@ import User from '../model/RegisteredUser.js';
 
 const findById = async (id) => {
     try {
-        const user = await User.findById(id);
+        const user = await User.findById(id, {"_id": 1, "last_name": 1});
         return user;
     } catch (error) {
         throw new Error(error.message);

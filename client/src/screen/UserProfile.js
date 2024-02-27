@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { useDispatch, useSelector } from "react-redux";
-import { login, logOut } from "../redux/auth.js";
+import { login, logOut, setUserInfo} from "../redux/auth.js";
 import "../style/userprofile.css"
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
@@ -69,6 +69,10 @@ export default function UserProfile() {
                 "PUT",
                 updateEditProfile
             );
+            // console.log("Data here: "+data);
+            if(data.data){
+                dispatch(setUserInfo(data.data));
+            }
         } catch (error) {
             console.log(error);
         }
@@ -167,13 +171,13 @@ export default function UserProfile() {
         <DefaultTemplate>
             <div className="w-full min-h-screen">
                 <div className="profile-contain">
-                    <div className="profile-header bg-light30">
-                        <div className="profile-back">
+                    <div className="profile-header bg-light30 dark:bg-dark30">
+                        {/* <div className="profile-back">
                             <Link className="flex items-center" to={"/"}>
                                 <MdOutlineKeyboardBackspace size={30} />
                                 <p className="text-lg font-semibold text-light10">HomePage</p>
                             </Link>
-                        </div>
+                        </div> */}
                         <div className="profile-info">
                             <div className="picture">
                                 <img src={auth.profile_picture} alt="Girl in a jacket" />
@@ -326,14 +330,14 @@ export default function UserProfile() {
                         </div>
 
                         <div className="px-4 mt-1">
-                            <h2 className="text-2xl font-bold mb-4">Public Playlists</h2>
+                            <h2 className="text-2xl font-bold mb-4 text-lightText dark:text-darkText">Public Playlists</h2>
                             <div className="flex flex-wrap justify-between px-4 space-x-4">
                                 {playlists.map((playlist, index) => (
-                                    <div className="playlist-item w-1/6 p-4 bg-gray-100 rounded-lg" key={index}>
+                                    <div className="playlist-item w-1/6 p-4 bg-light30 dark:bg-dark30 rounded-lg" key={index}>
                                         <img src={playlist.image} alt={playlist.name_song} className="playlist-image w-full h-auto rounded-lg" />
                                         <div className="playlist-details mt-4">
-                                            <h3 className="playlist-name text-lg font-semibold">{playlist.name_song}</h3>
-                                            <p className="playlist-description text-sm mt-2">{playlist.description}</p>
+                                            <h3 className="playlist-name text-lg font-semibold text-lightText dark:text-darkText">{playlist.name_song}</h3>
+                                            <p className="playlist-description text-sm mt-2 text-lightTextSecondary dark:text-darkTextSecondary">{playlist.description}</p>
                                         </div>
                                     </div>
                                 ))}

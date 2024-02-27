@@ -6,26 +6,23 @@
 }
 .profile-header{
     width: 100%;
-    height: 40%;
-    /* background-color: #C0C0C0; */
-    /* background: linear-gradient(to left top, #FFAFBD, #ffc3a0); */
-    /* background-color: white; */
+    height: 35%;
     padding: 1em;
 }
-.profile-back{
+/* .profile-back{
     height: 8%;
-    /* border: 1px solid black; */
+    border: 1px solid black;
     margin-bottom: 2em;
-}
+} */
 .profile-info{
     width: 100%;
-    height: 80%;
+    height: 95%;
     /* border: 1px solid black; */
     display: flex;
-    align-items: end;
+    align-items: center;
 }
 .picture{
-    width: 15%;
+    width: 18%;
     height: 100%;
 }
 .picture img{
@@ -35,7 +32,7 @@
 }
 .info-user{
     width: 80%;
-    height: 90%;
+    height: 70%;
     /* border: 1px solid black; */
     color: black;
     margin-left: 1em;    
