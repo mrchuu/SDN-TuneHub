@@ -3,7 +3,6 @@ export const authSlice = createSlice({
   name: "auth",
   initialState: {
     isLoggedIn: false,
-    action: false,
     userInfo: {},
   },
 
