@@ -33,4 +33,5 @@ authenticationRouter.get(
   AuthenticationController.oauth2GoogleAuthentication
 );
 authenticationRouter.post("/googleLogin", AuthenticationController.googleLogin);
+authenticationRouter.post('/forgot-password', AuthenticationController.sendResetLink);
 export default authenticationRouter;
