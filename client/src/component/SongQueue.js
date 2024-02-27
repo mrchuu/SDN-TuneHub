@@ -29,7 +29,7 @@ export default function SongQueue() {
             <div
               key={song._id}
               className={`cursor-pointer w-full py-2 flex items-center justify-between hover:bg-light10 group dark:hover:bg-dark10 ${
-                currentSong._id == songQueue[queueIndex]._id
+                currentSong._id === songQueue[index]._id
                   ? "bg-light10 group dark:bg-dark10"
                   : ""
               }`}
@@ -47,7 +47,7 @@ export default function SongQueue() {
                 <div className="ml-2">
                   <h4
                     className={`w-full font-semibold text-sm group-hover:text-white ${
-                      currentSong._id == songQueue[queueIndex]._id
+                      currentSong._id === songQueue[index]._id
                         ? "text-white dark:text-darkText"
                         : "text-lightTextSecondary dark:text-darkTextSecondary"
                     } text-ellipsis`}
@@ -56,7 +56,7 @@ export default function SongQueue() {
                   </h4>
                   <h6
                     className={`font-normal text-xs group-hover:text-darkText ${
-                      currentSong._id == songQueue[queueIndex]._id
+                      currentSong._id === songQueue[index]._id
                         ? "text-white dark:text-darkText"
                         : "text-lightTextSecondary dark:text-darkTextSecondary"
                     } `}
@@ -66,25 +66,25 @@ export default function SongQueue() {
                 </div>
               </div>
               <div className="h-full w-3/12 flex items-center justify-between">
-                {currentSong._id == songQueue[queueIndex]._id ? (
+                {currentSong._id === songQueue[index]._id ? (
                   <CgLoadbarSound
-                    className="text-white dark:text-darkText "
-                    size={25}
+                    className="text-green-500 right-2 relative"
+                    size={30}
                   />
                 ) : (
                   <FaPlay
                     className={`mr-4 group-hover:text-darkText text-lightTextSecondary dark:text-darkTextSecondary`}
-                    size={18}
+                    size={15}
                   />
                 )}
 
                 <AiFillDelete
                   className={`mr-4 group-hover:text-darkText ${
-                    currentSong._id == songQueue[queueIndex]._id
+                    currentSong._id === songQueue[index]._id
                       ? "text-white dark:text-darkText"
                       : "text-lightTextSecondary dark:text-darkTextSecondary"
                   }`}
-                  size={23}
+                  size={20}
                   onClick={(e) => {
                     e.stopPropagation();
                     dispatch(removeSongFromQueue(index));

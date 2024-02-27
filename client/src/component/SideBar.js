@@ -236,7 +236,7 @@ export default function SideBar() {
                         className="w-10 h-10 rounded-full border-slate-600  border-2"
                         src={artist.userId.profile_picture}
                       />
-                      &nbsp;<span>{artist.artist_name}</span>
+                      &nbsp;<span className="text-lightText dark:text-darkTextSecondary">{artist.artist_name}</span>
                     </div>
                   ))}
                 </div>

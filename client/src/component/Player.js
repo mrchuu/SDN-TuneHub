@@ -5,6 +5,7 @@ import {
   toogleIsPlaying,
   updateProgress,
   finishSong,
+  setSliderValue,
 } from "../redux/player.js";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { Box, Fade, Modal, Typography } from "@mui/material";
@@ -14,8 +15,9 @@ export default function Player() {
   const isPlaying = useSelector((state) => state.player.isPlaying);
   const volume = useSelector((state) => state.player.volume);
   const userInfo = useSelector((state) => state.auth.userInfo);
-  const progress = useSelector((state) => state.player.progress);
+  const loop = useSelector((state) => state.player.loop);
   const playerRef = useRef(null);
+  const sliderValue = useSelector((state) => state.player.sliderValue);
   const { OriginalRequest } = PerformRequest();
   const [apiCalled, setApiCalled] = useState(false);
   const handleProgress = async (e) => {
@@ -36,8 +38,9 @@ export default function Player() {
   const handleSongEnd = (e) => {
     console.log("song end!");
     if (
-      (!userInfo.songs_purchased.includes(currentSong._id) &&
-      currentSong.is_exclusive) || !currentSong.is_exclusive
+      (userInfo.songs_purchased.includes(currentSong._id) &&
+        currentSong.is_exclusive) ||
+      !currentSong.is_exclusive
     ) {
       dispatch(finishSong());
     } else {
@@ -48,6 +51,9 @@ export default function Player() {
   useEffect(() => {
     setApiCalled(false);
   }, [currentSong._id]);
+  // useEffect(()=>{
+  //   playerRef.current.seekTo(sliderValue);
+  // }, [sliderValue])
   const style = {
     position: "absolute",
     top: "50%",
@@ -69,25 +75,29 @@ export default function Player() {
   return (
     <div>
       <div className="hidden">
-        {currentSong._id && (
-          <ReactPlayer
-            ref={playerRef}
-            url={`http://localhost:9999/api/songs/streamSong/${currentSong._id}`}
-            controls
-            width="100%"
-            height="50px"
-            playing={isPlaying}
-            key={currentSong._id}
-            onProgress={(e) => {
-              handleProgress(e);
-            }}
-            volume={volume / 100}
-            onEnded={(e) => {
-              handleSongEnd(e);
-            }}
-          />
-        )}
-      </div>
+          {currentSong._id && (
+            <ReactPlayer
+              ref={playerRef}
+              url={`http://localhost:9999/api/songs/streamSong/${currentSong._id}`}
+              controls
+              width="100%"
+              height="50px"
+              playing={isPlaying}
+              key={currentSong._id}
+              loop={loop}
+              onStart={(e)=>{
+                console.log(sliderValue);
+              }}
+              onProgress={(e) => {
+                handleProgress(e);
+              }}
+              volume={volume / 100}
+              onEnded={(e) => {
+                handleSongEnd(e);
+              }}
+            />
+          )}
+        </div>
       <div>
         <Modal
           open={open}

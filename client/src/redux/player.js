@@ -11,11 +11,16 @@ export const playerSlice = createSlice({
     songQueue: [],
     queueIndex: 0,
     showBox: false,
+    loop: false,
+    sliderValue: 0,
   },
 
   reducers: {
     toogleIsPlaying: (state, action) => {
       state.isPlaying = action.payload;
+    },
+    toogleLoop: (state, action) =>{
+      state.loop = !state.loop
     },
     setCurrentSong: (state, action) => {
       state.currentSong = { ...state.currentSong, ...action.payload };
@@ -74,6 +79,10 @@ export const playerSlice = createSlice({
     toogleQueue: (state, action) => {
       state.showBox = state.showBox ? false : true;
     },
+    setSliderValue: (state, action) =>{
+      state.progress = action.payload
+      state.sliderValue = action.payload;
+    }
   },
 });
 //hehe
@@ -87,5 +96,7 @@ export const {
   removeSongFromQueue,
   setQueueIndex,
   toogleQueue,
+  toogleLoop, 
+ setSliderValue
 } = playerSlice.actions;
 export default playerSlice.reducer;
