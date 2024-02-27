@@ -46,9 +46,9 @@ const searchSongByName = async (name) => {
       .select("_id song_name cover_image")
       .limit(10);
 
-    if (foundSongs.length === 0) {
-        throw new Error("No songs found with the provided name");
-    }
+    // if (foundSongs.length === 0) {
+    //     throw new Error("No songs found with the provided name");
+    // }
 
     return foundSongs;
   } catch (error) {

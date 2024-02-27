@@ -3,7 +3,7 @@ import { FaCogs } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useLocation } from "react-router-dom";
-import Search from "./Search.js";
+import Search from "./search/Search.js";
 import {
   Divider,
   ListItemIcon,
@@ -43,7 +43,7 @@ export default function Header() {
         className="text-light10 dark:text-dark10 ml-5"
         size={28}
       />
-      <div className="justify-end">
+      <div className="">
         {isLoggedIn ? (
           <div className="mr-10 ml-5">
             <img
