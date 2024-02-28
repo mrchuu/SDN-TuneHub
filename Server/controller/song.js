@@ -46,7 +46,11 @@ const streamSong = async (req, res) => {
     if (fs.existsSync(filePath)) {
       const { is_exclusive, preview_start_time, preview_end_time } =
         existingSong;
-      if (is_exclusive && userId && !existingSong.purchased_user.includes(userId)) {
+      if (
+        is_exclusive &&
+        userId &&
+        !existingSong.purchased_user.includes(userId)
+      ) {
         const ffmpegCmd = ffmpeg(filePath)
           .setStartTime(preview_start_time)
           .setDuration(preview_end_time - preview_start_time)
@@ -126,6 +130,11 @@ const uploadSong = async (req, res) => {
       const price = fields.price ? parseInt(fields.price[0]) : null;
       // Access the uploaded files
       const coverImage = fields.coverImage ? fields.coverImage[0] : null;
+      const artist = await ArtistRepository.findArtistByUserId(userId);
+      if (!artist) {
+        throw new Error("Unauthorized");
+      }
+      console.log(participatedArtists);
       const audioFile = files.audioFile;
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = dirname(__filename);
@@ -143,11 +152,7 @@ const uploadSong = async (req, res) => {
         fs.copyFileSync(uploadedFile.filepath, newPath);
         fs.unlinkSync(uploadedFile.filepath);
       }
-      const artistResult = await ArtistRepository.findArtistByUserId(userId);
-      if (!artistResult) {
-        throw new Error("Unauthorized");
-      }
-      console.log(participatedArtists);
+
       const result = await SongRepository.uploadSong({
         song_name: songName,
         genre: genre,
@@ -158,8 +163,15 @@ const uploadSong = async (req, res) => {
         preview_start_time: previewStart,
         preview_end_time: previewEnd,
         cover_image: coverImage,
-        artist: artistResult._id,
+        artist: artist._id,
         duration: duration,
+      });
+      ArtistRepository.addSongUpload({
+        artistId: artist._id,
+        songId: result._id,
+        songName: result.song_name,
+        songCover: result.cover_image,
+        isExclusive: result.isExclusive
       });
       return res.status(201).json({ message: "song uploaded successfully!!" });
     });

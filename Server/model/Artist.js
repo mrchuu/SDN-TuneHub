@@ -13,8 +13,9 @@ const songDTO = new Schema({
     type: String,
     required: true,
   },
-  price: {
-    type: Number,
+  is_exclusive: {
+    type: Schema.Types.Boolean,
+    default: false
   },
 });
 

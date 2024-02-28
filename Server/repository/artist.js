@@ -30,8 +30,29 @@ const searchArtistByName = async (name) => {
     throw new Error(error.message);
   }
 };
+const addSongUpload = async ({ artistId, songId, songName, songCover, isExclusive }) => {
+  try {
+    Artist.findByIdAndUpdate(
+      artistId,
+      {
+        $push: {
+          song_uploads: {
+            songId: songId,
+            song_name: songName,
+            song_cover: songCover,
+            is_exclusive: isExclusive
+          },
+        },
+      },
+      { new: true }
+    ).exec();
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   findArtistByName,
   findArtistByUserId,
   searchArtistByName,
+  addSongUpload
 };

@@ -55,7 +55,7 @@ const uploadSong = async ({
 }) => {
   console.log(artist);
   try {
-    const result = Song.create({
+    const result = await Song.create({
       song_name,
       genre,
       participated_artist,
