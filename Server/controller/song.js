@@ -171,7 +171,7 @@ const uploadSong = async (req, res) => {
         songId: result._id,
         songName: result.song_name,
         songCover: result.cover_image,
-        isExclusive: result.isExclusive
+        isExclusive: result.is_exclusive
       });
       return res.status(201).json({ message: "song uploaded successfully!!" });
     });
