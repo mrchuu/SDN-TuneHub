@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DefaultTemplate from "../template/DefaultTemplate";
-
-import PerformRequest from "../utilities/PerformRequest";
+import PerformRequest from "../utilities/PerformRequest.js";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
 import { useDispatch } from "react-redux";
@@ -14,37 +13,44 @@ import {
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 export default function LeaderBoard() {
+    const { OriginalRequest } = PerformRequest();
     const [SongList, setSong] = useState([]);
-    const [ArtistList, setArtist] = useState([])
+    const [ArtistList, setArtist] = useState([]);
 
+    const dispatch = useDispatch();
+    let intervalId;
+
+    const fetchSong = async () => {
+        const data = await OriginalRequest(
+            "songs/leaderboard/topSong/1m",
+            "GET"
+        );
+        if (data) {
+            setSong(data);
+        }
+    };
+    const fetchArtist = async () => {
+        const data = await OriginalRequest(
+            "artists/leaderboard/topArtist",
+            "GET"
+        );
+        if (data) {
+            setArtist(data);
+        }
+    };
     useEffect(() => {
-        fetch('http://localhost:9999/api/songs/leaderboard/topSong/1m')
-            .then((resp) => resp.json())
-            .then((data) => {
-                setSong(data);
-            })
-            .catch((err) => {
-                console.log(err.message);
-            });
+        fetchSong();
+        fetchArtist();
+        return () => clearInterval(intervalId);
     }, []);
 
-    useEffect(() => {
-        fetch('http://localhost:9999/api/artists/leaderboard/topArtist')
-            .then((resp) => resp.json())
-            .then((data) => {
-                setArtist(data);
-            })
-            .catch((err) => {
-                console.log(err.message);
-            });
-    }, []);
     return (
         <DefaultTemplate>
             <div className="w-full min-h-screen items-center justify-center px-10">
                 <h1 className="text-4xl font-bold mb-8 dark:text-white ml-4">
                     LeaderBoard
                 </h1>
-                <h2 className="text-2xl font-bold mb-8 dark:text-white m-2">Song</h2>
+                <h2 className="text-2xl font-bold mb-8 dark:text-white m-4">Song</h2>
                 <table className="w-full text-lightText dark:text-darkText">
                     <thead className="font-semibold">
                         <tr className="border-b border-neutral-300">
@@ -97,7 +103,7 @@ export default function LeaderBoard() {
                         ))}
                     </tbody>
                 </table>
-                <div className="w-full pt-8 ">
+                <div className="w-full pt-8">
                     <div className="mx-auto">
                         <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">Artist</h2>
                     </div>
@@ -119,8 +125,8 @@ export default function LeaderBoard() {
                                 <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">Follow: {artist.artist_followed_count}</p>
                             </div>
                         ))}
+                        
                     </div>
-
                 </div>
                 <div className="w-full pt-8 ">
                     <div className="mx-auto">
@@ -140,7 +146,6 @@ export default function LeaderBoard() {
                                     artist.artist_file.introduction ? <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">{artist.artist_file.introduction}</p> :
                                         <p className="text-md text-light30 dark:text-dark30 ml-2">Null</p>
                                 }
-
                                 <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">Follow: {artist.artist_followed_count}</p>
                             </div>
                         ))}

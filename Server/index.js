@@ -9,7 +9,6 @@ import {
   GenreRouter,
   SongRouter,
   ArtistRouter,
-  // LeaderBoardRouter
 } from "./routes/index.js";
 import "./utils/google-oauth2.js";
 import path from "path";
@@ -42,8 +41,6 @@ app.use(
   "/upload/image",
   express.static(path.join(__dirname, `upload`, "image"))
 );
-// app.use("/leaderboard", LeaderBoardRouter);
-
 app.use("/api/artists", ArtistRouter);
 const port = process.env.PORT || 9999;
 const MONGODB_URI = process.env.MONGODB_URI;

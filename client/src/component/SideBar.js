@@ -79,6 +79,7 @@ export default function SideBar() {
             }
             text={"Explore"}
             url={"/explore"}
+            active={window.location.href === "http://localhost:3000/explore"} 
           />
           <SideBarItem
             icon={
