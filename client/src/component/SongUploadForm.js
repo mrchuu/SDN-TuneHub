@@ -344,7 +344,7 @@ export default function SongUploadForm() {
                       <FormControl className="w-2/12">
                         <FormControlLabel
                           control={<Checkbox onChange={(e) => {}} />}
-                          label="Exclusive"
+                          label="public"
                         />
                       </FormControl>
                     </div>
