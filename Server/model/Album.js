@@ -32,6 +32,10 @@ const albumSchema = new Schema(
     price: {
         type: Number
     },
+    is_public: {
+      type: Schema.Types.Boolean,
+      default: true
+    },
   },
   {timestamps: true, collection: "Album"}
 );

@@ -162,7 +162,7 @@ export default function SongUploadForm() {
       }
     }
     try {
-     await OriginalRequest("songs/uploadSingle", "POST", formData);
+      await OriginalRequest("songs/uploadSingle", "POST", formData);
     } catch (error) {
       console.log(error);
     }
@@ -324,22 +324,30 @@ export default function SongUploadForm() {
                     )}
                   </div>
                   {songInfo.isExclusive ? (
-                    <FormControl>
-                      <TextField
-                        label="Price(vnd)"
-                        type="number"
-                        color="warning"
-                        value={songInfo.price}
-                        onChange={(e) => {
-                          dispatch(
-                            setSongInfo({
-                              name: "price",
-                              value: e.currentTarget.value,
-                            })
-                          );
-                        }}
-                      />
-                    </FormControl>
+                    <div>
+                      <FormControl>
+                        <TextField
+                          label="Price(vnd)"
+                          type="number"
+                          color="warning"
+                          value={songInfo.price}
+                          onChange={(e) => {
+                            dispatch(
+                              setSongInfo({
+                                name: "price",
+                                value: e.currentTarget.value,
+                              })
+                            );
+                          }}
+                        />
+                      </FormControl>
+                      <FormControl className="w-2/12">
+                        <FormControlLabel
+                          control={<Checkbox onChange={(e) => {}} />}
+                          label="Exclusive"
+                        />
+                      </FormControl>
+                    </div>
                   ) : (
                     <></>
                   )}

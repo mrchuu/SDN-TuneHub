@@ -121,6 +121,9 @@ const uploadSong = async (req, res) => {
       const isExclusive = fields.isExclusive
         ? fields.isExclusive[0] === "true"
         : false;
+        const isPublic = fields.isPublic
+        ? fields.isPublic[0] === "true"
+        : false;
       const previewStart = fields.previewStart
         ? parseInt(fields.previewStart[0])
         : null;
@@ -165,6 +168,7 @@ const uploadSong = async (req, res) => {
         cover_image: coverImage,
         artist: artist._id,
         duration: duration,
+        isPublic
       });
       ArtistRepository.addSongUpload({
         artistId: artist._id,

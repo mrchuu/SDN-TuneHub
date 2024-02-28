@@ -52,6 +52,7 @@ const uploadSong = async ({
   cover_image,
   artist,
   duration,
+  isPublic
 }) => {
   console.log(artist);
   try {
@@ -68,6 +69,7 @@ const uploadSong = async ({
       cover_image,
       artist: artist,
       duration,
+      is_public: isPublic
     });
     return result._doc;
   } catch (error) {

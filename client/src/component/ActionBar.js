@@ -44,13 +44,22 @@ export default function ActionBar() {
           <div className="w-16 h-16 rounded-md bg-zinc-400"></div>
         )}
         {currentSong.artist && currentSong.song_name ? (
-          <div className="ml-2">
+          <div className="ml-4">
             <h4 className="font-semibold text-md text-lightText dark:text-darkText">
               {currentSong.song_name}
             </h4>
-            <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
-              {currentSong.artist.artist_name}
-            </p>
+            <div className="flex items-center">
+              <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
+                {currentSong.artist.artist_name}
+              </p>
+              {currentSong.is_exclusive ? (
+                <span className="text-white px-2 bg-amber-500 text-xs rounded ml-2 font-medium">
+                  EXCLUSIVE
+                </span>
+              ) : (
+                <></>
+              )}
+            </div>
             <FaRegHeart
               className="text-light10 dark:text-dark10 mt-1"
               size={20}
@@ -98,7 +107,7 @@ export default function ActionBar() {
             className={`p-1 rounded ${
               loop
                 ? "bg-light10 dark:bg-dark10 text-white dark:text-lightText"
-                : " text-lightTextSecondary dark:text-darkTextSecondar"
+                : " text-lightTextSecondary dark:text-darkTextSecondary"
             }`}
           >
             <RxLoop

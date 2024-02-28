@@ -75,29 +75,29 @@ export default function Player() {
   return (
     <div>
       <div className="hidden">
-          {currentSong._id && (
-            <ReactPlayer
-              ref={playerRef}
-              url={`http://localhost:9999/api/songs/streamSong/${currentSong._id}`}
-              controls
-              width="100%"
-              height="50px"
-              playing={isPlaying}
-              key={currentSong._id}
-              loop={loop}
-              onStart={(e)=>{
-                console.log(sliderValue);
-              }}
-              onProgress={(e) => {
-                handleProgress(e);
-              }}
-              volume={volume / 100}
-              onEnded={(e) => {
-                handleSongEnd(e);
-              }}
-            />
-          )}
-        </div>
+        {currentSong._id && (
+          <ReactPlayer
+            ref={playerRef}
+            url={`http://localhost:9999/api/songs/streamSong/${currentSong._id}`}
+            controls
+            width="100%"
+            height="50px"
+            playing={isPlaying}
+            key={currentSong._id}
+            loop={loop}
+            onStart={(e) => {
+              console.log(sliderValue);
+            }}
+            onProgress={(e) => {
+              handleProgress(e);
+            }}
+            volume={volume / 100}
+            onEnded={(e) => {
+              handleSongEnd(e);
+            }}
+          />
+        )}
+      </div>
       <div>
         <Modal
           open={open}
@@ -112,20 +112,27 @@ export default function Player() {
               component="h2"
               color={"#DA8F66"}
             >
-              This Is An Exclusive Song !!
+              {currentSong.song_name}
             </Typography>
+            <img
+              src={currentSong.cover_image}
+              className="w-52 h-52 mx-auto object-cover object-center rounded-md"
+            />
             <Typography
               id="modal-modal-description"
               sx={{ mt: 2 }}
               color={"#ADADAD"}
             >
-              This is an exclusive song. You can buy the song to enjoy the full
-              version and support{" "}
-              <a href={`/artist/${currentSong?.artist?._id}`}>
+              This is a preview version of an <span className="text-amber-500">exclusive release</span>.
+              You can purchase the song to enjoy the full version and support{" "}
+              <a
+                href={`/artist/${currentSong?.artist?._id}`}
+                className="text-sky-600"
+              >
                 {currentSong?.artist?.artist_name}
               </a>
             </Typography>
-            <button className="bg-dark10 px-5 py-3 rounded-md mt-3">
+            <button className="bg-dark10 px-5 py-3 rounded-md mt-3 mx-auto">
               Buy The Song
             </button>
           </Box>
