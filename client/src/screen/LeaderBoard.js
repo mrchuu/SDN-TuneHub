@@ -65,8 +65,7 @@ export default function LeaderBoard() {
 
                                         <div className="ml-2">
                                             <h4 className="font-semibold text-md">{song.song_name}</h4>
-                                            {/* <p className="text-xs">{song.artist.artist_name}</p> */}
-                                            <p className="text-xs">abc</p>
+
                                         </div>
                                     </div>
                                 </td>
@@ -80,7 +79,7 @@ export default function LeaderBoard() {
                                     {song.artist_name}
                                 </td>
                                 <td className="w-1/12">
-                                {song.streamCount}
+                                    {song.streamCount}
                                 </td>
                                 <td className="w-1/12">
                                     <IoEllipsisHorizontal
@@ -144,6 +143,25 @@ export default function LeaderBoard() {
                                 <img
                                     src={song.profile_picture}
                                     className="rounded-full w-40 h-40 object-cover object-center"
+                                />
+                                <h3 className="text-lg font-bold dark:text-white m-2">
+                                    {song.artist_name}
+                                </h3>
+                                <p className="text-xs dark:text-white m-2">{song.intro_user}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="w-full pt-8 ">
+                    <div className="container mx-auto">
+                        <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">Album</h2>
+                    </div>
+                    <div className="container mx-auto flex flex-wrap items-center">
+                        {SongList.map((song, index) => (
+                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-lg shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm">
+                                <img
+                                    src={song.profile_picture}
+                                    className="rounded-md w-40 h-40 object-cover object-center"
                                 />
                                 <h3 className="text-lg font-bold dark:text-white m-2">
                                     {song.artist_name}

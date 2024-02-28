@@ -12,6 +12,19 @@ const getAllSongsByLastest = async (req, res) => {
     }
 }
 
+const getAllHotArtist = async (req, res) => {
+    try {
+        const artists = await LeaderBoardRepository.hotArtist();
+        res.status(200).json(artists);
+
+    } catch (error) {
+        getAllSongsByLastest.res.status(500).json({
+            message: error.toString()
+        });
+    }
+}
+
 export default {
-    getAllSongsByLastest
+    getAllSongsByLastest,
+    getAllHotArtist
 }
