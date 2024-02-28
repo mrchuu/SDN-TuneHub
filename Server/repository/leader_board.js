@@ -12,14 +12,14 @@ const hotestSongByDay = async () => {
                         from: "SongStream",
                         localField: "_id",
                         foreignField: "song",
-                        as: "streamTime"
-                    }
+                        as: "streamTime",
+                    },
                 },
                 {
                     $unwind: {
                         path: "$streamTime",
-                        preserveNullAndEmptyArrays: true
-                    }
+                        preserveNullAndEmptyArrays: true,
+                    },
                 },
                 {
                     $addFields: {
@@ -28,64 +28,91 @@ const hotestSongByDay = async () => {
                                 if: {
                                     $and: [
                                         { $gte: ["$streamTime.createdAt", { oneMonthAgo }] },
-                                        { $lt: ["$streamTime.createdAt", new Date()] }
-                                    ]
+                                        {
+                                            $lt: [
+                                                "$streamTime.createdAt",
+                                                new Date(),
+                                            ],
+                                        },
+                                    ],
                                 },
                                 then: 1,
-                                else: 0
-                            }
-                        }
-                    }
+                                else: 0,
+                            },
+                        },
+                    },
                 },
                 {
                     $lookup: {
                         from: "Artist",
                         localField: "artist",
                         foreignField: "_id",
-                        as: "artist_file"
-                    }
+                        as: "artist_file",
+                    },
                 },
                 {
-                    $unwind: "$artist_file"
+                    $unwind: "$artist_file",
                 },
                 {
                     $lookup: {
                         from: "Users",
                         localField: "artist_file.userId",
                         foreignField: "_id",
-                        as: "users_file"
-                    }
+                        as: "users_file",
+                    },
                 },
                 {
-                    $unwind: "$users_file"
+                    $unwind: "$users_file",
+                },
+                {
+                    $lookup: {
+                        from: "Album",
+                        localField: "album",
+                        foreignField: "_id",
+                        as: "album_file",
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$album_file",
+                        preserveNullAndEmptyArrays: true,
+                    },
                 },
                 {
                     $group: {
                         _id: "$_id",
                         song_name: { $first: "$song_name" },
                         album: { $first: "$album" },
-                        artist_name: { $first: "$artist_file.artist_name" },
+                        artist_name: {
+                            $first: "$artist_file.artist_name",
+                        },
                         cover_image: { $first: "$cover_image" },
-                        profile_picture: { $first: "$users_file.profile_picture" },
-                        intro_user: { $first: "$users_file.introduction" },
-                        streamCount: { $sum: "$withinLast24Hours" }
-                    }
+                        profile_picture: {
+                            $first: "$users_file.profile_picture",
+                        },
+                        album_name: {
+                            $first: "$album_file.album_name",
+                        },
+                        intro_user: {
+                            $first: "$users_file.introduction",
+                        },
+                        streamCount: { $sum: "$withinLast24Hours" },
+                    },
                 },
                 {
                     $project: {
                         _id: 1,
                         song_name: 1,
-                        album: 1,
                         artist: 1,
                         artist_name: 1,
                         cover_image: 1,
                         profile_picture: 1,
                         streamCount: 1,
                         intro_user: 1,
+                        album_name: 1
                     }
                 }
             ]
-
         ).exec();
         return results;
     } catch (error) {

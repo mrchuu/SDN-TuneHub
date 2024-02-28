@@ -1,5 +1,5 @@
 import AuthenticationController from "./authentication.js";
-import LeaderBoardController from "./leader_board.js";
+// import LeaderBoardController from "./leader_board.js";
 import SongController from "./song.js"
 import GenreController from "./genre.js";
 import ArtistController from "./artist.js";
@@ -10,5 +10,5 @@ export {
   ArtistController,
   UserController,
   GenreController,
-  LeaderBoardController
+  // LeaderBoardController
 };

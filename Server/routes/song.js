@@ -10,4 +10,6 @@ songRouter.post(
 "/addSongStream/:songId",
   SongController.addStreamSong
 );
+
+songRouter.get("/leaderboard/topSong/1m", SongController.getAllSongsByLastest)
 export default songRouter;

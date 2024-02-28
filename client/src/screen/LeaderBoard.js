@@ -15,9 +15,10 @@ import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 export default function LeaderBoard() {
     const [SongList, setSong] = useState([]);
+    const [ArtistList, setArtist] = useState([])
 
     useEffect(() => {
-        fetch('http://localhost:9999/leaderboard')
+        fetch('http://localhost:9999/api/songs/leaderboard/topSong/1m')
             .then((resp) => resp.json())
             .then((data) => {
                 setSong(data);
@@ -27,13 +28,23 @@ export default function LeaderBoard() {
             });
     }, []);
 
+    useEffect(() => {
+        fetch('http://localhost:9999/api/artists/leaderboard/topArtist')
+            .then((resp) => resp.json())
+            .then((data) => {
+                setArtist(data);
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
+    }, []);
     return (
         <DefaultTemplate>
             <div className="w-full min-h-screen items-center justify-center px-10">
                 <h1 className="text-4xl font-bold mb-8 dark:text-white ml-4">
                     LeaderBoard
                 </h1>
-                <h2 className="text-2xl font-bold mb-8 dark:text-white m-10">Song</h2>
+                <h2 className="text-2xl font-bold mb-8 dark:text-white m-2">Song</h2>
                 <table className="w-full text-lightText dark:text-darkText">
                     <thead className="font-semibold">
                         <tr className="border-b border-neutral-300">
@@ -48,7 +59,7 @@ export default function LeaderBoard() {
                     <tbody className="text-lightTextSecondary dark:text-darkTextSecondary hover:po">
                         {SongList.map((song, index) => (
                             <tr
-                                className="border-b border-neutral-300 hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group"
+                                className="border-b border-neutral-300  hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group"
                                 key={song._id}
                             >
                                 <td className="w-1/12 text-center">{index + 1}</td>
@@ -69,11 +80,8 @@ export default function LeaderBoard() {
                                         </div>
                                     </div>
                                 </td>
-                                {/* <td className="hidden md:table-cell md:w-5/12">
-                                    {song.album ? "album" : ""}
-                                </td> */}
                                 <td className="w-4/12">
-                                    {song.album ? song.album : "null"}
+                                    {song.album_name ? song.album_name : ""}
                                 </td>
                                 <td className="w-1/12">
                                     {song.artist_name}
@@ -89,89 +97,57 @@ export default function LeaderBoard() {
                         ))}
                     </tbody>
                 </table>
-                <Menu
-                // open={menuIsOpen}
-                // anchorEl={songMenuAnchor}
-                // onClose={closeMenu}
-                // MenuListProps={{
-                //     "aria-labelledby": "basic-button",
-                // }}
-                // autoFocus={false}
-                >
-                    <MenuItem>
-                        <ListItemIcon>
-                            <FaRegHeart
-                                className="text-light10 dark:text-dark10 mt-1"
-                                size={18}
-                            />
-                            <ListItemText>&nbsp;Add To Favorite</ListItemText>
-                        </ListItemIcon>
-                    </MenuItem>
-                    <MenuItem
-                    // className="flex items-center"
-                    // onClick={(e) => {
-                    //     console.log(songInAction);
-                    //     dispatch(addSongToQueue(songInAction));
-                    //     closeMenu(e)
-                    // }}
-                    >
-                        <ListItemIcon>
-                            <MdOutlineQueueMusic
-                                size={22}
-                                className="text-light10 dark:text-dark10 mr-3"
-                            />
-                            <ListItemText className="text-right">Queue Song</ListItemText>
-                        </ListItemIcon>
-                    </MenuItem>
-                    <MenuItem className="flex items-center">
-                        <ListItemIcon>
-                            <MdLibraryMusic
-                                size={20}
-                                className="text-light10 dark:text-dark10 mr-3"
-                            />
-                            <ListItemText className="text-right">Add To Playlist</ListItemText>
-                        </ListItemIcon>
-                    </MenuItem>
-                </Menu>
                 <div className="w-full pt-8 ">
-                    <div className="container mx-auto">
+                    <div className="mx-auto">
                         <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">Artist</h2>
                     </div>
-                    <div className="container mx-auto flex flex-wrap items-center">
-                        {SongList.map((song, index) => (
-                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-lg shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm">
+                    <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+                        {ArtistList.map((artist, index) => (
+                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
                                 <img
-                                    src={song.profile_picture}
+                                    src={artist.artist_file.profile_picture}
                                     className="rounded-full w-40 h-40 object-cover object-center"
                                 />
-                                <h3 className="text-lg font-bold dark:text-white m-2">
-                                    {song.artist_name}
+                                <h3 className="text-lg font-semibold dark:text-white m-2">
+                                    {artist.artist_name}
                                 </h3>
-                                <p className="text-xs dark:text-white m-2">{song.intro_user}</p>
+                                {
+                                    artist.artist_file.introduction ? <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">{artist.artist_file.introduction}</p> :
+                                        <p className="text-md text-light30 dark:text-dark30 ml-2">Null</p>
+                                }
+
+                                <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">Follow: {artist.artist_followed_count}</p>
                             </div>
                         ))}
                     </div>
+
                 </div>
                 <div className="w-full pt-8 ">
-                    <div className="container mx-auto">
-                        <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">Album</h2>
+                    <div className="mx-auto">
+                        <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">Artist</h2>
                     </div>
-                    <div className="container mx-auto flex flex-wrap items-center">
-                        {SongList.map((song, index) => (
-                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-lg shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm">
+                    <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+                        {ArtistList.map((artist, index) => (
+                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
                                 <img
-                                    src={song.profile_picture}
+                                    src={artist.artist_file.profile_picture}
                                     className="rounded-md w-40 h-40 object-cover object-center"
                                 />
-                                <h3 className="text-lg font-bold dark:text-white m-2">
-                                    {song.artist_name}
+                                <h3 className="text-lg font-semibold dark:text-white m-2">
+                                    {artist.artist_name}
                                 </h3>
-                                <p className="text-xs dark:text-white m-2">{song.intro_user}</p>
+                                {
+                                    artist.artist_file.introduction ? <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">{artist.artist_file.introduction}</p> :
+                                        <p className="text-md text-light30 dark:text-dark30 ml-2">Null</p>
+                                }
+
+                                <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">Follow: {artist.artist_followed_count}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
+            <div className="h-5"></div>
         </DefaultTemplate>
     );
 }

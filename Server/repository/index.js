@@ -1,5 +1,5 @@
 import AuthenticateRepository from "./authentication.js";
-import LeaderBoardRepository from "./leader_board.js";
+// import LeaderBoardRepository from "./leader_board.js";
 import SongRepository from "./Song.js";
 import SongStreamRepository from "./songStream.js";
 import GenreRepository from "./genre.js";
@@ -12,5 +12,5 @@ export {
   UserRepository,
   ArtistRepository,
   GenreRepository,
-  LeaderBoardRepository
+  // LeaderBoardRepository
 };
