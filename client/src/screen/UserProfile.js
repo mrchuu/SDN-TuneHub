@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { useDispatch, useSelector } from "react-redux";
-import { login, logOut, setUserInfo} from "../redux/auth.js";
+import { login, logOut, setUserInfo } from "../redux/auth.js";
 import "../style/userprofile.css"
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
@@ -64,15 +64,16 @@ export default function UserProfile() {
         const updateEditProfile = { ...editProfile };
         updateEditProfile.profilePicture = imageSrc;
         try {
-            const data  = await OriginalRequest(
+            const data = await OriginalRequest(
                 `user/edit-profile`,
                 "PUT",
                 updateEditProfile
             );
             // console.log("Data here: "+data);
-            if(data.data){
+            if (data.data) {
                 dispatch(setUserInfo(data.data));
             }
+            setIsOpen0(false);
         } catch (error) {
             console.log(error);
         }
@@ -136,6 +137,7 @@ export default function UserProfile() {
         } else {
             try {
                 OriginalRequest("user/change-password", "PUT", changePassword);
+                setIsOpen(false);
             } catch (error) {
                 console.error("Failed to change password:", error);
             }
