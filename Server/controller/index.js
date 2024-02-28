@@ -1,4 +1,14 @@
 import AuthenticationController from "./authentication.js";
 import LeaderBoardController from "./leader_board.js";
 import SongController from "./song.js"
-export { AuthenticationController, SongController,LeaderBoardController };
+import GenreController from "./genre.js";
+import ArtistController from "./artist.js";
+import UserController from "./user.js";
+export {
+  AuthenticationController,
+  SongController,
+  ArtistController,
+  UserController,
+  GenreController,
+  LeaderBoardController
+};

@@ -8,19 +8,26 @@ import { MdOutlineQueueMusic } from "react-icons/md";
 import {
   changeVolume,
   toogleIsPlaying,
+  setSliderValue,
+  toogleQueue,
+  toogleLoop,
   updateProgress,
-  toogleQueue
 } from "../redux/player.js";
+import { RxLoop } from "react-icons/rx";
 import ReactPlayer from "react-player";
 import { useEffect } from "react";
 import Player from "./Player.js";
+import { PiShuffleLight } from "react-icons/pi";
+
 export default function ActionBar() {
   const dispatch = useDispatch();
   const currentSong = useSelector((state) => state.player.currentSong);
   const isPlaying = useSelector((state) => state.player.isPlaying);
   const volumne = useSelector((state) => state.player.volume);
   const progress = useSelector((state) => state.player.progress);
+  const sliderValue = useSelector((state) => state.player.sliderValue);
   const showBox = useSelector((state) => state.player.showBox);
+  const loop = useSelector((state) => state.player.loop);
   useEffect(() => {
     console.log("song changed");
   }, [currentSong]);
@@ -55,7 +62,13 @@ export default function ActionBar() {
       </div>
       <div className="playerAction h-full px-4 flex-col w-6/12">
         <Player />
-        <div className="action flex items-center justify-between w-3/12 mx-auto pt-3 pb-1">
+        <div className="action flex items-center justify-between w-6/12 mx-auto pt-3 pb-1">
+          <div className=" p-1 rounded">
+            <PiShuffleLight
+              size={23}
+              className="text-lightTextSecondary dark:text-darkTextSecondary"
+            />
+          </div>
           <IoPlaySkipBackSharp
             className="text-light10 dark:text-dark10"
             size={30}
@@ -81,17 +94,31 @@ export default function ActionBar() {
             className="text-light10 dark:text-dark10"
             size={30}
           />
+          <div
+            className={`p-1 rounded ${
+              loop
+                ? "bg-light10 dark:bg-dark10 text-white dark:text-lightText"
+                : " text-lightTextSecondary dark:text-darkTextSecondar"
+            }`}
+          >
+            <RxLoop
+              size={20}
+              onClick={(e) => {
+                dispatch(toogleLoop());
+              }}
+            />
+          </div>
         </div>
         <div className="progress w-9/12 mx-auto">
           <Slider
             aria-label="progress"
-            value={(progress * 100) / currentSong.duration}
-            key={progress}
-            onChange={(e) => {
-              dispatch(
-                updateProgress((e.target.value * currentSong.duration) / 100)
-              );
+            value={progress}
+            onChange={(e, value) => {
+              // dispatch(toogleIsPlaying(false))
+              dispatch(setSliderValue(value));
+              // console.log(e.target.value);
             }}
+            max={currentSong?.duration}
             className="text-light10"
           />
         </div>
@@ -113,9 +140,13 @@ export default function ActionBar() {
         </div>
         <MdOutlineQueueMusic
           size={25}
-          className={`${showBox ? "text-white bg-light10 dark:bg-dark10" : "text-light10 dark:text-dark10"} mr-3 rounded-sm`}
-          onClick={(e)=>{
-            dispatch(toogleQueue())
+          className={`${
+            showBox
+              ? "text-white bg-light10 dark:bg-dark10"
+              : "text-light10 dark:text-dark10"
+          } mr-3 rounded-sm`}
+          onClick={(e) => {
+            dispatch(toogleQueue());
           }}
         />
       </div>

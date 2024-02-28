@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import { sendConfirmEmail } from "../utils/mailTransport.js";
 import jwksClient from "jwks-rsa";
 import User from "../model/RegisteredUser.js";
+import emailTemplate from '../utils/emailTemplate.js';
+
 
 const client = jwksClient({
   jwksUri: "https://www.googleapis.com/oauth2/v3/certs",
@@ -168,7 +170,7 @@ const login = async (req, res) => {
 const getUserInfo = async (req, res) => {
   try {
     const decodedToken = req.decodedToken;
-    console.log(decodedToken);
+    // console.log(decodedToken);
     const user = await AuthenticateRepository.getUserById(decodedToken.userId);
     const { password, createdAt, updatedAt, ...filterdUser } = user;
     return res.status(200).json(filterdUser);
@@ -184,7 +186,7 @@ const refreshToken = async (req, res) => {
         .status(401)
         .json({ error: "No cookie for refreshToken was provided" });
     }
-    const decodedToken = verifyToken(req, res, token);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const accessToken = jwt.sign(
       { userId: decodedToken.userId },
       process.env.JWT_SECRET_KEY,
@@ -210,7 +212,7 @@ const logOut = async (req, res) => {
   try {
     res.clearCookie("refreshToken");
     res.clearCookie("accessToken");
-    return res.status(200).json({ message: "Tokens have been cleared" });
+    return res.status(200).json({ message: "Logged Out" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -327,6 +329,45 @@ const googleLogin = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const sendResetLink = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await AuthenticateRepository.findByEmail(email);
+    if (!user) {
+      // toast.error("Email not found. Please enter a valid email.");
+      console.log("Not have email!");
+      return res.status(400).json({ error: "Email not found" });
+    }
+
+    // Generate a random password
+    const newPassword = generateRandomPassword();
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Save the hashed password to the user in the database
+    user.password = hashedPassword;
+    await user.save();
+
+    // Send the new password via emailsendNewPasswordEmail(user.email, newPassword)
+    await emailTemplate.sendNewPasswordEmail(user.email, newPassword);
+
+    return res.status(200).json({ message: "New password sent successfully! Please check your email." });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+const generateRandomPassword = () => {
+  // Generate a random string with specified length
+  const length = 10;
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let newPassword = '';
+  for (let i = 0; i < length; i++) {
+    newPassword += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return newPassword;
+};
 
 export default {
   authenticate,
@@ -338,4 +379,5 @@ export default {
   logOut,
   oauth2GoogleAuthentication,
   googleLogin,
+  sendResetLink
 };

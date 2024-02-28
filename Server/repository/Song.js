@@ -1,4 +1,5 @@
 import Song from "../model/Song.js";
+import { SongRepository } from "./index.js";
 import SongStreamRepository from "./songStream.js";
 const getAllSongs = async () => {
   try {
@@ -7,9 +8,9 @@ const getAllSongs = async () => {
       .populate("album")
       .select("_id")
       .select("song_name")
-      .select("artist")
       .select("cover_image")
-      .select("duration");
+      .select("duration")
+      .select("is_exclusive")
     return songList;
   } catch (error) {
     throw new Error(error.message);
@@ -37,8 +38,65 @@ const streamSong = async (songId, userId) => {
     throw new Error(error.message);
   }
 };
+
+const uploadSong = async ({
+  song_name,
+  genre,
+  participated_artist,
+  isExclusive,
+  price,
+  album,
+  file_name,
+  preview_start_time,
+  preview_end_time,
+  cover_image,
+  artist,
+  duration,
+}) => {
+  console.log(artist);
+  try {
+    const result = Song.create({
+      song_name,
+      genre,
+      participated_artist,
+      is_exclusive: isExclusive,
+      price,
+      album,
+      file_name,
+      preview_start_time,
+      preview_end_time,
+      cover_image,
+      artist: artist,
+      duration,
+    });
+    return result._doc;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+const searchSongByName = async (name) => {
+  try {
+    const foundSongs = await Song.find({
+      song_name: { $regex: name, $options: "i" },
+    })
+      .populate("artist", "_id artist_name")
+      .select("_id song_name cover_image")
+      .limit(10);
+
+    // if (foundSongs.length === 0) {
+    //     throw new Error("No songs found with the provided name");
+    // }
+
+    return foundSongs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export default {
   getAllSongs,
   streamSong,
   getSongsById,
+  uploadSong,
+  searchSongByName,
 };

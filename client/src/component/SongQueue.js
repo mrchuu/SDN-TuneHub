@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { FaPlay } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
+import { CgLoadbarSound } from "react-icons/cg";
 import {
   setCurrentSong,
   setQueueIndex,
@@ -12,8 +13,13 @@ export default function SongQueue() {
   const queueIndex = useSelector((state) => state.player.queueIndex);
   const songQueue = useSelector((state) => state.player.songQueue);
   const showBox = useSelector((state) => state.player.showBox);
+  const currentSong = useSelector((state) => state.player.currentSong);
   return (
-    <div className={`w-72 h-96 bg-light30 dark:bg-dark30 border border-light10/30 dark:border-dark10/40 fixed bottom-28 right-5 rounded-md  z-50 shadow-lg py-1 ${showBox ? "" : "hidden"}`}>
+    <div
+      className={`w-72 h-96 bg-light30 dark:bg-dark30 border border-light10/30 dark:border-dark10/40 fixed bottom-28 right-5 rounded-sm z-50 shadow-lg py-1 ${
+        showBox ? "" : "hidden"
+      }`}
+    >
       <h4 className="px-4 text-lightText dark:text-darkText font-semibold">
         Song Queue
       </h4>
@@ -23,7 +29,9 @@ export default function SongQueue() {
             <div
               key={song._id}
               className={`cursor-pointer w-full py-2 flex items-center justify-between hover:bg-light10 group dark:hover:bg-dark10 ${
-                index == queueIndex ? "bg-light10 group dark:bg-dark10" : ""
+                currentSong._id === songQueue[index]._id
+                  ? "bg-light10 group dark:bg-dark10"
+                  : ""
               }`}
               onClick={(e) => {
                 dispatch(setCurrentSong(song));
@@ -39,7 +47,7 @@ export default function SongQueue() {
                 <div className="ml-2">
                   <h4
                     className={`w-full font-semibold text-sm group-hover:text-white ${
-                      index == queueIndex
+                      currentSong._id === songQueue[index]._id
                         ? "text-white dark:text-darkText"
                         : "text-lightTextSecondary dark:text-darkTextSecondary"
                     } text-ellipsis`}
@@ -48,7 +56,7 @@ export default function SongQueue() {
                   </h4>
                   <h6
                     className={`font-normal text-xs group-hover:text-darkText ${
-                      index == queueIndex
+                      currentSong._id === songQueue[index]._id
                         ? "text-white dark:text-darkText"
                         : "text-lightTextSecondary dark:text-darkTextSecondary"
                     } `}
@@ -58,23 +66,27 @@ export default function SongQueue() {
                 </div>
               </div>
               <div className="h-full w-3/12 flex items-center justify-between">
-                <FaPlay
-                  className={`mr-4 group-hover:text-darkText ${
-                    index == queueIndex
-                      ? "text-white dark:text-darkText"
-                      : "text-lightTextSecondary dark:text-darkTextSecondary"
-                  }`}
-                  size={18}
-                />
+                {currentSong._id === songQueue[index]._id ? (
+                  <CgLoadbarSound
+                    className="text-green-500 right-2 relative"
+                    size={30}
+                  />
+                ) : (
+                  <FaPlay
+                    className={`mr-4 group-hover:text-darkText text-lightTextSecondary dark:text-darkTextSecondary`}
+                    size={15}
+                  />
+                )}
+
                 <AiFillDelete
                   className={`mr-4 group-hover:text-darkText ${
-                    index == queueIndex
+                    currentSong._id === songQueue[index]._id
                       ? "text-white dark:text-darkText"
                       : "text-lightTextSecondary dark:text-darkTextSecondary"
                   }`}
-                  size={23}
+                  size={20}
                   onClick={(e) => {
-                    e.stopPropagation()
+                    e.stopPropagation();
                     dispatch(removeSongFromQueue(index));
                   }}
                 />
