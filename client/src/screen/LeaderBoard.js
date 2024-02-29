@@ -50,7 +50,7 @@ export default function LeaderBoard() {
                 <h1 className="text-4xl font-bold mb-8 dark:text-white ml-4">
                     LeaderBoard
                 </h1>
-                <h2 className="text-2xl font-bold mb-8 dark:text-white m-4">Song</h2>
+                <h2 className="text-2xl font-bold mb-8 dark:text-white m-4">Top Song in month</h2>
                 <table className="w-full text-lightText dark:text-darkText">
                     <thead className="font-semibold">
                         <tr className="border-b border-neutral-300">
