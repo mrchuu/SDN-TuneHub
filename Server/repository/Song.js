@@ -212,7 +212,9 @@ const hotestSongByDay = async () => {
     console.log(error.message);
   }
 }
-
+const getUnPublishedSongOfArtist = (artistId) =>{
+  
+}
 export default {
   getAllSongs,
   streamSong,
