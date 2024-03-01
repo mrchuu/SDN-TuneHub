@@ -16,6 +16,7 @@ export default function SideBar() {
     const handleResize = () => {
       // setExpanded(window.innerWidth > 768);
       dispatch(toogleExpand(window.innerWidth > 768));
+      // console.log(window.location.href);
     };
 
     handleResize();
@@ -27,16 +28,14 @@ export default function SideBar() {
   }, []);
   return (
     <div
-      className={` h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-10 ${
-        expanded ? "w-60" : "w-20"
-      }`}
+      className={`h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-10 ${expanded ? "w-60" : "w-20"
+        }`}
     >
       <nav className="h-full flex flex-col border-r shadow-lg border-lightTextSecondary dark:border-darkTextSecondary">
         <div className="p-4 flex items-center justify-between">
           <div
-            className={`flex items-center overflow-hidden transition-all ${
-              expanded ? "w-36" : "w-0"
-            }`}
+            className={`flex items-center overflow-hidden transition-all ${expanded ? "w-36" : "w-0"
+              }`}
           >
             <BsSoundwave color="#ff5e3a" size={33} />
             <h3 className="text-lightText dark:text-darkText font-bold text-xl">
@@ -69,7 +68,7 @@ export default function SideBar() {
             }
             text={"Homepage"}
             url={"/"}
-            active
+            active={window.location.href === "http://localhost:3000/"} 
           />
           <SideBarItem
             icon={
@@ -80,6 +79,7 @@ export default function SideBar() {
             }
             text={"Explore"}
             url={"/explore"}
+            active={window.location.href === "http://localhost:3000/explore"} 
           />
           <SideBarItem
             icon={
@@ -90,12 +90,12 @@ export default function SideBar() {
             }
             text={"Leaderboard"}
             url={"/leaderboard"}
+            active={window.location.href === "http://localhost:3000/leaderboard"} 
           />
         </ul>
         <hr
-          className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${
-            expanded ? "w-3/5" : "w-0"
-          }`}
+          className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${expanded ? "w-3/5" : "w-0"
+            }`}
         />
         <div className="flex-1 flex-col relative">
           <div className="px-3 mt-2">
@@ -107,33 +107,29 @@ export default function SideBar() {
                 />
 
                 <span
-                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${
-                    expanded ? "w-24" : "w-0 hidden"
-                  }`}
+                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-24" : "w-0 hidden"
+                    }`}
                 >
                   &nbsp;Your Library
                 </span>
               </div>
               <FaPlus
-                className={`overflow-hidden transition-all text-lightText dark:text-darkText ${
-                  expanded ? "w-5" : "w-0 hidden"
-                }`}
+                className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-5" : "w-0 hidden"
+                  }`}
                 size={22}
               />
             </div>
           </div>
           <div
-            className={`max-h-40 overflow-hidden transition-all ${
-              expanded ? "w-full" : "w-0 hidden"
-            }`}
+            className={`max-h-44 overflow-hidden transition-all ${expanded ? "w-full" : "w-0 hidden"
+              }`}
             style={{ overflowY: "auto" }}
           >
             <div className="px-3 mt-2">
               {/* <div className="bg-light30 dark:bg-dark30 py-2 px-3 text-textSecondary font-medium rounded-md  ">
                 <span
-                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${
-                    expanded ? "w-32" : "w-0 hidden"
-                  }`}
+                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-32" : "w-0 hidden"
+                    }`}
                 >
                   Create your first playlist!
                 </span>
@@ -199,9 +195,8 @@ export default function SideBar() {
                 <FaUser size={22} />
                 &nbsp;
                 <span
-                  className={`overflow-hidden transition-all ${
-                    expanded ? "w-52" : "w-0 hidden"
-                  }`}
+                  className={`overflow-hidden transition-all ${expanded ? "w-52" : "w-0 hidden"
+                    }`}
                 >
                   Followed Artists
                 </span>

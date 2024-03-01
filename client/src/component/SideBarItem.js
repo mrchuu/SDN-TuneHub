@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { expandedContext } from "./SideBar.js";
 import { useSelector } from "react-redux";
-import { Outlet, Link } from "react-router-dom";
-export default function SideBarItem({ icon, text, active, alert, url }) {
+import { Link } from "react-router-dom";
+export default function SideBarItem({ icon, text, active, alert, url}) {
   const expanded = useSelector((state) => state.sideBar.expanded);
   return (
     <li
@@ -24,6 +24,6 @@ export default function SideBarItem({ icon, text, active, alert, url }) {
           &nbsp;{text}
         </span>
       </Link>
-    </li> 
+    </li>
   );
 }
