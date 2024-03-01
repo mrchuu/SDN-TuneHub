@@ -105,9 +105,9 @@ const searchArtistByName = async (name) => {
       },
     ]).exec();
 
-    if (foundArtist.length == 0) {
-      throw new Error("No artist found with the provided name");
-    }
+    // if (foundArtist.length == 0) {
+    //   throw new Error("No artist found with the provided name");
+    // }
     return foundArtist;
   } catch (error) {
     throw new Error(error.message);

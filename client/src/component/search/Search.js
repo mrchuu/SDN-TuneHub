@@ -15,7 +15,7 @@ function Search() {
 
   const { OriginalRequest } = PerformRequest();
 
-  const debouncedValue = useDebounce(searchValue, 1000);
+  const debouncedValue = useDebounce(searchValue, 500);
 
   useEffect(() => {
     if (!debouncedValue.trim()) {

@@ -170,9 +170,9 @@ const searchSongByName = async (name) => {
       },
     ]).exec();
 
-    if (foundSongs.length === 0) {
-      throw new Error("No songs found with the provided name");
-    }
+    // if (foundSongs.length === 0) {
+    //   throw new Error("No songs found with the provided name");
+    // }
 
     return foundSongs;
   } catch (error) {
