@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import PerformRequest from "../utilities/PerformRequest";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FaRegHeart } from "react-icons/fa";
 import {
   setCurrentSong,
@@ -11,7 +11,7 @@ import {
 } from "../redux/player.js";
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
-export default function SongList() {
+export default function SongList({url}) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
@@ -28,10 +28,11 @@ export default function SongList() {
     setMenuIsOpen(true);
     setSongMenuAnchor(e.currentTarget);
   };
+
   useEffect(() => {
     const fetch = async () => {
       if (hasMounted.current) {
-        const data = await OriginalRequest("songs/getAll", "GET");
+        const data = await OriginalRequest(url ? url : "songs/getAll", "GET");
         if (data) {
           setSongList(data.data);
         }
@@ -40,7 +41,7 @@ export default function SongList() {
       }
     };
     fetch();
-  }, [hasMounted]);
+  }, [hasMounted,url]);
   return (
     <div className="w-full flex px-5 md:px-10 items-center mt-5">
       <table className="w-full text-lightText dark:text-darkText">
