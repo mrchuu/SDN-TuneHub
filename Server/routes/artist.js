@@ -7,4 +7,6 @@ artistRouter.post("/findByName", ArtistController.findByName);
 artistRouter.get("/search/:nameKey", ArtistController.searchArtistByName);
 artistRouter.get("/rising", ArtistController.getRisingArtist);
 
+artistRouter.get("/leaderboard/topArtist", ArtistController.getAllHotArtist)
+
 export default artistRouter;

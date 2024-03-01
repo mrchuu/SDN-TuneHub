@@ -23,40 +23,39 @@ const getRisingArtist = async () => {
     return await Artist.aggregate([
       {
         $lookup: {
-            from: "Users",
-            localField: "userId",
-            foreignField: "_id",
-            as: "user",
+          from: "Users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
         },
-    },
-    {
-        $unwind: {
-            path: "$user",
-            preserveNullAndEmptyArrays: true,
-        },
-    },
-    {
-      $addFields: {
-        artist_followed_count: { $size: "$followers" },
       },
-    },
-    {
-      $sort: { artist_followed_count: -1 }
-    },
-    {
-        $limit: 6,
-    },
-    {
-        $project: {
-            _id: 1,
-            artist_name: 1,
-            "user.introduction": 1,
-            "user.profile_picture": 1,
-            artist_followed_count: 1
+      {
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true,
         },
-    },
-]).exec();
-
+      },
+      {
+        $addFields: {
+          artist_followed_count: { $size: "$followers" },
+        },
+      },
+      {
+        $sort: { artist_followed_count: -1 },
+      },
+      {
+        $limit: 6,
+      },
+      {
+        $project: {
+          _id: 1,
+          artist_name: 1,
+          "user.introduction": 1,
+          "user.profile_picture": 1,
+          artist_followed_count: 1,
+        },
+      },
+    ]).exec();
   } catch (error) {
     throw new Error(error.message);
   }
@@ -66,23 +65,23 @@ const searchArtistByName = async (name) => {
   try {
     const foundArtist = await Artist.aggregate([
       {
-          $match: {
-              artist_name: { $regex: name, $options: "i" },
-          },
+        $match: {
+          artist_name: { $regex: name, $options: "i" },
+        },
       },
       {
-          $lookup: {
-              from: "Users",
-              localField: "userId",
-              foreignField: "_id",
-              as: "user",
-          },
+        $lookup: {
+          from: "Users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+        },
       },
       {
-          $unwind: {
-              path: "$user",
-              preserveNullAndEmptyArrays: true,
-          },
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $addFields: {
@@ -90,21 +89,21 @@ const searchArtistByName = async (name) => {
         },
       },
       {
-        $sort: { artist_followed_count: -1 }
+        $sort: { artist_followed_count: -1 },
       },
       {
-          $limit: 12,
+        $limit: 12,
       },
       {
-          $project: {
-              _id: 1,
-              artist_name: 1,
-              "user.introduction": 1,
-              "user.profile_picture": 1,
-              artist_followed_count: 1
-          },
+        $project: {
+          _id: 1,
+          artist_name: 1,
+          "user.introduction": 1,
+          "user.profile_picture": 1,
+          artist_followed_count: 1,
+        },
       },
-  ]).exec();
+    ]).exec();
 
     if (foundArtist.length == 0) {
       throw new Error("No artist found with the provided name");
@@ -114,9 +113,67 @@ const searchArtistByName = async (name) => {
     throw new Error(error.message);
   }
 };
+
+const hotArtist = async () => {
+  try {
+    const result = await Artist.aggregate([
+      {
+        $lookup: {
+          from: "Users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "artist_file",
+        },
+      },
+      {
+        $unwind: {
+          path: "$artist_file",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          withinLast24Hours: {
+            $cond: {
+              if: {
+                $and: [
+                  {
+                    $gte: ["$artist_file.artist_followed", 0],
+                  },
+                ],
+              },
+              then: 1,
+              else: 0,
+            },
+          },
+        },
+      },
+      {
+        $sort: { "artist_file.artist_followed": -1 },
+      },
+      {
+        $limit: 5,
+      },
+      {
+        $project: {
+          _id: 1,
+          artist_name: 1,
+          "artist_file.introduction": 1,
+          "artist_file.profile_picture": 1,
+          artist_followed_count: { $size: "$artist_file.artist_followed" },
+        },
+      },
+    ]).exec();
+    return result;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 export default {
   findArtistByName,
   findArtistByUserId,
   searchArtistByName,
-  getRisingArtist
+  getRisingArtist,
+  hotArtist,
 };

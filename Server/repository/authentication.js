@@ -1,4 +1,14 @@
 import User from "../model/RegisteredUser.js";
+import Playlist from "../model/Playlist.js";
+import Album from "../model/Album.js";
+import Artist from "../model/Artist.js";
+import Comment from "../model/Comment.js";
+import Genre from "../model/Genre.js";
+import Notification from "../model/Notification.js";
+import PromotionPost from "../model/PromotionPost.js";
+import Report from "../model/Report.js";
+import Song from "../model/Song.js";
+import SongStream from "../model/SongStream.js";
 const authenticate = async () => {
   try {
     return { data: "hahaha" };
