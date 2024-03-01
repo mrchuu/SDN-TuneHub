@@ -8,10 +8,6 @@ const RoleSchema = new Schema(
       require: true,
       unique: true,
     },
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-    },
   },
   { timestamps: true, collection: "Role" }
 );

@@ -171,11 +171,23 @@ const uploadSong = async (req, res) => {
 const searchSongByName = async (req, res) => {
   try {
     const songs = await SongRepository.searchSongByName(req.params.nameKey);
-    res.status(201).json(songs);
+    return res.status(200).json({ data: songs });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
+
+const getAllSongsByLastest = async (req, res) => {
+  try {
+      const songs = await SongRepository.hotestSongByDay();
+      res.status(200).json(songs);
+
+  } catch (error) {
+      getAllSongsByLastest.res.status(500).json({
+          message: error.toString()
+      });
+  }
+}
 
 export default {
   getAllSongs,
@@ -183,4 +195,5 @@ export default {
   addStreamSong,
   uploadSong,
   searchSongByName,
+  getAllSongsByLastest
 };

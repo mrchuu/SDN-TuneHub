@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import Role from "./Role.js";
 import Artist from "./Artist.js";
 import Playlist from './Playlist.js'
 import Song from "./Song.js";
@@ -67,7 +68,11 @@ const UserSchema = new Schema(
     songs_purchased: {
       type: [Schema.Types.ObjectId],
       default: []
-    }
+    },
+    role: {
+      type: Schema.Types.ObjectId,
+      ref: "Role",
+    },
   },
   { timestamps: true, collection: "Users" }
 );

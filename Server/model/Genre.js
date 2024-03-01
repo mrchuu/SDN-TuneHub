@@ -6,6 +6,12 @@ const GenreSchema = new Schema(
       type: String,
       require: true
     },
+    image: {
+      type: String,
+    },
+    bgColor:{
+      type: String
+    }
   },
   { timestamps: true, collection: "Genre"}
 );
