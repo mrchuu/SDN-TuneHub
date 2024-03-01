@@ -3,41 +3,50 @@ import Song from "./Song.js";
 import User from "./RegisteredUser.js";
 
 const songDTO = new Schema({
-  songId: { type: Schema.Types.ObjectId },
+  _id: { type: Schema.Types.ObjectId },
   song_name: {
     required: true,
     type: String,
   },
-  song_cover: {
+  cover_image: {
     type: String,
     required: true,
-  }
+  },
+  duration: {
+    type: Number,
+  },
 });
-
 
 const albumSchema = new Schema(
   {
-    artist: { type:Schema.Types.ObjectId, ref: "Artist" },
+    artist: { type: Schema.Types.ObjectId, ref: "Artist" },
     album_name: {
-        type: String
+      type: String,
     },
     songs: [songDTO],
     description: {
-        type: String
+      type: String,
     },
-    purchasers: [{ type: Schema.Types.ObjectId }],
+    purchasers: {
+      type: [Schema.Types.ObjectId],
+      default: [],
+    },
     album_cover: {
-        type: String
+      type: String,
     },
     price: {
-        type: Number
+      type: Number,
     },
     is_public: {
       type: Schema.Types.Boolean,
-      default: true
+      default: true,
+    },
+    background: {
+      type: String,
+      default: "#E57F94",
     },
   },
-  {timestamps: true, collection: "Album"}
+  { timestamps: true, collection: "Album" }
 );
 const Album = mongoose.model("album", albumSchema);
 export default Album;

@@ -4,6 +4,7 @@ import SongStreamRepository from "./songStream.js";
 import GenreRepository from "./genre.js";
 import ArtistRepository from "./artist.js";
 import UserRepository from "./user.js";
+import AlbumRepository from "./album.js"
 export {
   AuthenticateRepository,
   SongRepository,
@@ -11,4 +12,5 @@ export {
   UserRepository,
   ArtistRepository,
   GenreRepository,
+  AlbumRepository
 };

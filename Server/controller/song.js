@@ -121,9 +121,7 @@ const uploadSong = async (req, res) => {
       const isExclusive = fields.isExclusive
         ? fields.isExclusive[0] === "true"
         : false;
-        const isPublic = fields.isPublic
-        ? fields.isPublic[0] === "true"
-        : false;
+      const isPublic = fields.isPublic ? fields.isPublic[0] === "true" : false;
       const previewStart = fields.previewStart
         ? parseInt(fields.previewStart[0])
         : null;
@@ -168,14 +166,14 @@ const uploadSong = async (req, res) => {
         cover_image: coverImage,
         artist: artist._id,
         duration: duration,
-        isPublic
+        isPublic,
       });
       ArtistRepository.addSongUpload({
         artistId: artist._id,
         songId: result._id,
         songName: result.song_name,
         songCover: result.cover_image,
-        isExclusive: result.is_exclusive
+        isExclusive: result.is_exclusive,
       });
       return res.status(201).json({ message: "song uploaded successfully!!" });
     });
@@ -195,21 +193,37 @@ const searchSongByName = async (req, res) => {
 
 const getAllSongsByLastest = async (req, res) => {
   try {
-      const songs = await SongRepository.hotestSongByDay();
-      res.status(200).json(songs);
-
+    const songs = await SongRepository.hotestSongByDay();
+    res.status(200).json(songs);
   } catch (error) {
-      getAllSongsByLastest.res.status(500).json({
-          message: error.toString()
-      });
+    getAllSongsByLastest.res.status(500).json({
+      message: error.toString(),
+    });
   }
-}
-
+};
+const getUnPublishedSongOfArtist = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const unpublishedSongs = await SongRepository.getUnPublishedSongOfArtist(
+      artist._id
+    );
+    return res.status(200).json({ data: unpublishedSongs });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export default {
   getAllSongs,
   streamSong,
   addStreamSong,
   uploadSong,
   searchSongByName,
-  getAllSongsByLastest
+  getAllSongsByLastest,
+  getUnPublishedSongOfArtist
 };
