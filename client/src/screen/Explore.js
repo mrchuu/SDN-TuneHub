@@ -2,98 +2,226 @@ import DefaultTemplate from "../template/DefaultTemplate";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import SongList from "../component/SongList";
+import PerformRequest from "../utilities/PerformRequest.js";
+import { color } from "framer-motion";
+import { red } from "@mui/material/colors";
+// import '../style/explore.css'
 
 function Explore() {
-  const artist = [
-    {
-      name: "M TP",
-      image:
-        "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2021/2/23/882785/Son-Tung-Mtp.jpeg",
-    },
-    {
-      name: "AMEE",
-      image:
-        "https://static-images.vnncdn.net/files/publish/2022/5/27/hain7580-102.jpg",
-    },
-    {
-      name: "7dnight",
-      image:
-        "https://static.wixstatic.com/media/41a9b2_0c708f6344c84434839a9c4002a07a2b~mv2.png/v1/fill/w_980,h_980,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/41a9b2_0c708f6344c84434839a9c4002a07a2b~mv2.png",
-    },
-    {
-      name: "Den",
-      image:
-        "https://thanhnien.mediacdn.vn/uploaded/hienht/2021_04_12/den-vau_TICF.jpg?width=500",
-    },
-  ];
-
-  const genres = [
+  const playlist = [
     {
       name: "Rock 'n' roll",
-      image: "https://picsum.photos/200/300?image=1075",
+      image:
+        "https://vapa.vn/wp-content/uploads/2022/12/hinh-nen-hoa-tulip-001.jpg",
     },
     {
       name: "Hiphop",
-      image: "https://picsum.photos/200/300?image=1069",
+      image:
+        "https://tamanh.net/wp-content/uploads/2023/01/tao-dang-chup-anh-ao-dai-voi-hoa.jpg",
     },
     {
       name: "Blues",
-      image: "https://picsum.photos/200/300?image=1073",
+      image:
+        "https://vapa.vn/wp-content/uploads/2022/12/hinh-nen-hoa-tulip-001.jpg",
     },
     {
       name: "RnB",
-      image: "https://picsum.photos/200/300?image=1071",
+      image:
+        "https://tamanh.net/wp-content/uploads/2023/01/tao-dang-chup-anh-ao-dai-voi-hoa.jpg",
     },
     {
       name: "Pop",
-      image: "https://picsum.photos/200/300?image=1074",
+      image:
+        "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/8/18/1082524/1660404545-Fadkeqhve.jpg",
     },
     {
       name: "Classical",
-      image: "https://picsum.photos/200/300?image=1076",
+      image:
+        "https://cattour.vn/images/upload/images/quang-binh/deo-ngang-quang-binh/deo-ngang-quang-binh-14.jpg",
     },
     {
       name: "Electronic",
-      image: "https://picsum.photos/200/300?image=1072",
+      image:
+        "https://i.pinimg.com/736x/6f/a9/c3/6fa9c33211ce7c08f2cc4fcef6144b7d.jpg",
     },
     {
       name: "Country",
-      image: "https://picsum.photos/200/300?image=1068",
+      image:
+        "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/8/18/1082524/1660404545-Fadkeqhve.jpg",
     },
   ];
+  
 
-  const dataSearch = useSelector((state) => state.search.data);
-  const dataLenght = useSelector((state) => state.search.dataLenght);
+  const { OriginalRequest } = PerformRequest();
 
-  console.log(dataLenght);
+  const [artistList, setArtistList] = useState([])
+  const [risingArtist, setRisingArtist] = useState([])
+  const [genres, setGenres] = useState([])
+
+
+  const searchValue = useSelector((state) => state.search.searchKey);
+  console.log(searchValue);
+
+    useEffect(() => {
+    const fetch = async () => {
+      const searchArtistValue = await OriginalRequest(
+        `artists/search/${searchValue}`,
+        "GET"
+      );
+      if (searchArtistValue) {
+        setArtistList(searchArtistValue.data);
+      }
+    };
+    fetch();
+  }, [searchValue]);
+
+  useEffect(() => {
+    const fetchRising = async () => {
+      const risingArtist = await OriginalRequest(
+        `artists/rising`,
+        "GET"
+      );
+      if (risingArtist) {
+        setRisingArtist(risingArtist.data);
+      }
+    };
+    fetchRising();
+
+    const fetchGenres = async () => {
+      const genresSong = await OriginalRequest(
+        `genres/`,
+        "GET"
+      );
+      if (genresSong) {
+        setGenres(genresSong.data.slice(0, 12));
+      }
+    };
+    fetchGenres();
+  }, []);
 
   return (
     <DefaultTemplate>
-      {(!dataLenght) ? <div className="w-full min-h-screen items-center justify-center">
-        <div className="container mx-auto">
-          <h1 className="text-2xl p-4 font-bold">Genrer</h1>
-        </div>
-        <div className="container mx-auto flex flex-wrap">
-          {genres.map((genre) => (
-            <div className="card w-10 sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
-              <img
-                src={genre.image}
-                alt={genre.name}
-                className="rounded-lg mb-4 w-10/12"
-              />
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                {genre.name}
-              </h3>
+      <div className="w-full min-h-screen items-center justify-center px-10">
+        {!searchValue ? (
+          <>
+            <div className="w-full pt-8 ">
+              <div className="container mx-auto">
+                <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">
+                  Genres
+                </h2>
+              </div>
+              <div className="container mx-auto flex flex-wrap items-center">
+                {genres.map((genre, index) => (
+                  <div style={{backgroundColor: genre.bgColor ? genre.bgColor : "red"}} className="card w-48 h-72 ml-4 mr-5 mb-10 border rounded-lg relative shadow-2xl shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm overflow-hidden">
+                  <h3 className="text-lg text-white font-bold p-2">
+                    {genre.name}
+                  </h3>
+                  <img
+                    src={genre.image ? genre.image : 'https://i.pinimg.com/736x/90/57/0a/90570addee2645866a597530721f37fd.jpg'}
+                    className="absolute bottom-0 right-0 w-32 h-32 object-cover object-center transform rotate-12 translate-x-3 translate-y-1"
+                  />
+                </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-        <div className="container mx-auto">
-          <h1 className="text-2xl p-4 font-bold">Rising Artist</h1>
-        </div>
-      </div> : 
-      <SongList/>
-      }
-      
+            <div className="w-full pt-8 ">
+              <div className="mx-auto">
+                <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">
+                  Rising Artist
+                </h2>
+              </div>
+              <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+                {risingArtist.map((artist, index) => (
+                  <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
+                    <img
+                      src={artist.user.profile_picture}
+                      className="rounded-full w-40 h-40 object-cover object-center"
+                    />
+                    <h3 className="text-lg font-semibold dark:text-white m-2">
+                      {artist.artist_name}
+                    </h3>
+                    {artist.user.introduction ? (
+                      <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                        {artist.user.introduction}
+                      </p>
+                    ) : (
+                      <p className="text-md text-light30 dark:text-dark30 ml-2">
+                        Null
+                      </p>
+                    )}
+
+                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                      Follow: {artist.artist_followed_count}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="w-full pt-8 ">
+              <div className="container mx-auto">
+                <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">
+                  Mood and activity playlists
+                </h2>
+              </div>
+              <div className="container mx-auto flex flex-wrap items-center">
+                {playlist.map((artist, index) => (
+                  <div className="w-72 h-44 card ml-10 mb-10 border rounded-sm bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-200 dark:shadow-blue-300 dark:shadow-md dark:border-none">
+                    <img
+                      src={artist.image}
+                      className="rounded-md w-full h-full object-cover object-center filter brightness-75"
+                    />
+                    <h3 className="absolute top-2 left-2 text-lg font-semibold text-white m-2">
+                      {artist.name}
+                    </h3>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4 mt-4">
+              Explore
+            </h2>
+            <SongList url={`songs/search/${searchValue}`}/>
+
+            <div className="w-full pt-8 ">
+              <div className="mx-auto">
+                <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">
+                  Artist
+                </h2>
+              </div>
+              <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+                {artistList.map((artist, index) => (
+                  <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
+                    <img
+                      src={artist.user.profile_picture}
+                      className="rounded-full w-40 h-40 object-cover object-center"
+                    />
+                    <h3 className="text-lg font-semibold dark:text-white m-2">
+                      {artist.artist_name}
+                    </h3>
+                    {artist.name ? (
+                      <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                        {artist.user.introduction}
+                      </p>
+                    ) : (
+                      <p className="text-md text-light30 dark:text-dark30 ml-2">
+                        Null
+                      </p>
+                    )}
+
+                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                      Follow: {artist.artist_followed_count}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
     </DefaultTemplate>
   );
 }
