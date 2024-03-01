@@ -191,6 +191,11 @@ const hotestSongByDay = async () => {
           },
         },
         {
+          $sort: {
+            streamCount: -1,
+          }
+        },
+        {
           $project: {
             _id: 1,
             song_name: 1,
