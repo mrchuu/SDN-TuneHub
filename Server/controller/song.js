@@ -193,10 +193,23 @@ const searchSongByName = async (req, res) => {
   }
 };
 
+const getAllSongsByLastest = async (req, res) => {
+  try {
+      const songs = await SongRepository.hotestSongByDay();
+      res.status(200).json(songs);
+
+  } catch (error) {
+      getAllSongsByLastest.res.status(500).json({
+          message: error.toString()
+      });
+  }
+}
+
 export default {
   getAllSongs,
   streamSong,
   addStreamSong,
   uploadSong,
   searchSongByName,
+  getAllSongsByLastest
 };

@@ -50,9 +50,72 @@ const addSongUpload = async ({ artistId, songId, songName, songCover, isExclusiv
     throw new Error(error.message);
   }
 };
+
+const hotArtist = async () => {
+  try {
+    const result = await Artist.aggregate(
+      [
+        {
+          $lookup: {
+            from: "Users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "artist_file",
+          },
+        },
+        {
+          $unwind: {
+            path: "$artist_file",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            withinLast24Hours: {
+              $cond: {
+                if: {
+                  $and: [
+                    {
+                      $gte: [
+                        "$artist_file.artist_followed", 0
+                      ],
+                    },
+                  ],
+                },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
+        },
+        {
+          $sort: { "artist_file.artist_followed": -1 }
+        },
+        {
+          $limit: 5
+        },
+        {
+          $project: {
+            _id: 1,
+            artist_name: 1,
+            "artist_file.introduction": 1,
+            "artist_file.profile_picture": 1,
+            "artist_followed_count": { $size: "$artist_file.artist_followed" }
+
+          }
+        }
+      ]
+    ).exec();
+    return result;
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 export default {
   findArtistByName,
   findArtistByUserId,
   searchArtistByName,
-  addSongUpload
+  addSongUpload,
+  hotArtist
 };
