@@ -146,7 +146,7 @@ export default function SongUploadForm() {
     }
     formData.append("audioFile", songInfo.audioFile);
     formData.append("duration", songInfo.duration);
-
+    formData.append("isPublic", songInfo.isPublic)
     if (songInfo.isExclusive) {
       formData.append("isExclusive", true);
       formData.append("previewStart", songInfo.previewStart);

@@ -1,9 +1,19 @@
 import { ArtistRepository } from "../repository/index.js";
 const findByName = async (req, res) => {
   try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
     const searchInput = req.body.artistName;
-    console.log(searchInput);
-    const result = await ArtistRepository.findArtistByName(searchInput);
+    const result = await ArtistRepository.findArtistByName({
+      searchInput: searchInput,
+      artistId: artist._id,
+    });
     return res.status(200).json({ data: result });
   } catch (error) {
     return res.status(500).json({ error: error.message });

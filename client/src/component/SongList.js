@@ -11,7 +11,7 @@ import {
 } from "../redux/player.js";
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
-export default function SongList({url}) {
+export default function SongList({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
@@ -41,15 +41,18 @@ export default function SongList({url}) {
       }
     };
     fetch();
-  }, [hasMounted,url]);
+  }, [hasMounted, url]);
   return (
-    <div className="w-full flex px-5 md:px-10 items-center mt-5">
+    <div className="w-full flex items-center mt-5">
       <table className="w-full text-lightText dark:text-darkText">
         <thead className="font-semibold">
           <tr className="border-b border-neutral-300">
             <td className="w-1/12 text-center">#</td>
-            <td className="w-5/12">Song</td>
-            <td className="hidden md:table-cell md:w-5/12">Album</td>
+            <td className="w-4/12">Song</td>
+            <td className="hidden md:table-cell md:w-5/12 text-center">
+              Album
+            </td>
+            <td className="w-1/12 text-center">duration</td>
             <td className="w-1/12"></td>
           </tr>
         </thead>
@@ -64,7 +67,7 @@ export default function SongList({url}) {
               }}
             >
               <td className="w-1/12 text-center">{index + 1}</td>
-              <td className="w-5/12 py-2">
+              <td className="w-4/12 py-2">
                 <div className="flex items-center">
                   <div
                     style={{ backgroundImage: `url('${song.cover_image}')` }}
@@ -81,9 +84,12 @@ export default function SongList({url}) {
                   </div>
                 </div>
               </td>
-              <td className="hidden md:table-cell md:w-5/12">
-                {song.album ? "album" : ""}
+              <td className="hidden md:table-cell md:w-5/12 text-center">
+                {song.album ? song.album.album_name : ""}
               </td>
+              <td className="w-1/12 text-center">{`${Math.floor(
+                song.duration / 60
+              )}:${song.duration % 60}`}</td>
               <td className="w-1/12">
                 <IoEllipsisHorizontal
                   onClick={(e) => {
@@ -119,7 +125,7 @@ export default function SongList({url}) {
           onClick={(e) => {
             console.log(songInAction);
             dispatch(addSongToQueue(songInAction));
-            closeMenu(e)
+            closeMenu(e);
           }}
         >
           <ListItemIcon>

@@ -1,3 +1,4 @@
+import album from "../repository/album.js";
 import {
   AlbumRepository,
   ArtistRepository,
@@ -23,14 +24,20 @@ const addAlbum = async (req, res) => {
       description,
       album_cover,
       price,
-      background
+      background,
     });
     const songIds = newAlbum.songs.map((song) => song._id);
-    const songsUpdate = await SongRepository.makePublic(songIds);
-    return res.status(201).json({message: "New album has been published !!"})
+    const songsUpdate = await SongRepository.makePublic({songIds, album: newAlbum._id});
+    const artistUpdate = await ArtistRepository.makeAlbum({
+      albumId: newAlbum._id,
+      album_name: newAlbum.album_name,
+      album_cover: newAlbum.album_cover,
+      price: newAlbum.price,
+      artistId: artist._id
+    });
+    return res.status(201).json({ message: "New album has been published !!" });
   } catch (error) {}
 };
 export default {
   addAlbum,
-
 };

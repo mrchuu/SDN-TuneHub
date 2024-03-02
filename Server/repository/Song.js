@@ -55,7 +55,7 @@ const uploadSong = async ({
   duration,
   isPublic,
 }) => {
-  console.log(artist);
+  console.log(isPublic);
   try {
     const result = await Song.create({
       song_name,
@@ -326,13 +326,14 @@ const getUnPublishedSongOfArtist = async (artistId) => {
     throw new Error(error.message);
   }
 };
-const makePublic = async (songIds) => {
+const makePublic = async ({songIds, album}) => {
   try {
     const result = await Song.updateMany(
       { _id: { $in: songIds } },
       {
         $set: {
           is_public: true,
+          album: album
         },
       }
     );

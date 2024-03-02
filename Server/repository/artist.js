@@ -1,10 +1,11 @@
 import Artist from "../model/Artist.js";
 import song from "../model/Song.js";
 
-const findArtistByName = async (searchInput) => {
+const findArtistByName = async ({searchInput, artistId}) => {
   try {
     return await Artist.find({
       artist_name: { $regex: new RegExp(`.*${searchInput}.*`, "i") },
+      _id: {$ne: artistId}
     }).exec();
   } catch (error) {
     throw new Error(error.message);
@@ -113,7 +114,13 @@ const searchArtistByName = async (name) => {
     throw new Error(error.message);
   }
 };
-const addSongUpload = async ({ artistId, songId, songName, songCover, isExclusive }) => {
+const addSongUpload = async ({
+  artistId,
+  songId,
+  songName,
+  songCover,
+  isExclusive,
+}) => {
   try {
     Artist.findByIdAndUpdate(
       artistId,
@@ -123,7 +130,7 @@ const addSongUpload = async ({ artistId, songId, songName, songCover, isExclusiv
             songId: songId,
             song_name: songName,
             song_cover: songCover,
-            is_exclusive: isExclusive
+            is_exclusive: isExclusive,
           },
         },
       },
@@ -189,7 +196,31 @@ const hotArtist = async () => {
     console.log(error.message);
   }
 };
-
+const makeAlbum = async ({
+  artistId,
+  albumId,
+  album_name,
+  album_cover,
+  price,
+}) => {
+  const result = await Artist.findOneAndUpdate(
+    {
+      _id: artistId,
+    },
+    {
+      $push: {
+        albums: {
+          albumId,
+          album_name,
+          album_cover,
+          price,
+        },
+      },
+    },
+    { new: true }
+  );
+  return result;
+};
 export default {
   findArtistByName,
   findArtistByUserId,
@@ -197,4 +228,5 @@ export default {
   addSongUpload,
   getRisingArtist,
   hotArtist,
+  makeAlbum
 };
