@@ -5,6 +5,7 @@ import ArtistTemplate from "../template/ArtistTemplate";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import SongUploadForm from "../component/SongUploadForm";
+import CreateAlbum from "../component/CreateAlbum";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -17,11 +18,7 @@ function CustomTabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -88,11 +85,13 @@ export default function ArtistUpload() {
           </Box>
           <CustomTabPanel value={value} index={0}>
             <div className="w-full">
-              <SongUploadForm/>
+              <SongUploadForm />
             </div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            Album
+            <div className="w-full">
+              <CreateAlbum />
+            </div>
           </CustomTabPanel>
         </div>
       </div>

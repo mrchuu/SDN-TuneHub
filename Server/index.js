@@ -9,6 +9,7 @@ import {
   GenreRouter,
   SongRouter,
   ArtistRouter,
+  AlbumRouter
 } from "./routes/index.js";
 import "./utils/google-oauth2.js";
 import path from "path";
@@ -33,6 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use("/api/auth", AuthenticationRouter);
+app.use("/api/album", AlbumRouter);
 app.use("/api/songs", SongRouter);
 app.use("/api/genres", GenreRouter);
 app.use("/api/artists", ArtistRouter);

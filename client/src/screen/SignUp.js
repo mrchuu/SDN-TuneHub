@@ -19,6 +19,7 @@ export default function SignUp() {
   const [imageSrc, setImageSrc] = useState(
     "https://res.cloudinary.com/djzdhtdpj/image/upload/v1704269768/tempAvatar_juqb4s.jpg"
   );
+  const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const onDrop = useCallback((acceptedFile) => {
     const file = acceptedFile[0];
@@ -48,6 +49,7 @@ export default function SignUp() {
     const updateSignupData = { ...signUpData };
     updateSignupData.profilePicture = imageSrc;
     try {
+      setLoading(true);
       const data = await OriginalRequest(
         `auth/signup`,
         "POST",
@@ -55,6 +57,8 @@ export default function SignUp() {
       );
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -174,10 +178,13 @@ export default function SignUp() {
                 )}
               </div>
               <button
-                className="bg-light10 rounded-md py-3 shadow-md"
+                className={`${
+                  loading ? "bg-slate-400" : "bg-light10"
+                } rounded-md py-3 shadow-md`}
                 type="submit"
+                disabled={loading}
               >
-                Sign Up
+                {loading ? "Please wait ..." : "Sign Up"}
               </button>
             </FormControl>
           </form>

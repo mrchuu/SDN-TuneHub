@@ -46,7 +46,11 @@ const streamSong = async (req, res) => {
     if (fs.existsSync(filePath)) {
       const { is_exclusive, preview_start_time, preview_end_time } =
         existingSong;
-      if (is_exclusive && userId && !existingSong.purchased_user.includes(userId)) {
+      if (
+        is_exclusive &&
+        userId &&
+        !existingSong.purchased_user.includes(userId)
+      ) {
         const ffmpegCmd = ffmpeg(filePath)
           .setStartTime(preview_start_time)
           .setDuration(preview_end_time - preview_start_time)
@@ -117,6 +121,7 @@ const uploadSong = async (req, res) => {
       const isExclusive = fields.isExclusive
         ? fields.isExclusive[0] === "true"
         : false;
+      const isPublic = fields.isPublic ? fields.isPublic[0] === "true" : false;
       const previewStart = fields.previewStart
         ? parseInt(fields.previewStart[0])
         : null;
@@ -126,6 +131,11 @@ const uploadSong = async (req, res) => {
       const price = fields.price ? parseInt(fields.price[0]) : null;
       // Access the uploaded files
       const coverImage = fields.coverImage ? fields.coverImage[0] : null;
+      const artist = await ArtistRepository.findArtistByUserId(userId);
+      if (!artist) {
+        throw new Error("Unauthorized");
+      }
+      console.log(participatedArtists);
       const audioFile = files.audioFile;
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = dirname(__filename);
@@ -143,11 +153,7 @@ const uploadSong = async (req, res) => {
         fs.copyFileSync(uploadedFile.filepath, newPath);
         fs.unlinkSync(uploadedFile.filepath);
       }
-      const artistResult = await ArtistRepository.findArtistByUserId(userId);
-      if (!artistResult) {
-        throw new Error("Unauthorized");
-      }
-      console.log(participatedArtists);
+
       const result = await SongRepository.uploadSong({
         song_name: songName,
         genre: genre,
@@ -158,8 +164,16 @@ const uploadSong = async (req, res) => {
         preview_start_time: previewStart,
         preview_end_time: previewEnd,
         cover_image: coverImage,
-        artist: artistResult._id,
+        artist: artist._id,
         duration: duration,
+        isPublic,
+      });
+      ArtistRepository.addSongUpload({
+        artistId: artist._id,
+        songId: result._id,
+        songName: result.song_name,
+        songCover: result.cover_image,
+        isExclusive: result.is_exclusive,
       });
       return res.status(201).json({ message: "song uploaded successfully!!" });
     });
@@ -179,21 +193,37 @@ const searchSongByName = async (req, res) => {
 
 const getAllSongsByLastest = async (req, res) => {
   try {
-      const songs = await SongRepository.hotestSongByDay();
-      res.status(200).json(songs);
-
+    const songs = await SongRepository.hotestSongByDay();
+    res.status(200).json(songs);
   } catch (error) {
-      getAllSongsByLastest.res.status(500).json({
-          message: error.toString()
-      });
+    getAllSongsByLastest.res.status(500).json({
+      message: error.toString(),
+    });
   }
-}
-
+};
+const getUnPublishedSongOfArtist = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const unpublishedSongs = await SongRepository.getUnPublishedSongOfArtist(
+      artist._id
+    );
+    return res.status(200).json({ data: unpublishedSongs });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export default {
   getAllSongs,
   streamSong,
   addStreamSong,
   uploadSong,
   searchSongByName,
-  getAllSongsByLastest
+  getAllSongsByLastest,
+  getUnPublishedSongOfArtist
 };
