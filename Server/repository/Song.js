@@ -17,7 +17,7 @@ const getAllSongs = async () => {
   }
 };
 const getSongsById = async (songId) => {
-  try {
+  try { 
     const existingSong = await Song.findById(songId)
       .populate("artist")
       .populate("album")
@@ -188,6 +188,7 @@ const hotestSongByDay = async () => {
               $first: "$users_file.introduction",
             },
             streamCount: { $sum: "$withinLast24Hours" },
+            duration: { $first: "$duration"},
           },
         },
         {
@@ -205,7 +206,8 @@ const hotestSongByDay = async () => {
             profile_picture: 1,
             streamCount: 1,
             intro_user: 1,
-            album_name: 1
+            album_name: 1,
+            duration: 1
           }
         }
       ]

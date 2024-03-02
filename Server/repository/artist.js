@@ -81,7 +81,6 @@ const hotArtist = async () => {
             "artist_file.introduction": 1,
             "artist_file.profile_picture": 1,
             "artist_followed_count": { $size: "$artist_file.artist_followed" }
-
           }
         }
       ]

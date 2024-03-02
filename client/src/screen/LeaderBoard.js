@@ -55,21 +55,21 @@ export default function LeaderBoard() {
                     <thead className="font-semibold">
                         <tr className="border-b border-neutral-300">
                             <td className="w-1/12 text-center">#</td>
-                            <td className="w-4/12">Song</td>
-                            <td className="w-2/12">Album</td>
-                            <td className="w-1/12">Artist</td>
+                            <td className="w-5/12">Song</td>
+                            <td className="w-1/12">Album</td>
                             <td className="w-1/12 ">Play</td>
+                            <td className="w-1/12">Time</td>                           
                             <td className="w-2/12">Action</td>
                         </tr>
                     </thead>
-                    <tbody className="text-lightTextSecondary dark:text-darkTextSecondary hover:po">
+                    <tbody className="text-lightTextSecondary dark:text-darkTextSecondary hover:po ">
                         {SongList.map((song, index) => (
                             <tr
                                 className="border-b border-neutral-300  hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group"
                                 key={song._id}
                             >
                                 <td className="w-1/12 text-center">{index + 1}</td>
-                                <td className="w-4/12 py-2">
+                                <td className="w-5/12 py-2">
                                     <div className="flex items-center">
                                         <div
                                             style={{ backgroundImage: `url('${song.cover_image}')` }}
@@ -82,19 +82,19 @@ export default function LeaderBoard() {
 
                                         <div className="ml-2">
                                             <h4 className="font-semibold text-md">{song.song_name}</h4>
-
+                                            <h6 className="text-xs mt-1">{song.artist_name} </h6>
                                         </div>
                                     </div>
                                 </td>
-                                <td className="w-4/12">
+                                <td className="w-2/12">
                                     {song.album_name ? song.album_name : ""}
-                                </td>
-                                <td className="w-1/12">
-                                    {song.artist_name}
                                 </td>
                                 <td className="w-1/12">
                                     {song.streamCount}
                                 </td>
+                                <td className="w-2/12">
+                                    {song.duration}
+                                </td>                              
                                 <td className="w-1/12">
                                     <IoEllipsisHorizontal
                                     />
