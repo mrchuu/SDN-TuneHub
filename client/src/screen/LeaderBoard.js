@@ -16,9 +16,21 @@ export default function LeaderBoard() {
     const { OriginalRequest } = PerformRequest();
     const [SongList, setSong] = useState([]);
     const [ArtistList, setArtist] = useState([]);
-
+    const [songMenuAnchor, setSongMenuAnchor] = useState(null);
+    const [menuIsOpen, setMenuIsOpen] = useState(false);
+    const [songInAction, setSongInAction] = useState(null);
     const dispatch = useDispatch();
     let intervalId;
+
+    const closeMenu = (e, song) => {
+        setMenuIsOpen(false);
+        setSongMenuAnchor(null);
+    };
+    const openMenu = (e, song) => {
+        setSongInAction(song);
+        setMenuIsOpen(true);
+        setSongMenuAnchor(e.currentTarget);
+    };
 
     const fetchSong = async () => {
         const data = await OriginalRequest("songs/leaderboard/topSong/1m", "GET");
@@ -52,7 +64,7 @@ export default function LeaderBoard() {
                         <tr className="border-b border-neutral-300">
                             <td className="w-1/12 text-center">#</td>
                             <td className="w-4/12">Song</td>
-                            <td className="w-2/12">Album</td>                      
+                            <td className="w-2/12">Album</td>
                             <td className="w-1/12 ">Play</td>
                             <td className="w-1/12">Time</td>
                             <td className="w-2/12">Action</td>
@@ -63,6 +75,10 @@ export default function LeaderBoard() {
                             <tr
                                 className="border-b border-neutral-300  hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group"
                                 key={song._id}
+                                onClick={(e) => {
+                                    dispatch(setCurrentSong(song));
+                                    dispatch(toogleIsPlaying(true));
+                                  }}
                             >
                                 <td className="w-1/12 text-center">{index + 1}</td>
                                 <td className="w-4/12 py-2">
@@ -92,12 +108,59 @@ export default function LeaderBoard() {
                                 <td className="w-1/12">{song.streamCount}</td>
                                 <td className="w-1/12">{Math.floor(song.duration / 60)}:{song.duration % 60}</td>
                                 <td className="w-1/12">
-                                    <IoEllipsisHorizontal />
+                                    <IoEllipsisHorizontal onClick={(e) => {
+                                        e.stopPropagation();
+                                        openMenu(e, song);
+                                    }} />
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
+                <Menu
+                    open={menuIsOpen}
+                    anchorEl={songMenuAnchor}
+                    onClose={closeMenu}
+                    MenuListProps={{
+                        "aria-labelledby": "basic-button",
+                    }}
+                    autoFocus={false}
+                >
+                    <MenuItem>
+                        <ListItemIcon>
+                            <FaRegHeart
+                                className="text-light10 dark:text-dark10 mt-1"
+                                size={18}
+                            />
+                            <ListItemText>&nbsp;Add To Favorite</ListItemText>
+                        </ListItemIcon>
+                    </MenuItem>
+                    <MenuItem
+                        className="flex items-center"
+                        onClick={(e) => {
+                            console.log(songInAction);
+                            dispatch(addSongToQueue(songInAction));
+                            closeMenu(e);
+                        }}
+                    >
+                        <ListItemIcon>
+                            <MdOutlineQueueMusic
+                                size={22}
+                                className="text-light10 dark:text-dark10 mr-3"
+                            />
+                            <ListItemText className="text-right">Queue Song</ListItemText>
+                        </ListItemIcon>
+                    </MenuItem>
+                    <MenuItem className="flex items-center">
+                        <ListItemIcon>
+                            <MdLibraryMusic
+                                size={20}
+                                className="text-light10 dark:text-dark10 mr-3"
+                            />
+                            <ListItemText className="text-right">Add To Playlist</ListItemText>
+                        </ListItemIcon>
+                    </MenuItem>
+                </Menu>
                 <div className="w-full pt-8">
                     <div className="mx-auto">
                         <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">
