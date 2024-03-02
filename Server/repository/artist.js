@@ -178,9 +178,9 @@ const hotArtist = async () => {
       {
         $sort: { "artist_file.artist_followed": -1 },
       },
-      {
-        $limit: 5,
-      },
+      // {
+      //   $limit: 5,
+      // },
       {
         $project: {
           _id: 1,

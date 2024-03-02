@@ -5,6 +5,7 @@ import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { FaRegHeart, FaSearch } from "react-icons/fa";
+import "../style/leaderboard.css"
 import {
     setCurrentSong,
     toogleIsPlaying,
@@ -20,6 +21,8 @@ export default function LeaderBoard() {
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const [songInAction, setSongInAction] = useState(null);
     const dispatch = useDispatch();
+    const [showAllSongs, setShowAllSongs] = useState(false);
+    const [showAllArtists, setShowAllArtists] = useState(false);
     let intervalId;
 
     const closeMenu = (e, song) => {
@@ -78,7 +81,7 @@ export default function LeaderBoard() {
                                 onClick={(e) => {
                                     dispatch(setCurrentSong(song));
                                     dispatch(toogleIsPlaying(true));
-                                  }}
+                                }}
                             >
                                 <td className="w-1/12 text-center">{index + 1}</td>
                                 <td className="w-4/12 py-2">
@@ -114,9 +117,21 @@ export default function LeaderBoard() {
                                     }} />
                                 </td>
                             </tr>
-                        ))}
+                        )).slice(0, showAllSongs ? SongList.length : 5)}
                     </tbody>
                 </table>
+                <div className="text-center mt-4">
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowAllSongs(!showAllSongs);
+                        }}
+                        className=" border border-neutral-300 rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10"
+                    >
+                        {showAllSongs ? "Ẩn đi" : "Xem thêm"}
+                    </a>
+                </div>
                 <Menu
                     open={menuIsOpen}
                     anchorEl={songMenuAnchor}
@@ -168,8 +183,8 @@ export default function LeaderBoard() {
                         </h2>
                     </div>
                     <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
-                        {ArtistList.map((artist, index) => (
-                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
+                        {ArtistList.slice(0, showAllArtists ? ArtistList.length : 5).map((artist, index) => (
+                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8">
                                 <img
                                     src={artist.artist_file.profile_picture}
                                     className="rounded-full w-40 h-40 object-cover object-center"
@@ -194,15 +209,27 @@ export default function LeaderBoard() {
                         ))}
                     </div>
                 </div>
-                <div className="w-full pt-8 ">
+                <div className="text-center mt-4">
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowAllArtists(!showAllArtists);
+                        }}
+                        className=" border border-neutral-300 rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10"
+                    >
+                        {showAllArtists ? "Ẩn đi" : "Xem thêm"}
+                    </a>
+                </div>
+                <div className="w-full pt-8">
                     <div className="mx-auto">
                         <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">
-                            Artist
+                            Album
                         </h2>
                     </div>
                     <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
                         {ArtistList.map((artist, index) => (
-                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
+                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8">
                                 <img
                                     src={artist.artist_file.profile_picture}
                                     className="rounded-md w-40 h-40 object-cover object-center"
