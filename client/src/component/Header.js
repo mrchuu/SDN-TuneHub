@@ -11,16 +11,19 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaCircleUser } from "react-icons/fa6";
 import { IoLogOut } from "react-icons/io5";
 import { IoIosNotifications } from "react-icons/io";
 import Logout from "../utilities/LogOut.js";
+import { logOut } from "../redux/auth.js";
 export default function Header() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const expanded = useSelector((state) => state.sideBar.expanded);
   const userInfo = useSelector((state) => state.auth.userInfo);
   const [anchorProfile, setAnchorProfile] = useState(null);
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
+  const [atTop, setAtTop] = useState(true);
   const openMenu = (e) => {
     setOpenProfileMenu(true);
     setAnchorProfile(e.currentTarget);
@@ -33,9 +36,21 @@ export default function Header() {
 
   const location = useLocation();
   const currentPath = location.pathname;
-
+  useEffect(() => {
+    const handleScroll = () => {
+      setAtTop(window.scrollY <= 20)
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); 
   return (
-    <div className="flex items-center justify-end pt-5">
+    <div
+      className={`flex items-center justify-end p-3 fixed top-0 right-0 left-0 z-50 transition-all ${
+        window.innerWidth > 768 ? (expanded ? "ml-60" : "ml-20") : "ml-20"
+      } ${atTop ? "" : "bg-light30 dark:bg-dark30"}`}
+    >
       {/* <FaCogs size={35} className="mr-8" color="#f2785c" /> */}
       {currentPath === "/explore" ? <Search /> : null}
       <ThemeSwitcher />

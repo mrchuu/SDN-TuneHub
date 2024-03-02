@@ -16,6 +16,7 @@ export default function DefaultTemplate({ title, children }) {
           }`}
         >
           <Header />
+          <div style={{height: "80px"}}></div>
           {children}
         </div>
       </div>
