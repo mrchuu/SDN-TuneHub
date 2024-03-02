@@ -3,7 +3,7 @@ import HeadlessTippy from "@tippyjs/react/headless";
 import { useState, useEffect } from "react";
 import useDebounce from "./useDebounce.js";
 import PerformRequest from "../../utilities/PerformRequest.js";
-import { addData, clearData } from "../../redux/search.js";
+import { addKeySearch } from "../../redux/search.js";
 import { useDispatch } from "react-redux";
 
 function Search() {
@@ -15,27 +15,35 @@ function Search() {
 
   const { OriginalRequest } = PerformRequest();
 
-  const debouncedValue = useDebounce(searchValue, 1000);
+  const debouncedValue = useDebounce(searchValue, 500);
 
   useEffect(() => {
     if (!debouncedValue.trim()) {
       setSearchValue("");
-      const data = [];
-      dispatch(clearData([]));
+      dispatch(addKeySearch(""));
     }
-    const fetch = async () => {
-      const songList = await OriginalRequest(
-        `songs/search/${debouncedValue}`,
-        "GET"
-      );
-      if (songList) {
-        dispatch(addData(songList));
-      } else {
-        dispatch(clearData([]));
-      }
-    };
-    fetch();
+
+    dispatch(addKeySearch(debouncedValue));
   }, [debouncedValue]);
+
+  // useEffect(() => {
+  //   if (!debouncedValue.trim()) {
+  //     setSearchValue("");
+  //     dispatch(clearData([]));
+  //   }
+  //   const fetch = async () => {
+  //     const songList = await OriginalRequest(
+  //       `songs/search/${debouncedValue}`,
+  //       "GET"
+  //     );
+  //     if (songList) {
+  //       dispatch(addData(songList));
+  //     } else {
+  //       dispatch(clearData([]));
+  //     }
+  //   };
+  //   fetch();
+  // }, [debouncedValue]);
 
   const handleChange = (e) => {
     const searchValue = e.target.value;
@@ -50,7 +58,7 @@ function Search() {
         value={searchValue}
         type="text"
         placeholder="Search"
-        className="w-full outline-none bg-transparent"
+        className="w-full outline-none bg-transparent dark:text-white"
         onChange={handleChange}
         // onFocus={() => setShowResult(true)}
       />

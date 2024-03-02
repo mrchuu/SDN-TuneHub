@@ -106,7 +106,7 @@ export default function SongUploadForm() {
   }, [hasMounted]);
   useEffect(() => {
     const fetchArtists = async () => {
-      console.log("aaaaaaaaaaaaaaaaaaaa");
+
       try {
         const response = await OriginalRequest("artists/findByName", "POST", {
           artistName: "",
@@ -146,7 +146,7 @@ export default function SongUploadForm() {
     }
     formData.append("audioFile", songInfo.audioFile);
     formData.append("duration", songInfo.duration);
-
+    formData.append("isPublic", songInfo.isPublic)
     if (songInfo.isExclusive) {
       formData.append("isExclusive", true);
       formData.append("previewStart", songInfo.previewStart);
@@ -162,7 +162,7 @@ export default function SongUploadForm() {
       }
     }
     try {
-     await OriginalRequest("songs/uploadSingle", "POST", formData);
+      await OriginalRequest("songs/uploadSingle", "POST", formData);
     } catch (error) {
       console.log(error);
     }
@@ -264,6 +264,47 @@ export default function SongUploadForm() {
               </FormControl>
               {songInfo.audioFile ? (
                 <div>
+                  <div className="flex items-center">
+                    <FormControl className="w-3/12 mr-7">
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            onChange={(e) => {
+                              dispatch(
+                                setSongInfo({
+                                  name: "isPublic",
+                                  value: e.currentTarget.checked,
+                                })
+                              );
+                            }}
+                          />
+                        }
+                        label="Public"
+                      />
+                    </FormControl>
+                    {songInfo.isExclusive ? (
+                      <div>
+                        <FormControl>
+                          <TextField
+                            label="Price(vnd)"
+                            type="number"
+                            color="warning"
+                            value={songInfo.price}
+                            onChange={(e) => {
+                              dispatch(
+                                setSongInfo({
+                                  name: "price",
+                                  value: e.currentTarget.value,
+                                })
+                              );
+                            }}
+                          />
+                        </FormControl>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                   <div className="flex items-center justify-between">
                     <FormControl className="w-2/12">
                       <FormControlLabel
@@ -323,26 +364,6 @@ export default function SongUploadForm() {
                       <></>
                     )}
                   </div>
-                  {songInfo.isExclusive ? (
-                    <FormControl>
-                      <TextField
-                        label="Price(vnd)"
-                        type="number"
-                        color="warning"
-                        value={songInfo.price}
-                        onChange={(e) => {
-                          dispatch(
-                            setSongInfo({
-                              name: "price",
-                              value: e.currentTarget.value,
-                            })
-                          );
-                        }}
-                      />
-                    </FormControl>
-                  ) : (
-                    <></>
-                  )}
                 </div>
               ) : (
                 <></>
