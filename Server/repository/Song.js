@@ -182,9 +182,9 @@ const searchSongByName = async (name) => {
   }
 };
 
-const hotestSongByDay = async () => {
+const hotestSongByDay = async (date) => {
   try {
-    const oneMonthAgo = new Date(new Date() - 24 * 30 * 60 * 60 * 1000);
+    const byDay = new Date(new Date() - 24 * date * 60 * 60 * 1000);
     const results = await Song.aggregate([
       {
         $lookup: {
@@ -206,7 +206,7 @@ const hotestSongByDay = async () => {
             $cond: {
               if: {
                 $and: [
-                  { $gte: ["$streamTime.createdAt", { oneMonthAgo }] },
+                  { $gte: ["$streamTime.createdAt", { byDay }] },
                   {
                     $lt: ["$streamTime.createdAt", new Date()],
                   },

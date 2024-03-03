@@ -59,7 +59,10 @@ export default function LeaderBoard() {
                 <h1 className="text-4xl font-bold mb-8 dark:text-white ml-4">
                     LeaderBoard
                 </h1>
-                <h2 className="text-2xl font-bold mb-8 dark:text-white m-4">
+                <button className="border border-neutral-300 rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1">Day</button>
+                <button className="border border-neutral-300 rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1">Week</button>
+                <button className="border border-neutral-300 rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1">Month</button>
+                <h2 className="text-2xl font-semibold mb-8 dark:text-white m-4">
                     Top Song in month
                 </h2>
                 <table className="w-full text-lightText dark:text-darkText">
@@ -70,7 +73,7 @@ export default function LeaderBoard() {
                             <td className="w-2/12">Album</td>
                             <td className="w-1/12 ">Play</td>
                             <td className="w-1/12">Time</td>
-                            <td className="w-2/12">Action</td>
+                            <td className="w-2/12 text-center">Action</td>
                         </tr>
                     </thead>
                     <tbody className="text-lightTextSecondary dark:text-darkTextSecondary hover:po">
@@ -110,11 +113,18 @@ export default function LeaderBoard() {
                                 </td>
                                 <td className="w-1/12">{song.streamCount}</td>
                                 <td className="w-1/12">{Math.floor(song.duration / 60)}:{song.duration % 60}</td>
-                                <td className="w-1/12">
-                                    <IoEllipsisHorizontal onClick={(e) => {
-                                        e.stopPropagation();
-                                        openMenu(e, song);
-                                    }} />
+
+                                <td className="w-1/12 ">
+                                    <div className="flex items-center justify-evenly">
+                                        <FaRegHeart
+                                            className="text-light10 dark:text-dark10 mt-1"
+                                            size={18}
+                                        />
+                                        <IoEllipsisHorizontal onClick={(e) => {
+                                            e.stopPropagation();
+                                            openMenu(e, song);
+                                        }} />
+                                    </div>
                                 </td>
                             </tr>
                         )).slice(0, showAllSongs ? SongList.length : 5)}
@@ -141,7 +151,7 @@ export default function LeaderBoard() {
                     }}
                     autoFocus={false}
                 >
-                    <MenuItem>
+                    {/* <MenuItem>
                         <ListItemIcon>
                             <FaRegHeart
                                 className="text-light10 dark:text-dark10 mt-1"
@@ -149,7 +159,7 @@ export default function LeaderBoard() {
                             />
                             <ListItemText>&nbsp;Add To Favorite</ListItemText>
                         </ListItemIcon>
-                    </MenuItem>
+                    </MenuItem> */}
                     <MenuItem
                         className="flex items-center"
                         onClick={(e) => {
@@ -178,7 +188,7 @@ export default function LeaderBoard() {
                 </Menu>
                 <div className="w-full pt-8">
                     <div className="mx-auto">
-                        <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">
+                        <h2 className="text-2xl font-semibold mb-8 dark:text-white ml-4">
                             Artist
                         </h2>
                     </div>
@@ -223,7 +233,7 @@ export default function LeaderBoard() {
                 </div>
                 <div className="w-full pt-8">
                     <div className="mx-auto">
-                        <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4">
+                        <h2 className="text-2xl font-semibold mb-8 dark:text-white ml-4">
                             Album
                         </h2>
                     </div>

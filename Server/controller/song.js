@@ -191,9 +191,9 @@ const searchSongByName = async (req, res) => {
   }
 };
 
-const getAllSongsByLastest = async (req, res) => {
+const getAllSongsByLastest = async (req, res, date) => {
   try {
-    const songs = await SongRepository.hotestSongByDay();
+    const songs = await SongRepository.hotestSongByDay(date);
     res.status(200).json(songs);
   } catch (error) {
     getAllSongsByLastest.res.status(500).json({
