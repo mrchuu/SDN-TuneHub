@@ -3,6 +3,84 @@ import { SongRepository } from "./index.js";
 import SongStreamRepository from "./songStream.js";
 import artist from "./artist.js";
 import mongoose from "mongoose";
+const getSongsByIds = async (songId) => {
+  return await Song.aggregate([
+    { $match: { _id: songId} },
+    { 
+      $lookup: {
+        from: "Album",
+        localField: "album",
+        foreignField: "_id",
+        as: "album"
+      }
+    },
+    { 
+      $lookup: {
+        from: "Artist",
+        localField: "artist",
+        foreignField: "_id",
+        as: "artist"
+      }
+    },
+    { 
+      $project: {
+        _id: 1,
+        song_name: 1,
+        is_exclusive: 1,
+        album: { 
+          $arrayElemAt: [
+            {
+              $map: {
+                input: "$album",
+                in: { 
+                  _id: "$$this._id", 
+                  // artist: "$$this.artist",
+                  album_name: "$$this.album_name",
+                  // songs: {
+                  //   $map: {
+                  //     input: "$$this.songs",
+                  //     as: "song",
+                  //     in: {
+                  //       _id: "$$song._id",
+                  //       song_name: "$$song.song_name",
+                  //       // song_cover: "$$song.cover_image"
+                  //     }
+                  //   }
+                  // },
+                  // description: "$$this.description",
+                  // purchasers: "$$this.purchasers",
+                  // album_cover: "$$this.album_cover",
+                  // price: "$$this.price"
+                }
+              }
+            }, 
+            0
+          ] 
+        },
+        
+        cover_image: 1,
+        artist: { 
+          $arrayElemAt: [
+            {
+              $map: {
+                input: "$artist",
+                in: { _id: "$$this._id", artist_name: "$$this.artist_name" }
+              }
+            }, 
+            0
+          ] 
+        },
+        duration: 1
+      }
+    },
+    { $limit: 1 } // Giới hạn kết quả trả về thành 1 đối tượng
+  ]);
+};
+
+
+
+
+
 const getAllSongs = async () => {
   try {
     const songList = await Song.find()
@@ -423,4 +501,5 @@ export default {
   getUnPublishedSongOfArtist,
   makePublic,
   getPopularSongOfArtist,
+  getSongsByIds,
 };
