@@ -74,6 +74,9 @@ export const playerSlice = createSlice({
         state.isPlaying = true;
         state.queueIndex++;
         state.currentSong = state.songQueue[state.queueIndex];
+      }else{
+        state.isPlaying = false;
+        state.currentSong = {}
       }
     },
     toogleQueue: (state, action) => {

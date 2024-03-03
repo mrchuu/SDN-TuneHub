@@ -12,6 +12,7 @@ import UserProfile from "./screen/UserProfile";
 import ForgotPassword from "./screen/ForgotPassword";
 import ArtistDashBoard from "./screen/ArtistDashBoard";
 import ArtistUpload from "./screen/ArtistUpload";
+import ArtistProfile from "./screen/ArtistProfile";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/confirmSignUp/:token" element={<ConfirmSignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword/>}/>
         <Route path="/profile" element={<UserProfile/>}/>
+        <Route path="/artist/:artistId" element={<ArtistProfile/>}/>
       </Routes>
     </BrowserRouter>
   );

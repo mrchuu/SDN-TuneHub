@@ -14,4 +14,5 @@ songRouter.get(
   verifyToken,
   SongController.getUnPublishedSongOfArtist
 );
+songRouter.get("/getArtistPopularSongs/:artistId", SongController.getPopularSongOfArtist)
 export default songRouter;

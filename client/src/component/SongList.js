@@ -11,6 +11,8 @@ import {
 } from "../redux/player.js";
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { Link } from "react-router-dom";
 export default function SongList({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
@@ -64,10 +66,15 @@ export default function SongList({ url }) {
             <td className="w-1/12"></td>
           </tr>
         </thead>
-        <tbody className="text-lightTextSecondary dark:text-darkTextSecondary bg-slate-500">
+        <tbody className="text-lightTextSecondary dark:text-darkTextSecondary">
           {loading ? (
-            <tr className="flex justify-center w-full">
-              <div className="w-10 h-10 bg-light10"></div>
+            <tr className="w-full">
+              <td colSpan="5" className="w-full">
+                <AiOutlineLoading3Quarters
+                  className={`mx-auto mt-10 text-light10 animate-spin duration-${10000}`}
+                  size={35}
+                />
+              </td>
             </tr>
           ) : (
             SongList.map((song, index) => (
@@ -95,7 +102,16 @@ export default function SongList({ url }) {
                       <h4 className="font-semibold text-md">
                         {song.song_name}
                       </h4>
-                      <p className="text-xs">{song.artist.artist_name}</p>
+                      {song.artist ? (
+                        <Link
+                          to={`artist/${song.artist._id}`}
+                          className="text-xs hover:underline"
+                        >
+                          {song.artist.artist_name}
+                        </Link>
+                      ) : (
+                        <></>
+                      )}
                     </div>
                   </div>
                 </td>

@@ -47,10 +47,15 @@ const streamSong = async (req, res) => {
       const { is_exclusive, preview_start_time, preview_end_time } =
         existingSong;
       if (
-        is_exclusive &&
-        userId &&
-        !existingSong.purchased_user.includes(userId)
+        (is_exclusive &&
+          userId &&
+          existingSong.purchased_user.includes(userId)) ||
+        !is_exclusive
       ) {
+        const fileStream = fs.createReadStream(filePath);
+        res.setHeader("Content-Type", "audio/mpeg");
+        fileStream.pipe(res);
+      } else {
         const ffmpegCmd = ffmpeg(filePath)
           .setStartTime(preview_start_time)
           .setDuration(preview_end_time - preview_start_time)
@@ -58,10 +63,6 @@ const streamSong = async (req, res) => {
           .format("mp3");
         res.setHeader("Content-Type", "audio/mpeg");
         ffmpegCmd.pipe(res, { end: true });
-      } else {
-        const fileStream = fs.createReadStream(filePath);
-        res.setHeader("Content-Type", "audio/mpeg");
-        fileStream.pipe(res);
       }
     } else {
       return res.status(500).json({
@@ -218,6 +219,15 @@ const getUnPublishedSongOfArtist = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getPopularSongOfArtist = async (req, res) => {
+  try {
+    const artistId = req.params.artistId;
+    const result = await SongRepository.getPopularSongOfArtist(artistId);
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({error: error.message})
+  }
+};
 export default {
   getAllSongs,
   streamSong,
@@ -225,5 +235,6 @@ export default {
   uploadSong,
   searchSongByName,
   getAllSongsByLastest,
-  getUnPublishedSongOfArtist
+  getUnPublishedSongOfArtist,
+  getPopularSongOfArtist
 };
