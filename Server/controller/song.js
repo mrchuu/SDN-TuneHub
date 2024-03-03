@@ -10,6 +10,33 @@ import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 import jwt from "jsonwebtoken";
 import formidable from "formidable";
+const getRecentlyPlayedSongs = async (req, res) => {
+  try {
+    // let userId;
+    // if (token) {
+    //   const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    //   const existingUser = await AuthenticateRepository.getUserById(
+    //     decodedToken.userId
+    //   );
+    //   if (!existingUser) {
+    //     return res.status(400).json({ error: "User was not found" });
+    //   }
+    //   userId = existingUser._id;
+    // }
+    const currentUserId = req.params.id; 
+    const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(currentUserId);
+    console.log(`songStreams: ${songStreams}`);
+    const songs = await Promise.all(songStreams.map(async (stream) => {
+      const song = await SongRepository.getSongsByIds(stream.song)
+      return song[0];
+    }));
+    // const songs = await SongRepository.getSongsByIds(songStreams[0].song);
+    res.status(200).json({ data: songs });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const getAllSongs = async (req, res) => {
   try {
     const songList = await SongRepository.getAllSongs();
@@ -236,5 +263,6 @@ export default {
   searchSongByName,
   getAllSongsByLastest,
   getUnPublishedSongOfArtist,
-  getPopularSongOfArtist
+  getPopularSongOfArtist,
+  getRecentlyPlayedSongs,
 };
