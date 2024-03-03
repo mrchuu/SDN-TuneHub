@@ -1,11 +1,11 @@
 import Artist from "../model/Artist.js";
 import song from "../model/Song.js";
 
-const findArtistByName = async ({searchInput, artistId}) => {
+const findArtistByName = async ({ searchInput, artistId }) => {
   try {
     return await Artist.find({
       artist_name: { $regex: new RegExp(`.*${searchInput}.*`, "i") },
-      _id: {$ne: artistId}
+      _id: { $ne: artistId }
     }).exec();
   } catch (error) {
     throw new Error(error.message);
@@ -178,9 +178,9 @@ const hotArtist = async () => {
       {
         $sort: { "artist_file.artist_followed": -1 },
       },
-      {
-        $limit: 5,
-      },
+      // {
+      //   $limit: 5,
+      // },
       {
         $project: {
           _id: 1,
@@ -189,8 +189,9 @@ const hotArtist = async () => {
           "artist_file.profile_picture": 1,
           artist_followed_count: { $size: "$artist_file.artist_followed" },
         },
-      },
-    ]).exec();
+      }
+    ]
+    ).exec();
     return result;
   } catch (error) {
     console.log(error.message);

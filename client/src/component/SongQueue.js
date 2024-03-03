@@ -61,7 +61,7 @@ export default function SongQueue() {
                         : "text-lightTextSecondary dark:text-darkTextSecondary"
                     } `}
                   >
-                    {song.artist.artist_name}
+                    {song.artist ? song.artist.artist_name : "Unknown Artist"}
                   </h6>
                 </div>
               </div>
