@@ -16,6 +16,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { FormControl, TextField } from "@mui/material";
 import { useDropzone } from "react-dropzone";
+import SongList from "../component/SongList.js";
 export default function UserProfile() {
 
     const navigate = useNavigate();
@@ -330,7 +331,10 @@ export default function UserProfile() {
                                 </Modal>
                             </div>
                         </div>
-
+                         <div className="px-5">
+                                                        <h1 className="text-lg font-semibold">Recent song</h1>
+                              <SongList url={`songs/recentSong/${auth._id}`}/>
+                         </div>                              
                         <div className="px-4 mt-1">
                             <h2 className="text-2xl font-bold mb-4 text-lightText dark:text-darkText">Public Playlists</h2>
                             <div className="flex flex-wrap justify-between px-4 space-x-4">

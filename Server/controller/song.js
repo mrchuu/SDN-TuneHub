@@ -12,7 +12,18 @@ import jwt from "jsonwebtoken";
 import formidable from "formidable";
 const getRecentlyPlayedSongs = async (req, res) => {
   try {
-    const currentUserId = req.params.id; // Giả sử bạn đã lấy ID của người dùng từ request
+    // let userId;
+    // if (token) {
+    //   const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    //   const existingUser = await AuthenticateRepository.getUserById(
+    //     decodedToken.userId
+    //   );
+    //   if (!existingUser) {
+    //     return res.status(400).json({ error: "User was not found" });
+    //   }
+    //   userId = existingUser._id;
+    // }
+    const currentUserId = req.params.id; 
     const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(currentUserId);
     console.log(`songStreams: ${songStreams}`);
     const songs = await Promise.all(songStreams.map(async (stream) => {
