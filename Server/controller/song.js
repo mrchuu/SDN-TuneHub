@@ -10,6 +10,22 @@ import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 import jwt from "jsonwebtoken";
 import formidable from "formidable";
+const getRecentlyPlayedSongs = async (req, res) => {
+  try {
+    const currentUserId = req.params.id; // Giả sử bạn đã lấy ID của người dùng từ request
+    const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(currentUserId);
+    console.log(`songStreams: ${songStreams}`);
+    const songs = await Promise.all(songStreams.map(async (stream) => {
+      const song = await SongRepository.getSongsByIds(stream.song)
+      return song[0];
+    }));
+    // const songs = await SongRepository.getSongsByIds(songStreams[0].song);
+    res.status(200).json({ data: songs });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const getAllSongs = async (req, res) => {
   try {
     const songList = await SongRepository.getAllSongs();
@@ -225,5 +241,6 @@ export default {
   uploadSong,
   searchSongByName,
   getAllSongsByLastest,
-  getUnPublishedSongOfArtist
+  getUnPublishedSongOfArtist,
+  getRecentlyPlayedSongs,
 };
