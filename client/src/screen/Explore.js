@@ -134,15 +134,15 @@ function Explore() {
                 {risingArtist.map((artist, index) => (
                   <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
                     <img
-                      src={artist.user.profile_picture}
+                      src={artist.user?.profile_picture}
                       className="rounded-full w-40 h-40 object-cover object-center"
                     />
                     <h3 className="text-lg font-semibold dark:text-white m-2">
                       {artist.artist_name}
                     </h3>
-                    {artist.user.introduction ? (
+                    {artist.user?.introduction ? (
                       <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                        {artist.user.introduction}
+                        {artist.user?.introduction}
                       </p>
                     ) : (
                       <p className="text-md text-light30 dark:text-dark30 ml-2">
@@ -196,7 +196,7 @@ function Explore() {
                 {artistList.map((artist, index) => (
                   <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
                     <img
-                      src={artist.user.profile_picture}
+                      src={artist.user?.profile_picture}
                       className="rounded-full w-40 h-40 object-cover object-center"
                     />
                     <h3 className="text-lg font-semibold dark:text-white m-2">
@@ -204,7 +204,7 @@ function Explore() {
                     </h3>
                     {artist.name ? (
                       <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                        {artist.user.introduction}
+                        {artist.user?.introduction}
                       </p>
                     ) : (
                       <p className="text-md text-light30 dark:text-dark30 ml-2">
