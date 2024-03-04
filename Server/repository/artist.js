@@ -1,11 +1,11 @@
 import Artist from "../model/Artist.js";
 import song from "../model/Song.js";
 
-const findArtistByName = async ({searchInput, artistId}) => {
+const findArtistByName = async ({ searchInput, artistId }) => {
   try {
     return await Artist.find({
       artist_name: { $regex: new RegExp(`.*${searchInput}.*`, "i") },
-      _id: {$ne: artistId}
+      _id: { $ne: artistId },
     }).exec();
   } catch (error) {
     throw new Error(error.message);
@@ -21,10 +21,20 @@ const findArtistByUserId = async (userId) => {
 
 const getRisingArtist = async () => {
   try {
+    const currentDate = new Date();
+    const sevenDaysAgo = new Date(
+      currentDate.getTime() - 7 * 24 * 60 * 60 * 1000
+    );
+
     return await Artist.aggregate([
+      // {
+      //   $match: {
+      //     "followers.createdAt": { $gte: sevenDaysAgo },
+      //   },
+      // },
       {
         $lookup: {
-          from: "Users",
+          from: "users",
           localField: "userId",
           foreignField: "_id",
           as: "user",
@@ -67,7 +77,7 @@ const searchArtistByName = async (name) => {
     const foundArtist = await Artist.aggregate([
       {
         $match: {
-          artist_name: { $regex: name, $options: "i" },
+          artist_name: { $regex: "", $options: "i" },
         },
       },
       {
@@ -228,5 +238,5 @@ export default {
   addSongUpload,
   getRisingArtist,
   hotArtist,
-  makeAlbum
+  makeAlbum,
 };

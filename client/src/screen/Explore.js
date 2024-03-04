@@ -166,7 +166,7 @@ function Explore() {
               </div>
               <div className="container mx-auto flex flex-wrap items-center">
                 {playlist.map((artist, index) => (
-                  <div className="w-72 h-44 card ml-10 mb-10 border rounded-sm bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-200 dark:shadow-blue-300 dark:shadow-md dark:border-none">
+                  <div className="w-80 h-44 card m-3 mb-4 border rounded-sm bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-200 dark:shadow-blue-300 dark:shadow-md dark:border-none">
                     <img
                       src={artist.image}
                       className="rounded-md w-full h-full object-cover object-center filter brightness-75"

@@ -159,6 +159,8 @@ const searchSongByName = async (name) => {
           artist: "$artist",
           duration: "$duration",
           cover_image: "$cover_image",
+          streamCount: "streamCount",
+          lastStreamTime: "$lastStreamTime"
         },
       },
       {
