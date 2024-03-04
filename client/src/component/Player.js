@@ -24,11 +24,12 @@ export default function Player() {
     dispatch(updateProgress(playerRef.current.getCurrentTime()));
     if (Math.floor(playerRef.current.getCurrentTime()) > 10 && !apiCalled) {
       try {
+        setApiCalled(true);
         const data = await OriginalRequest(
           `songs/addSongStream/${currentSong._id}`,
           "POST"
         );
-        setApiCalled(true);
+
         console.log(data);
       } catch (error) {
         console.log(error);
@@ -38,7 +39,7 @@ export default function Player() {
   const handleSongEnd = (e) => {
     console.log("song end!");
     if (
-      (userInfo.songs_purchased.includes(currentSong._id) &&
+      (userInfo._id && userInfo.songs_purchased.includes(currentSong._id) &&
         currentSong.is_exclusive) ||
       !currentSong.is_exclusive
     ) {
@@ -123,8 +124,9 @@ export default function Player() {
               sx={{ mt: 2 }}
               color={"#ADADAD"}
             >
-              This is a preview version of an <span className="text-amber-500">exclusive release</span>.
-              You can purchase the song to enjoy the full version and support{" "}
+              This is a preview version of an{" "}
+              <span className="text-amber-500">exclusive release</span>. You can
+              purchase the song to enjoy the full version and support{" "}
               <a
                 href={`/artist/${currentSong?.artist?._id}`}
                 className="text-sky-600"

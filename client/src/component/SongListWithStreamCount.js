@@ -13,7 +13,7 @@ import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
-export default function SongList({ url }) {
+export default function SongListWithStreamCount({url}) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
@@ -59,10 +59,11 @@ export default function SongList({ url }) {
           <tr className="border-b border-neutral-300">
             <td className="w-1/12 text-center">#</td>
             <td className="w-4/12">Song</td>
-            <td className="hidden md:table-cell md:w-5/12 text-center">
+            <td className="hidden md:table-cell md:w-4/12 text-center">
               Album
             </td>
             <td className="w-1/12 text-center">duration</td>
+            <td className="w-1/12 text-center">Stream</td>
             <td className="w-1/12"></td>
           </tr>
         </thead>
@@ -115,12 +116,15 @@ export default function SongList({ url }) {
                     </div>
                   </div>
                 </td>
-                <td className="hidden md:table-cell md:w-5/12 text-center">
+                <td className="hidden md:table-cell md:w-4/12 text-center">
                   {song.album ? song.album.album_name : ""}
                 </td>
                 <td className="w-1/12 text-center">{`${Math.floor(
                   song.duration / 60
                 )}:${song.duration % 60}`}</td>
+                <td className="w-1/12 text-center">
+                    {song.streamCount}
+                </td>
                 <td className="w-1/12">
                   <IoEllipsisHorizontal
                     onClick={(e) => {

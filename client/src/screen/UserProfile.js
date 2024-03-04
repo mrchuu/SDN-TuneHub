@@ -5,17 +5,18 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { useDispatch, useSelector } from "react-redux";
-import { login, logOut, setUserInfo} from "../redux/auth.js";
+import { login, logOut, setUserInfo } from "../redux/auth.js";
 import "../style/userprofile.css"
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { BsThreeDots } from "react-icons/bs";
 import { FaPen } from "react-icons/fa";
-import Modal from 'react-modal';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import Modal from "react-modal";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import { FormControl, TextField } from "@mui/material";
 import { useDropzone } from "react-dropzone";
+import SongList from "../component/SongList.js";
 export default function UserProfile() {
 
     const navigate = useNavigate();
@@ -64,15 +65,16 @@ export default function UserProfile() {
         const updateEditProfile = { ...editProfile };
         updateEditProfile.profilePicture = imageSrc;
         try {
-            const data  = await OriginalRequest(
+            const data = await OriginalRequest(
                 `user/edit-profile`,
                 "PUT",
                 updateEditProfile
             );
             // console.log("Data here: "+data);
-            if(data.data){
+            if (data.data) {
                 dispatch(setUserInfo(data.data));
             }
+            setIsOpen0(false);
         } catch (error) {
             console.log(error);
         }
@@ -109,25 +111,25 @@ export default function UserProfile() {
 
 
 
-    const [changePassword, setChangePassword] = useState({
-        id: auth._id,
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
+  const [changePassword, setChangePassword] = useState({
+    id: auth._id,
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [passwordMatch, setPasswordMatch] = useState(true);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setChangePassword({
+      ...changePassword,
+      [name]: value,
     });
-
-    const [passwordMatch, setPasswordMatch] = useState(true);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setChangePassword({
-            ...changePassword,
-            [name]: value
-        });
-        if (name === 'confirmPassword') {
-            setPasswordMatch(changePassword.newPassword === value);
-        }
-    };
+    if (name === "confirmPassword") {
+      setPasswordMatch(changePassword.newPassword === value);
+    }
+  };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -136,43 +138,44 @@ export default function UserProfile() {
         } else {
             try {
                 OriginalRequest("user/change-password", "PUT", changePassword);
+                setIsOpen(false);
             } catch (error) {
                 console.error("Failed to change password:", error);
             }
         }
     };
 
-    function openPopup() {
-        setIsOpen(true);
-    }
+  function openPopup() {
+    setIsOpen(true);
+  }
 
-    function closePopup() {
-        setIsOpen(false);
-    }
-    const openPopup0 = () => {
-        setIsOpen0(true);
-    };
+  function closePopup() {
+    setIsOpen(false);
+  }
+  const openPopup0 = () => {
+    setIsOpen0(true);
+  };
 
-    const closePopup0 = () => {
-        setIsOpen0(false);
-    };
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        // border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-    };
-    return (
-        <DefaultTemplate>
-            <div className="w-full min-h-screen">
-                <div className="profile-contain">
-                    <div className="profile-header">
-                        {/* <div className="profile-back">
+  const closePopup0 = () => {
+    setIsOpen0(false);
+  };
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    // border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+  return (
+    <DefaultTemplate>
+      <div className="w-full min-h-screen">
+        <div className="profile-contain">
+          <div className="profile-header bg-light30 dark:bg-dark30">
+            {/* <div className="profile-back">
                             <Link className="flex items-center" to={"/"}>
                                 <MdOutlineKeyboardBackspace size={30} />
                                 <p className="text-lg font-semibold text-light10">HomePage</p>
@@ -328,7 +331,10 @@ export default function UserProfile() {
                                 </Modal>
                             </div>
                         </div>
-
+                         <div className="px-5">
+                                                        <h1 className="text-lg font-semibold">Recent song</h1>
+                              <SongList url={`songs/recentSong/${auth._id}`}/>
+                         </div>                              
                         <div className="px-4 mt-1">
                             <h2 className="text-2xl font-bold mb-4 text-lightText dark:text-darkText">Public Playlists</h2>
                             <div className="flex flex-wrap justify-between px-4 space-x-4">
