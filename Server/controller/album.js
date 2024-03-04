@@ -27,17 +27,30 @@ const addAlbum = async (req, res) => {
       background,
     });
     const songIds = newAlbum.songs.map((song) => song._id);
-    const songsUpdate = await SongRepository.makePublic({songIds, album: newAlbum._id});
+    const songsUpdate = await SongRepository.makePublic({
+      songIds,
+      album: newAlbum._id,
+    });
     const artistUpdate = await ArtistRepository.makeAlbum({
       albumId: newAlbum._id,
       album_name: newAlbum.album_name,
       album_cover: newAlbum.album_cover,
       price: newAlbum.price,
-      artistId: artist._id
+      artistId: artist._id,
     });
     return res.status(201).json({ message: "New album has been published !!" });
   } catch (error) {}
 };
+const getAlbumsOfArtists = async (req, res) => {
+  try {
+    const artistId = req.params.artistId;
+    const albums = await AlbumRepository.getAlbumsOfArtists(artistId);
+    return res.status(200).json({ data: albums });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export default {
   addAlbum,
+  getAlbumsOfArtists
 };

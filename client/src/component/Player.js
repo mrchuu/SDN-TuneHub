@@ -39,7 +39,7 @@ export default function Player() {
   const handleSongEnd = (e) => {
     console.log("song end!");
     if (
-      (userInfo.songs_purchased.includes(currentSong._id) &&
+      (userInfo._id && userInfo.songs_purchased.includes(currentSong._id) &&
         currentSong.is_exclusive) ||
       !currentSong.is_exclusive
     ) {

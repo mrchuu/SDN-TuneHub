@@ -23,13 +23,17 @@ const getRecentlyPlayedSongs = async (req, res) => {
     //   }
     //   userId = existingUser._id;
     // }
-    const currentUserId = req.params.id; 
-    const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(currentUserId);
+    const currentUserId = req.params.id;
+    const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(
+      currentUserId
+    );
     console.log(`songStreams: ${songStreams}`);
-    const songs = await Promise.all(songStreams.map(async (stream) => {
-      const song = await SongRepository.getSongsByIds(stream.song)
-      return song[0];
-    }));
+    const songs = await Promise.all(
+      songStreams.map(async (stream) => {
+        const song = await SongRepository.getSongsByIds(stream.song);
+        return song[0];
+      })
+    );
     // const songs = await SongRepository.getSongsByIds(songStreams[0].song);
     res.status(200).json({ data: songs });
   } catch (error) {
@@ -73,23 +77,24 @@ const streamSong = async (req, res) => {
     if (fs.existsSync(filePath)) {
       const { is_exclusive, preview_start_time, preview_end_time } =
         existingSong;
-      if (
-        (is_exclusive &&
-          userId &&
-          existingSong.purchased_user.includes(userId)) ||
-        !is_exclusive
-      ) {
+      if (is_exclusive) {
+        if (userId && existingSong.purchased_user.includes(userId)) {
+          const fileStream = fs.createReadStream(filePath);
+          res.setHeader("Content-Type", "audio/mpeg");
+          fileStream.pipe(res);
+        } else {
+          const ffmpegCmd = ffmpeg(filePath)
+            .setStartTime(preview_start_time)
+            .setDuration(preview_end_time - preview_start_time)
+            .audioCodec("libmp3lame")
+            .format("mp3");
+          res.setHeader("Content-Type", "audio/mpeg");
+          ffmpegCmd.pipe(res, { end: true });
+        }
+      } else {
         const fileStream = fs.createReadStream(filePath);
         res.setHeader("Content-Type", "audio/mpeg");
         fileStream.pipe(res);
-      } else {
-        const ffmpegCmd = ffmpeg(filePath)
-          .setStartTime(preview_start_time)
-          .setDuration(preview_end_time - preview_start_time)
-          .audioCodec("libmp3lame")
-          .format("mp3");
-        res.setHeader("Content-Type", "audio/mpeg");
-        ffmpegCmd.pipe(res, { end: true });
       }
     } else {
       return res.status(500).json({
@@ -252,7 +257,7 @@ const getPopularSongOfArtist = async (req, res) => {
     const result = await SongRepository.getPopularSongOfArtist(artistId);
     return res.status(200).json({ data: result });
   } catch (error) {
-    return res.status(500).json({error: error.message})
+    return res.status(500).json({ error: error.message });
   }
 };
 export default {

@@ -24,6 +24,18 @@ const createAlbum = async ({
     throw new Error(error.message);
   }
 };
+const getAlbumsOfArtists = async (artistId) => {
+  try {
+    const result = await Album.find(
+      { artist: artistId, is_public: true },
+      "createdAt _id album_cover album_name description"
+    );
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   createAlbum,
+  getAlbumsOfArtists,
 };

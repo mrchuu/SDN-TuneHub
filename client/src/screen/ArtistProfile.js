@@ -3,6 +3,8 @@ import NoSpaceHeaderTemplate from "../template/NoSpaceHeaderTemplat";
 import { useDispatch, useSelector } from "react-redux";
 import { setScrollPos } from "../redux/window";
 import { useEffect } from "react";
+import SongListWithStreamCount from "../component/SongListWithStreamCount";
+import AlbumList from "../component/AlbumsList";
 
 export default function ArtistProfile() {
   const dispatch = useDispatch();
@@ -36,8 +38,21 @@ export default function ArtistProfile() {
           </div>
         </div>
         <div className="h-24 w-full bg-gradient-to-b from-light30 to-light60 dark:from-dark30 dark:to-dark60 transition-all"></div>
+        <div className="px-5">
+          <h4 className="text-lightText dark:text-darkText font-semibold text-xl">
+            Popular Tracks
+          </h4>
+          <div className="px-5">
+            <SongListWithStreamCount
+              url={`songs/getArtistPopularSongs/${artistId}`}
+            />
+          </div>
+          <h4 className="text-lightText dark:text-darkText font-semibold text-xl mt-7">
+            Albums
+          </h4>
+          <AlbumList url={`album/getAlbumsOfArtist/${artistId}`} />
+        </div>
       </div>
-      <div className="h-96"></div>
     </NoSpaceHeaderTemplate>
   );
 }
