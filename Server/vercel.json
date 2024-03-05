@@ -2,8 +2,32 @@
     "version": 2,
     "routes": [
         {
+            "src": "/api/auth/(.*)",
+            "dest": "/Server/routes/index.js"
+        },
+        {
+            "src": "/api/songs/(.*)",
+            "dest": "/Server/routes/index.js"
+        },
+        {
+            "src": "/api/genres/(.*)",
+            "dest": "/Server/routes/index.js"
+        },
+        {
+            "src": "/api/artists/(.*)",
+            "dest": "/Server/routes/index.js"
+        },
+        {
+            "src": "/api/user/(.*)",
+            "dest": "/Server/routes/index.js"
+        },
+        {
+            "src": "/api/album/(.*)",
+            "dest": "/Server/routes/index.js"
+        },
+        {
             "src": "/(.*)",
-            "dest": "/"
+            "dest": "/Server/$1"
         }
     ]
 }
