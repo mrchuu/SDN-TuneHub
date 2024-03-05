@@ -2,8 +2,8 @@
     "version": 2,
     "routes": [
         {
-            "src": "/api/songs",
-            "dest": "/routes/song.js"
+            "src": "/(.*)",
+            "dest": "/"
         }
     ]
 }
