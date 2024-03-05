@@ -1,13 +1,13 @@
 {
     "version": 2,
-    "rewrites": [
+    "routes": [
         {
-            "source": "/api/(.*)",
-            "destination": "/Server/routes/$1"
+            "src": "/api/(.*)",
+            "dest": "/Server/routes/index.js"
         },
         {
-            "source": "/(.*)",
-            "destination": "/Server/$1"
+            "src": "/(.*)",
+            "dest": "/Server/index.js"
         }
     ]
 }
