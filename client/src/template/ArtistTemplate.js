@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import ArtistSideBar from "../component/ArtistSideBar.js";
-import Header from "../component/Header.js";
+import HeaderDefault from "../component/HeaderDefault.js";
 export default function ArtistTemplate({ title, children }) {
   const expanded = useSelector((state) => state.sideBar.expanded);
   return (
@@ -12,8 +12,7 @@ export default function ArtistTemplate({ title, children }) {
             window.innerWidth > 768 ? (expanded ? "ml-60" : "ml-20") : "ml-20"
           }`}
         >
-          <Header />
-          <div style={{ height: "80px" }}></div>
+          <HeaderDefault />
           {children}
         </div>
       </div>

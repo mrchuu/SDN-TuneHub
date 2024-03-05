@@ -194,7 +194,7 @@ export default function LeaderBoard() {
                     </div>
                     <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
                         {ArtistList.slice(0, showAllArtists ? ArtistList.length : 5).map((artist, index) => (
-                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8">
+                            <div key={artist._id} className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8">
                                 <img
                                     src={artist.artist_file.profile_picture}
                                     className="rounded-full w-40 h-40 object-cover object-center"
@@ -239,7 +239,7 @@ export default function LeaderBoard() {
                     </div>
                     <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
                         {ArtistList.map((artist, index) => (
-                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8">
+                            <div key={artist._id} className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8">
                                 <img
                                     src={artist.artist_file.profile_picture}
                                     className="rounded-md w-40 h-40 object-cover object-center"

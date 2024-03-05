@@ -148,7 +148,7 @@ const uploadSong = async (req, res) => {
       const genre = fields.genre ? fields.genre : null;
       const participatedArtists =
         fields.participatedArtists[0] !== ""
-          ? fields.participatedArtists
+          ? fields.participatedArtists[0].split(",")
           : null;
       const duration = fields.duration ? parseInt(fields.duration[0]) : null;
       const isExclusive = fields.isExclusive
