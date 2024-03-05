@@ -23,6 +23,7 @@ export default function LeaderBoard() {
     const dispatch = useDispatch();
     const [showAllSongs, setShowAllSongs] = useState(false);
     const [showAllArtists, setShowAllArtists] = useState(false);
+    const [date, setDate] = useState('1');
     let intervalId;
 
     const closeMenu = (e, song) => {
@@ -35,8 +36,13 @@ export default function LeaderBoard() {
         setSongMenuAnchor(e.currentTarget);
     };
 
-    const fetchSong = async () => {
-        const data = await OriginalRequest("songs/leaderboard/topSong/1m", "GET");
+    const handleDateChange = (value) => {
+        setDate(value);
+    };
+
+    const fetchSong = async (date) => {
+        const data = await OriginalRequest(`songs/leaderboard/topSong/${date}`, "GET");
+        console.log(date);
         if (data) {
             setSong(data);
         }
@@ -47,11 +53,24 @@ export default function LeaderBoard() {
             setArtist(data);
         }
     };
+
+    const getDateText = () => {
+        switch (date) {
+            case '1':
+                return 'Day';
+            case '7':
+                return 'Week';
+            case '30':
+                return 'Month';
+            default:
+                return 'Time';
+        }
+    };
     useEffect(() => {
-        fetchSong();
+        fetchSong(date);
         fetchArtist();
         return () => clearInterval(intervalId);
-    }, []);
+    }, [date]);
 
     return (
         <DefaultTemplate>
@@ -59,11 +78,31 @@ export default function LeaderBoard() {
                 <h1 className="text-4xl font-bold mb-8 dark:text-white ml-4">
                     LeaderBoard
                 </h1>
-                <button className="border border-neutral-300 rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1">Day</button>
-                <button className="border border-neutral-300 rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1">Week</button>
-                <button className="border border-neutral-300 rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1">Month</button>
+                <div class="flex flex-row">
+                    <button
+                        onClick={() => handleDateChange('1')}
+                        class={`rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1 ${date === '1' ? 'bg-light10 dark:bg-dark10' : ''}`}
+                    >
+                        <span class="cursor-pointer">Day</span>
+                    </button>
+
+                    <button
+                        onClick={() => handleDateChange('7')}
+                        class={`rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1 ${date === '7' ? 'bg-light10 dark:bg-dark10' : ''}`}
+                    >
+                        <span class="cursor-pointer">Week</span>
+                    </button>
+
+                    <button
+                        onClick={() => handleDateChange('30')}
+                        class={`rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1 ${date === '30' ? 'bg-light10 dark:bg-dark10' : ''}`}
+                    >
+                        <span class="cursor-pointer">Month</span>
+                    </button>
+                </div>
+
                 <h2 className="text-2xl font-semibold mb-8 dark:text-white m-4">
-                    Top Song in month
+                    Top Song in {getDateText()}
                 </h2>
                 <table className="w-full text-lightText dark:text-darkText">
                     <thead className="font-semibold">

@@ -224,16 +224,18 @@ const searchSongByName = async (req, res) => {
   }
 };
 
-const getAllSongsByLastest = async (req, res, date) => {
+const getAllSongsByLastest = async (req, res) => {
   try {
+    const { date } = req.params;
     const songs = await SongRepository.hotestSongByDay(date);
     res.status(200).json(songs);
   } catch (error) {
-    getAllSongsByLastest.res.status(500).json({
+    res.status(500).json({
       message: error.toString(),
     });
   }
 };
+
 const getUnPublishedSongOfArtist = async (req, res) => {
   try {
     const decodedToken = req.decodedToken;

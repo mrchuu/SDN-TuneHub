@@ -9,7 +9,7 @@ songRouter.post("/uploadSingle", verifyToken, SongController.uploadSong);
 songRouter.get("/search/:nameKey", SongController.searchSongByName);
 songRouter.post("/addSongStream/:songId", SongController.addStreamSong);
 
-songRouter.get("/leaderboard/topSong/1m", SongController.getAllSongsByLastest);
+songRouter.get("/leaderboard/topSong/:date", SongController.getAllSongsByLastest);
 songRouter.get(
   "/unpublished",
   verifyToken,
