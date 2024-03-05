@@ -333,7 +333,7 @@ export default function UserProfile() {
                         </div>
                          <div className="px-5">
                                                         <h1 className="text-lg font-semibold">Recent song</h1>
-                              <SongList url={`songs/recentSong/${auth._id}`}/>
+                              <SongList url={`songs/recentSong`}/>
                          </div>                              
                         <div className="px-4 mt-1">
                             <h2 className="text-2xl font-bold mb-4 text-lightText dark:text-darkText">Public Playlists</h2>

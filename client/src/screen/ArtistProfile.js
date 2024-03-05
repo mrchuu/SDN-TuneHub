@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import SongListWithStreamCount from "../component/SongListWithStreamCount";
 import AlbumList from "../component/AlbumsList";
 import PerformRequest from "../utilities/PerformRequest";
+import FeaturedIn from "../component/artistProfile/FeaturedIn";
 
 export default function ArtistProfile() {
   const dispatch = useDispatch();
@@ -28,7 +29,6 @@ export default function ArtistProfile() {
       try {
         const artist = await OriginalRequest(`artists/${artistId}`, "GET");
         setArtistInfo(artist.data);
-        
       } catch (error) {
         console.log(error);
       }
@@ -73,7 +73,7 @@ export default function ArtistProfile() {
               <h4 className="text-lightText dark:text-darkText font-semibold text-xl">
                 Popular Tracks
               </h4>
-              <div className="px-5">
+              <div className="px-3">
                 <SongListWithStreamCount
                   url={`songs/getArtistPopularSongs/${artistId}`}
                 />
@@ -82,9 +82,14 @@ export default function ArtistProfile() {
                 Albums
               </h4>
               <AlbumList url={`album/getAlbumsOfArtist/${artistId}`} />
+              <h4 className="text-lightText dark:text-darkText font-semibold text-xl mt-2">
+                Featured In
+              </h4>
+              <FeaturedIn url={`songs/getFeaturedSongs/${artistId}`} />
             </div>
           </div>
         )}
+        <div className="h-10"></div>
       </div>
     </NoSpaceHeaderTemplate>
   );

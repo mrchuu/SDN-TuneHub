@@ -5,35 +5,35 @@ import artist from "./artist.js";
 import mongoose from "mongoose";
 const getSongsByIds = async (songId) => {
   return await Song.aggregate([
-    { $match: { _id: songId} },
-    { 
+    { $match: { _id: songId } },
+    {
       $lookup: {
         from: "Album",
         localField: "album",
         foreignField: "_id",
-        as: "album"
-      }
+        as: "album",
+      },
     },
-    { 
+    {
       $lookup: {
         from: "Artist",
         localField: "artist",
         foreignField: "_id",
-        as: "artist"
-      }
+        as: "artist",
+      },
     },
-    { 
+    {
       $project: {
         _id: 1,
         song_name: 1,
         is_exclusive: 1,
-        album: { 
+        album: {
           $arrayElemAt: [
             {
               $map: {
                 input: "$album",
-                in: { 
-                  _id: "$$this._id", 
+                in: {
+                  _id: "$$this._id",
                   // artist: "$$this.artist",
                   album_name: "$$this.album_name",
                   // songs: {
@@ -51,35 +51,31 @@ const getSongsByIds = async (songId) => {
                   // purchasers: "$$this.purchasers",
                   // album_cover: "$$this.album_cover",
                   // price: "$$this.price"
-                }
-              }
-            }, 
-            0
-          ] 
+                },
+              },
+            },
+            0,
+          ],
         },
-        
+
         cover_image: 1,
-        artist: { 
+        artist: {
           $arrayElemAt: [
             {
               $map: {
                 input: "$artist",
-                in: { _id: "$$this._id", artist_name: "$$this.artist_name" }
-              }
-            }, 
-            0
-          ] 
+                in: { _id: "$$this._id", artist_name: "$$this.artist_name" },
+              },
+            },
+            0,
+          ],
         },
-        duration: 1
-      }
+        duration: 1,
+      },
     },
-    { $limit: 1 } // Giới hạn kết quả trả về thành 1 đối tượng
+    { $limit: 1 }, // Giới hạn kết quả trả về thành 1 đối tượng
   ]);
 };
-
-
-
-
 
 const getAllSongs = async () => {
   try {
@@ -97,7 +93,7 @@ const getAllSongs = async () => {
   }
 };
 const getSongsById = async (songId) => {
-  try { 
+  try {
     const existingSong = await Song.findById(songId)
       .populate("artist")
       .populate("album")
@@ -123,7 +119,7 @@ const getPopularSongOfArtist = async (artistId) => {
     const result = await Song.aggregate([
       {
         $match: {
-          artist: new mongoose.Types.ObjectId(artistId)
+          artist: new mongoose.Types.ObjectId(artistId),
         },
       },
       {
@@ -414,48 +410,47 @@ const hotestSongByDay = async (date) => {
         },
       },
       {
-          $group: {
-            _id: "$_id",
-            song_name: { $first: "$song_name" },
-            album: { $first: "$album" },
-            artist_name: {
-              $first: "$artist_file.artist_name",
-            },
-            cover_image: { $first: "$cover_image" },
-            profile_picture: {
-              $first: "$users_file.profile_picture",
-            },
-            album_name: {
-              $first: "$album_file.album_name",
-            },
-            intro_user: {
-              $first: "$users_file.introduction",
-            },
-            streamCount: { $sum: "$withinLast24Hours" },
-            duration: { $first: "$duration"},
+        $group: {
+          _id: "$_id",
+          song_name: { $first: "$song_name" },
+          album: { $first: "$album" },
+          artist_name: {
+            $first: "$artist_file.artist_name",
           },
+          cover_image: { $first: "$cover_image" },
+          profile_picture: {
+            $first: "$users_file.profile_picture",
+          },
+          album_name: {
+            $first: "$album_file.album_name",
+          },
+          intro_user: {
+            $first: "$users_file.introduction",
+          },
+          streamCount: { $sum: "$withinLast24Hours" },
+          duration: { $first: "$duration" },
+        },
       },
       {
         $sort: {
           streamCount: -1,
         },
       },
-        {
-          $project: {
-            _id: 1,
-            song_name: 1,
-            artist: 1,
-            artist_name: 1,
-            cover_image: 1,
-            profile_picture: 1,
-            streamCount: 1,
-            intro_user: 1,
-            album_name: 1,
-            duration: 1
-          }
-        }
-      ]
-    ).exec();
+      {
+        $project: {
+          _id: 1,
+          song_name: 1,
+          artist: 1,
+          artist_name: 1,
+          cover_image: 1,
+          profile_picture: 1,
+          streamCount: 1,
+          intro_user: 1,
+          album_name: 1,
+          duration: 1,
+        },
+      },
+    ]).exec();
     return results;
   } catch (error) {
     console.log(error.message);
@@ -471,6 +466,24 @@ const getUnPublishedSongOfArtist = async (artistId) => {
       "_id song_name cover_image duration price artist"
     );
     return unPublishedSongs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+const getFeaturedSongs = async (artistId) => {
+  try {
+    const result = await Song.find(
+      {
+        participated_artist: {
+          $in: [artistId],
+        },
+      },
+      "_id song_name participated_artist is_exclusive preview_start_time preview_end_time cover_image artist duration album"
+    )
+      .populate("participated_artist", "_id artist_name")
+      .populate("artist", "_id artist_name")
+      .populate("album", "_id album_name");
+    return result;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -502,4 +515,5 @@ export default {
   makePublic,
   getPopularSongOfArtist,
   getSongsByIds,
+  getFeaturedSongs,
 };

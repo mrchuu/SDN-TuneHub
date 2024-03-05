@@ -34,12 +34,12 @@ export default function AlbumList({ url }) {
           {albums.map((album) => (
             <div
               key={album.id} // Add a unique key to each element in the array
-              className="card border lg:w-2/12 md:w-4/12 sm:w-6/12 pb-2 rounded-md hover:bg-light30 hover:dark:bg-dark30 hover:shadow-md hover:shadow-neutral-400 hover:dark:shadow-blue-600/40 dark:border-none"
+              className="card border lg:w-2/12 md:w-4/12 sm:w-6/12 pb-2 rounded hover:bg-light30 hover:dark:bg-dark30 hover:shadow-md hover:shadow-neutral-400 hover:dark:shadow-blue-600/40 dark:border-none"
             >
               <div className="p-2">
                 <img
                   src={album.album_cover}
-                  className="w-44 h-44 rounded-md mx-auto border-2 border-neutral-400/20"
+                  className="w-44 h-44 rounded-md mx-auto border-2 border-neutral-400/20 object-cover object-center"
                 />
               </div>
               <div className="lg:px-3 md:px-3 sm:px-8">
@@ -56,7 +56,7 @@ export default function AlbumList({ url }) {
       ) : (
         <></>
       )}
-      <div className="h-10"></div>
+
     </div>
   );
 }
