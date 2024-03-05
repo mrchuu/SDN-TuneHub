@@ -18,7 +18,7 @@ import { fileURLToPath } from "url";
 const app = express();
 dotenv.config();
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://TuneHub.app",
   methods: "PUT, POST, GET, DELETE, OPTIONS, PATCH",
   credentials: true, // Allow cookies and other credentials to be sent
 };
@@ -39,10 +39,6 @@ app.use("/api/songs", SongRouter);
 app.use("/api/genres", GenreRouter);
 app.use("/api/artists", ArtistRouter);
 app.use("/api/user", UserRouter);
-app.use(
-  "/upload/image",
-  express.static(path.join(__dirname, `upload`, "image"))
-);
 app.use("/api/artists", ArtistRouter);
 const port = process.env.PORT || 9999;
 const MONGODB_URI = process.env.MONGODB_URI;
