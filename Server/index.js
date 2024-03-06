@@ -33,6 +33,9 @@ app.use(express.urlencoded({ extended: true }));
 // });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+app.get("/hello", (req, res)=>{
+  return res.status(200).json("hello")
+})
 app.use("/api/auth", AuthenticationRouter);
 app.use("/api/album", AlbumRouter);
 app.use("/api/songs", SongRouter);
