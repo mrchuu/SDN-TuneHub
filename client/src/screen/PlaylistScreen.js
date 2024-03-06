@@ -87,7 +87,7 @@ const PlaylistScreen = () => {
   const fakePlaylists = [
     {
       id: 1,
-      name: "Chill Vibesheeeeeeeeeeeeeeeeêhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+      name: "Chill Vibeshe",
       creator: "John Doe",
       image: "https://rdsic.edu.vn/blog/toan/hinh-nen-dep-meo-cute-tao-khong-gian-tuoi-sang-va-ruc-ro-cho-tre-nho-vi-cb.html",
       songs: [
