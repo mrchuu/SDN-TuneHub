@@ -106,6 +106,7 @@ export default function SongList({ url }) {
                         <Link
                           to={`artist/${song.artist._id}`}
                           className="text-xs hover:underline"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {song.artist.artist_name}
                         </Link>
