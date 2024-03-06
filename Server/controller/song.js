@@ -23,7 +23,7 @@ const getRecentlyPlayedSongs = async (req, res) => {
     //   }
     //   userId = existingUser._id;
     // }
-    const currentUserId = req.params.id;
+    const currentUserId = req.decodedToken.userId;
     const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(
       currentUserId
     );
@@ -148,7 +148,7 @@ const uploadSong = async (req, res) => {
       const genre = fields.genre ? fields.genre : null;
       const participatedArtists =
         fields.participatedArtists[0] !== ""
-          ? fields.participatedArtists
+          ? fields.participatedArtists[0].split(",")
           : null;
       const duration = fields.duration ? parseInt(fields.duration[0]) : null;
       const isExclusive = fields.isExclusive
@@ -267,6 +267,23 @@ const getSongDetail = async (req, res) => {
     const songId = req.params.songId;
     const result = await SongRepository.getSongsById(songId);
     return res.status(200).json({ data: result });
+  } catch {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const getFeaturedSongs = async (req, res) => {
+  try {
+    const artistId = req.params.artistId;
+    if (!artistId) {
+      return res.status(400).json({ error: "Bad request" });
+    }
+    const artist = await ArtistRepository.findByArtistId(artistId);
+    if (!artist) {
+      return res.status(404).json({ error: "Not found" });
+    }
+    const featuredSongs = await SongRepository.getFeaturedSongs(artistId);
+    return res.status(200).json({ data: featuredSongs });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -282,5 +299,6 @@ export default {
   getUnPublishedSongOfArtist,
   getPopularSongOfArtist,
   getRecentlyPlayedSongs,
-  getSongDetail
+  getSongDetail,
+  getFeaturedSongs
 };

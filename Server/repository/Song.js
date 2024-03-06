@@ -11,16 +11,16 @@ const getSongsByIds = async (songId) => {
         from: "Album",
         localField: "album",
         foreignField: "_id",
-        as: "album"
-      }
+        as: "album",
+      },
     },
     {
       $lookup: {
         from: "Artist",
         localField: "artist",
         foreignField: "_id",
-        as: "artist"
-      }
+        as: "artist",
+      },
     },
     {
       $project: {
@@ -51,11 +51,11 @@ const getSongsByIds = async (songId) => {
                   // purchasers: "$$this.purchasers",
                   // album_cover: "$$this.album_cover",
                   // price: "$$this.price"
-                }
-              }
+                },
+              },
             },
-            0
-          ]
+            0,
+          ],
         },
 
         cover_image: 1,
@@ -64,16 +64,16 @@ const getSongsByIds = async (songId) => {
             {
               $map: {
                 input: "$artist",
-                in: { _id: "$$this._id", artist_name: "$$this.artist_name" }
-              }
+                in: { _id: "$$this._id", artist_name: "$$this.artist_name" },
+              },
             },
-            0
-          ]
+            0,
+          ],
         },
-        duration: 1
-      }
+        duration: 1,
+      },
     },
-    { $limit: 1 } // Giới hạn kết quả trả về thành 1 đối tượng
+    { $limit: 1 }, // Giới hạn kết quả trả về thành 1 đối tượng
   ]);
 };
 
@@ -119,7 +119,7 @@ const getPopularSongOfArtist = async (artistId) => {
     const result = await Song.aggregate([
       {
         $match: {
-          artist: new mongoose.Types.ObjectId(artistId)
+          artist: new mongoose.Types.ObjectId(artistId),
         },
       },
       {
@@ -419,53 +419,44 @@ const hotestSongByDay = async (date) => {
           $group: {
             _id: "$_id",
             song_name: { $first: "$song_name" },
-            album: {
-              $first: {
-                _id: "$album_file.id",
-                album_name: "$album_file.album_name",
-              },
-            },
-            artist: {
-              $first: {
-                _id: "$artist_file._id",
-                artist_name: "$artist_file.artist_name",
-              },
+            album: { $first: "$album" },
+            artist_name: {
+              $first: "$artist_file.artist_name",
             },
             cover_image: { $first: "$cover_image" },
-            streamCount: { $sum: "$count" },
-            duration: { $first: "$duration" },
-            is_exclusive: { $first: "$is_exclusive" },
-            lastStreamTime: {
-              $first: "$lastStreamTime",
+            profile_picture: {
+              $first: "$users_file.profile_picture",
             },
+            album_name: {
+              $first: "$album_file.album_name",
+            },
+            intro_user: {
+              $first: "$users_file.introduction",
+            },
+            streamCount: { $sum: "$withinLast24Hours" },
+            duration: { $first: "$duration" },
           },
-        },
-        {
-          $project: {
-            _id: "$_id",
-            song_name: "$song_name",
-            album: "$album",
-            artist: "$artist",
-            cover_image: "$cover_image",
-            streamCount: "$streamCount",
-            duration: "$duration",
-            is_exclusive: "$is_exclusive",
-            lastStreamTime: "$lastStreamTime",
-          },
-        },
-        {
-          $sort: { lastStreamTime: -1 },
-        },
-        {
-          $limit: 7,
         },
         {
           $sort: {
             streamCount: -1,
           },
         },
-      ]
-    ).exec();
+        {
+          $project: {
+            _id: 1,
+            song_name: 1,
+            artist: 1,
+            artist_name: 1,
+            cover_image: 1,
+            profile_picture: 1,
+            streamCount: 1,
+            intro_user: 1,
+            album_name: 1,
+            duration: 1,
+          },
+        },
+      ]).exec();
     return results;
   } catch (error) {
     console.error("Error in hotestSongByDay:", error);
@@ -483,6 +474,24 @@ const getUnPublishedSongOfArtist = async (artistId) => {
       "_id song_name cover_image duration price artist"
     );
     return unPublishedSongs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+const getFeaturedSongs = async (artistId) => {
+  try {
+    const result = await Song.find(
+      {
+        participated_artist: {
+          $in: [artistId],
+        },
+      },
+      "_id song_name participated_artist is_exclusive preview_start_time preview_end_time cover_image artist duration album"
+    )
+      .populate("participated_artist", "_id artist_name")
+      .populate("artist", "_id artist_name")
+      .populate("album", "_id album_name");
+    return result;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -514,4 +523,5 @@ export default {
   makePublic,
   getPopularSongOfArtist,
   getSongsByIds,
+  getFeaturedSongs,
 };

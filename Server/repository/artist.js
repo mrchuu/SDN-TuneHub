@@ -1,6 +1,6 @@
 import Artist from "../model/Artist.js";
 import song from "../model/Song.js";
-
+import User from "../model/RegisteredUser.js";
 const findArtistByName = async ({ searchInput, artistId }) => {
   try {
     return await Artist.find({
@@ -124,6 +124,14 @@ const searchArtistByName = async (name) => {
     throw new Error(error.message);
   }
 };
+const findByArtistId = async (artistId) =>{
+  try {
+    const result = await Artist.findById(artistId, "_id artist_name followers userId").populate("userId", "profile_picture").exec();
+    return result._doc
+  } catch (error) {
+    throw new Error(error.message)
+  }
+}
 const addSongUpload = async ({
   artistId,
   songId,
@@ -232,4 +240,5 @@ export default {
   getRisingArtist,
   hotArtist,
   makeAlbum,
+  findByArtistId
 };

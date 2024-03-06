@@ -50,10 +50,29 @@ const getAllHotArtist = async (req, res) => {
     });
   }
 };
+const getArtistInfo = async (req, res) => {
+  try {
+    const artisId = req.params.artistId;
+    if (!artisId) {
+      return res.status(400).json({ error: "Bad request" });
+    }
+    const artist = await ArtistRepository.findByArtistId(artisId);
+    if (!artist) {
+      return res.status(404).json({ error: "Not found" });
+    }
+    console.log(artist);
+    const { followers, ...filteredArtist } = artist;
 
+    filteredArtist.followersCount = artist.followers.length;
+    return res.status(200).json({ data: filteredArtist });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export default {
   findByName,
   searchArtistByName,
   getRisingArtist,
   getAllHotArtist,
+  getArtistInfo,
 };

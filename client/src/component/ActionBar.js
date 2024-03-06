@@ -15,7 +15,7 @@ import {
 } from "../redux/player.js";
 import { RxLoop } from "react-icons/rx";
 import ReactPlayer from "react-player";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Player from "./Player.js";
 import { PiShuffleLight } from "react-icons/pi";
 
@@ -28,9 +28,18 @@ export default function ActionBar() {
   const sliderValue = useSelector((state) => state.player.sliderValue);
   const showBox = useSelector((state) => state.player.showBox);
   const loop = useSelector((state) => state.player.loop);
+  const hasMounted = useRef(false);
+  // useEffect(() => {
+  //   console.log("loop changed: " + loop);
+  // }, [loop]);
   useEffect(() => {
-    console.log("song changed");
-  }, [currentSong]);
+    if (hasMounted.current) {
+      console.log("rerendered");
+    } else {
+      hasMounted.current = true;
+    }
+  }, [hasMounted]);
+
   return (
     <div className="bg-light30 dark:bg-dark30 w-full h-20 fixed bottom-0 z-50 flex items-center justify-between px-4">
       <div className="songInfo h-full px-4 flex items-center w-3/12 ">
@@ -72,7 +81,7 @@ export default function ActionBar() {
 
       </div>
       <div className="playerAction h-full px-4 flex-col w-6/12">
-        <Player />
+       
         <div className="action flex items-center justify-between w-6/12 mx-auto pt-3 pb-1">
           <div className=" p-1 rounded">
             <PiShuffleLight

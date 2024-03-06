@@ -20,6 +20,7 @@ export default function Player() {
   const sliderValue = useSelector((state) => state.player.sliderValue);
   const { OriginalRequest } = PerformRequest();
   const [apiCalled, setApiCalled] = useState(false);
+  const hasMounted = useRef(false);
   const handleProgress = async (e) => {
     dispatch(updateProgress(playerRef.current.getCurrentTime()));
     if (Math.floor(playerRef.current.getCurrentTime()) > 10 && !apiCalled) {
@@ -39,7 +40,8 @@ export default function Player() {
   const handleSongEnd = (e) => {
     console.log("song end!");
     if (
-      (userInfo._id && userInfo.songs_purchased.includes(currentSong._id) &&
+      (userInfo._id &&
+        userInfo.songs_purchased.includes(currentSong._id) &&
         currentSong.is_exclusive) ||
       !currentSong.is_exclusive
     ) {
@@ -50,11 +52,12 @@ export default function Player() {
     }
   };
   useEffect(() => {
-    setApiCalled(false);
-  }, [currentSong._id]);
-  // useEffect(()=>{
-  //   playerRef.current.seekTo(sliderValue);
-  // }, [sliderValue])
+    if (hasMounted.current) {
+      setApiCalled(false);
+    } else {
+      hasMounted.current = true;
+    }
+  }, [currentSong._id, hasMounted]);
   const style = {
     position: "absolute",
     top: "50%",

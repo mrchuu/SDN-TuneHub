@@ -3,7 +3,7 @@ import express from "express";
 import verifyToken from "../middleware/verifyToken.js";
 const songRouter = express.Router();
 songRouter.get("/getAll", SongController.getAllSongs);
-songRouter.get("/recentSong/:id",SongController.getRecentlyPlayedSongs)
+songRouter.get("/recentSong", verifyToken,SongController.getRecentlyPlayedSongs)
 songRouter.get("/streamSong/:songId", SongController.streamSong);
 songRouter.post("/uploadSingle", verifyToken, SongController.uploadSong);
 songRouter.get("/search/:nameKey", SongController.searchSongByName);
@@ -16,4 +16,5 @@ songRouter.get(
   SongController.getUnPublishedSongOfArtist
 );
 songRouter.get("/getArtistPopularSongs/:artistId", SongController.getPopularSongOfArtist)
+songRouter.get("/getFeaturedSongs/:artistId", SongController.getFeaturedSongs)
 export default songRouter;

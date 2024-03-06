@@ -106,7 +106,6 @@ export default function SongUploadForm() {
   }, [hasMounted]);
   useEffect(() => {
     const fetchArtists = async () => {
-
       try {
         const response = await OriginalRequest("artists/findByName", "POST", {
           artistName: "",
@@ -117,8 +116,12 @@ export default function SongUploadForm() {
         console.log(error);
       }
     };
-    fetchArtists();
-  }, []);
+    if (hasMounted.current) {
+      fetchArtists();
+    } else {
+      hasMounted.current = true;
+    }
+  }, [hasMounted]);
   const readFileAsDataURL = (file) => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -146,7 +149,7 @@ export default function SongUploadForm() {
     }
     formData.append("audioFile", songInfo.audioFile);
     formData.append("duration", songInfo.duration);
-    formData.append("isPublic", songInfo.isPublic)
+    formData.append("isPublic", songInfo.isPublic);
     if (songInfo.isExclusive) {
       formData.append("isExclusive", true);
       formData.append("previewStart", songInfo.previewStart);
