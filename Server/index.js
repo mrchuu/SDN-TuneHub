@@ -22,9 +22,9 @@ import { fileURLToPath } from "url";
 const app = express();
 dotenv.config();
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://TuneHub.app",
   methods: "PUT, POST, GET, DELETE, OPTIONS, PATCH",
-  credentials: true, // Allow cookies and other credentials to be sent
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -46,9 +46,13 @@ app.get("/api/playlists", async (req, res) => {
 // Serve static files
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
 app.use("/upload/image", express.static(path.join(__dirname, "upload", "image")));
 
-// Define API routes
+app.get("/hello", (req, res)=>{
+  return res.status(200).json("hello")
+})
+
 app.use("/api/auth", AuthenticationRouter);
 app.use("/api/album", AlbumRouter);
 app.use("/api/songs", SongRouter);
