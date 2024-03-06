@@ -1,7 +1,7 @@
-import Playlist from '../models/playlistModel.js';
+import Playlist from '../model/Playlist.js'; // Import Playlist model
 
 // Add a new playlist
-export const addPlaylist = async (playlistData) => {
+const addPlaylist = async (playlistData) => {
   try {
     const newPlaylist = await Playlist.create(playlistData);
     return newPlaylist;
@@ -10,8 +10,9 @@ export const addPlaylist = async (playlistData) => {
   }
 };
 
-// Get playlist by ID
-export const getPlaylistById = async (playlistId) => {
+// Get playlist by ID 
+const getPlaylistById = async (playlistId) => {
+  console.log("sos" + playlistId);
   try {
     const playlist = await Playlist.findById(playlistId);
     return playlist;
@@ -20,22 +21,30 @@ export const getPlaylistById = async (playlistId) => {
   }
 };
 
-// Update playlist
-export const updatePlaylist = async (playlistId, updateData) => {
-  try {
-    const updatedPlaylist = await Playlist.findByIdAndUpdate(playlistId, updateData, { new: true });
-    return updatedPlaylist;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
 // Delete playlist
-export const deletePlaylist = async (playlistId) => {
+const deletePlaylist = async (playlistId) => {
   try {
     const deletedPlaylist = await Playlist.findByIdAndDelete(playlistId);
     return deletedPlaylist;
   } catch (error) {
     throw new Error(error.message);
   }
+};
+
+
+// Get all playlists by user ID
+const getAllPlaylistsByUserId = async (creator) => {
+  try {
+    const playlists = await Playlist.find({creator:creator}); // Use Playlist model to get all playlists by a user ID
+    return playlists;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export default {
+  addPlaylist,
+  getPlaylistById,
+  deletePlaylist,
+  getAllPlaylistsByUserId
 };

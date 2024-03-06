@@ -3,17 +3,13 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import {
-  UserRouter,
-  AuthenticationRouter,
-  GenreRouter,
-  SongRouter,
-  ArtistRouter,
-} from "./routes/index.js";
+import { UserRouter, AuthenticationRouter, GenreRouter, SongRouter, ArtistRouter, PlaylistRouter } from "./routes/index.js";
 import "./utils/google-oauth2.js";
 import path from "path";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+
+
 const app = express();
 dotenv.config();
 const corsOptions = {
@@ -26,31 +22,39 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
-// app.use((req, res, next) => {
-//   res.charset = "UTF-8";
-//   next();
-// });
+
+// Define endpoint to fetch playlists
+app.get("/api/playlists", async (req, res) => {
+  try {
+    const playlists = await Playlist.find(); // Retrieve all playlists from the database
+    res.json(playlists); // Send the playlists as a JSON response
+  } catch (error) {
+    console.error("Error fetching playlists:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// Serve static files
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+app.use("/upload/image", express.static(path.join(__dirname, "upload", "image")));
+
+// Define API routes
 app.use("/api/auth", AuthenticationRouter);
 app.use("/api/songs", SongRouter);
 app.use("/api/genres", GenreRouter);
 app.use("/api/artists", ArtistRouter);
 app.use("/api/user", UserRouter);
-app.use(
-  "/upload/image",
-  express.static(path.join(__dirname, `upload`, "image"))
-);
-app.use("/api/artists", ArtistRouter);
+app.use("/playlist", PlaylistRouter);
+
 const port = process.env.PORT || 9999;
 const MONGODB_URI = process.env.MONGODB_URI;
 app.listen(port, async () => {
   try {
-    mongoose.connect(MONGODB_URI).then(() => {
-      console.log("Successfully connected to atlas");
-    });
+    await mongoose.connect(MONGODB_URI);
+    console.log("Successfully connected to MongoDB");
   } catch (error) {
-    console.log(`Something went wrong: ${error.message}`);
+    console.log(`Error connecting to MongoDB: ${error.message}`);
   }
   console.log(`Server running on http://localhost:${port}`);
 });
