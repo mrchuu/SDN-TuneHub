@@ -20,7 +20,7 @@ dotenv.config();
 const corsOptions = {
   origin: "https://TuneHub.app",
   methods: "PUT, POST, GET, DELETE, OPTIONS, PATCH",
-  credentials: true, // Allow cookies and other credentials to be sent
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
