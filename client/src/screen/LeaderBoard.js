@@ -13,6 +13,7 @@ import {
 } from "../redux/player.js";
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
+import { Link } from "react-router-dom";
 export default function LeaderBoard() {
     const { OriginalRequest } = PerformRequest();
     const [SongList, setSong] = useState([]);
@@ -44,13 +45,13 @@ export default function LeaderBoard() {
         const data = await OriginalRequest(`songs/leaderboard/topSong/${date}`, "GET");
         console.log(date);
         if (data) {
-            setSong(data);
+            setSong(data.data);
         }
     };
     const fetchArtist = async () => {
         const data = await OriginalRequest("artists/leaderboard/topArtist", "GET");
         if (data) {
-            setArtist(data);
+            setArtist(data.data);
         }
     };
 
@@ -139,10 +140,26 @@ export default function LeaderBoard() {
 
                                         <div className="ml-2">
                                             <h4 className="font-semibold text-md">
-                                                {song.song_name}
+                                                <Link
+                                                    to={`songdetail`}
+                                                    className="text-xs hover:underline"
+                                                    onClick={(e) => { e.stopPropagation() }}
+                                                >
+                                                    {song.song_name}
+                                                </Link>
                                             </h4>
                                             <h6 className=" text-xs">
-                                                {song.artist_name}
+                                                {song.artist ? (
+                                                    <Link
+                                                        to={`artist/${song.artist._id}`}
+                                                        className="text-xs hover:underline"
+                                                        onClick={(e) => { e.stopPropagation() }}
+                                                    >
+                                                        {song.artist.artist_name}
+                                                    </Link>
+                                                ) : (
+                                                    <></>
+                                                )}
                                             </h6>
                                         </div>
                                     </div>
@@ -190,15 +207,6 @@ export default function LeaderBoard() {
                     }}
                     autoFocus={false}
                 >
-                    {/* <MenuItem>
-                        <ListItemIcon>
-                            <FaRegHeart
-                                className="text-light10 dark:text-dark10 mt-1"
-                                size={18}
-                            />
-                            <ListItemText>&nbsp;Add To Favorite</ListItemText>
-                        </ListItemIcon>
-                    </MenuItem> */}
                     <MenuItem
                         className="flex items-center"
                         onClick={(e) => {
@@ -225,13 +233,13 @@ export default function LeaderBoard() {
                         </ListItemIcon>
                     </MenuItem>
                 </Menu>
-                <div className="w-full pt-8">
+                <div className="w-full pt-8 ">
                     <div className="mx-auto">
                         <h2 className="text-2xl font-semibold mb-8 dark:text-white ml-4">
                             Artist
                         </h2>
                     </div>
-                    <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+                    <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary ml-8 w-full">
                         {ArtistList.slice(0, showAllArtists ? ArtistList.length : 5).map((artist, index) => (
                             <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8">
                                 <img
@@ -239,8 +247,20 @@ export default function LeaderBoard() {
                                     className="rounded-full w-40 h-40 object-cover object-center"
                                 />
                                 <h3 className="text-lg font-semibold dark:text-white m-2">
-                                    {artist.artist_name}
+                                    {artist && (
+                                        <>
+                                            <Link
+                                                to={`artist/${artist._id}`}
+                                                className="text-xs hover:underline"
+                                                style={{ fontSize: "1.125rem", lineHeight: "1.25rem" }}
+                                                onClick={(e) => { e.stopPropagation() }}
+                                            >
+                                                {artist.artist_name}
+                                            </Link>
+                                        </>
+                                    )}
                                 </h3>
+
                                 {artist.artist_file.introduction ? (
                                     <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
                                         {artist.artist_file.introduction}
@@ -252,7 +272,7 @@ export default function LeaderBoard() {
                                 )}
 
                                 <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                                    Follow: {artist.artist_followed_count}
+                                    Follow: {artist.followers_count}
                                 </p>
                             </div>
                         ))}
@@ -276,7 +296,7 @@ export default function LeaderBoard() {
                             Album
                         </h2>
                     </div>
-                    <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+                    <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary ml-8">
                         {ArtistList.map((artist, index) => (
                             <div className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8">
                                 <img

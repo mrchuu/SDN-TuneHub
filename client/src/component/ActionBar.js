@@ -48,10 +48,10 @@ export default function ActionBar() {
             <h4 className="font-semibold text-md text-lightText dark:text-darkText">
               {currentSong.song_name}
             </h4>
-            {currentSong.artist_name ? (
+            {currentSong.artist.artist_name ? (
               <div className="flex items-center">
                 <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
-                  {currentSong.artist_name}
+                  {currentSong.artist.artist_name}
                 </p>
                 {currentSong.is_exclusive ? (
                   <span className="text-white px-2 bg-amber-500 text-xs rounded ml-2 font-medium">

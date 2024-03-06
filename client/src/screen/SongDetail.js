@@ -22,7 +22,7 @@ export default function   ArtistProfile() {
   return (
     <NoSpaceHeaderTemplate>
       <div className="w-full min-h-screen">
-        <div className="profileHeader w-full h-96 bg-[url('https://i.ytimg.com/vi/3zI-HbAz_zY/maxresdefault.jpg')] bg-center bg-cover">
+        <div className="profileHeader w-full h-96 bg-[url('https://gcs.tripi.vn/public-tripi/tripi-feed/img/474095PJn/hinh-anh-am-nhac-dep_103427714.jpg')] bg-center bg-cover">
           <div className={`w-full h-full pt-56 relative`}>
             <div
               className="absolute inset-0 bg-light30 dark:bg-dark30"
@@ -44,13 +44,15 @@ export default function   ArtistProfile() {
           </h4>
           <div className="px-5">
             <SongListWithStreamCount
-              url={`songs/getArtistPopularSongs/${artistId}`}
+            //   url={`songs/getArtistPopularSongs/${artistId}`}
             />
           </div>
           <h4 className="text-lightText dark:text-darkText font-semibold text-xl mt-7">
             Albums
           </h4>
-          <AlbumList url={`album/getAlbumsOfArtist/${artistId}`} />
+          <AlbumList 
+        //   url={`album/getAlbumsOfArtist/${artistId}`}
+           />
         </div>
       </div>
     </NoSpaceHeaderTemplate>

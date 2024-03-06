@@ -170,36 +170,28 @@ const hotArtist = async () => {
       },
       {
         $addFields: {
-          withinLast24Hours: {
+          followers_count: {
             $cond: {
-              if: {
-                $and: [
-                  {
-                    $gte: ["$artist_file.artist_followed", 0],
-                  },
-                ],
-              },
-              then: 1,
+              if: { $isArray: "$followers" },
+              then: { $size: "$followers" },
               else: 0,
             },
           },
         },
       },
       {
-        $sort: { "artist_file.artist_followed": -1 },
-      },
-      // {
-      //   $limit: 5,
-      // },
-      {
         $project: {
-          _id: 1,
+          id: 1,
           artist_name: 1,
-          "artist_file.introduction": 1,
-          "artist_file.profile_picture": 1,
-          artist_followed_count: { $size: "$artist_file.artist_followed" },
+          artist_file: {
+            profile_picture:
+              "$artist_file.profile_picture",
+            introduction: "$artist_file.introduction",
+          },
+          followers_count: 1,
         },
-      }
+      },
+      { $limit: 7 },
     ]
     ).exec();
     return result;

@@ -228,7 +228,7 @@ const getAllSongsByLastest = async (req, res) => {
   try {
     const { date } = req.params;
     const songs = await SongRepository.hotestSongByDay(date);
-    res.status(200).json(songs);
+    res.status(200).json({ data: songs });
   } catch (error) {
     res.status(500).json({
       message: error.toString(),
@@ -262,6 +262,16 @@ const getPopularSongOfArtist = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getSongDetail = async (req, res) => {
+  try {
+    const songId = req.params.songId;
+    const result = await SongRepository.getSongsById(songId);
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export default {
   getAllSongs,
   streamSong,
@@ -272,4 +282,5 @@ export default {
   getUnPublishedSongOfArtist,
   getPopularSongOfArtist,
   getRecentlyPlayedSongs,
+  getSongDetail
 };

@@ -43,7 +43,7 @@ const searchArtistByName = async (req, res) => {
 const getAllHotArtist = async (req, res) => {
   try {
     const artists = await ArtistRepository.hotArtist();
-    res.status(200).json(artists);
+    res.status(200).json({ data: artists });
   } catch (error) {
     getAllSongsByLastest.res.status(500).json({
       message: error.toString(),

@@ -13,6 +13,7 @@ import ForgotPassword from "./screen/ForgotPassword";
 import ArtistDashBoard from "./screen/ArtistDashBoard";
 import ArtistUpload from "./screen/ArtistUpload";
 import ArtistProfile from "./screen/ArtistProfile";
+import SongDetail from "./screen/SongDetail";
 
 function App() {
   return (
@@ -31,6 +32,8 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword/>}/>
         <Route path="/profile" element={<UserProfile/>}/>
         <Route path="/artist/:artistId" element={<ArtistProfile/>}/>
+        <Route path="/leaderboard/artist/:artistId" element={<ArtistProfile/>}/>
+        <Route path="/leaderboard/songdetail" element={<SongDetail/>}/>
       </Routes>
     </BrowserRouter>
   );
