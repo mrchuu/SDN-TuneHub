@@ -14,10 +14,14 @@ module.exports = {
         lightText: "#353535",
         darkText: "#FFFFFF",
         darkTextSecondary: "#ADADAD",
-        lightTextSecondary: "#717171"
-      }
+        lightTextSecondary: "#717171",
+      },
     },
   },
-  
+  variants: {
+    extend: {
+      width: ["responsive"], // Enable responsive variants for width utility
+    },
+  },
   plugins: [],
 };

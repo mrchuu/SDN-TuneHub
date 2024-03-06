@@ -10,6 +10,37 @@ import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 import jwt from "jsonwebtoken";
 import formidable from "formidable";
+const getRecentlyPlayedSongs = async (req, res) => {
+  try {
+    // let userId;
+    // if (token) {
+    //   const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    //   const existingUser = await AuthenticateRepository.getUserById(
+    //     decodedToken.userId
+    //   );
+    //   if (!existingUser) {
+    //     return res.status(400).json({ error: "User was not found" });
+    //   }
+    //   userId = existingUser._id;
+    // }
+    const currentUserId = req.decodedToken.userId;
+    const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(
+      currentUserId
+    );
+    console.log(`songStreams: ${songStreams}`);
+    const songs = await Promise.all(
+      songStreams.map(async (stream) => {
+        const song = await SongRepository.getSongsByIds(stream.song);
+        return song[0];
+      })
+    );
+    // const songs = await SongRepository.getSongsByIds(songStreams[0].song);
+    res.status(200).json({ data: songs });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const getAllSongs = async (req, res) => {
   try {
     const songList = await SongRepository.getAllSongs();
@@ -46,14 +77,20 @@ const streamSong = async (req, res) => {
     if (fs.existsSync(filePath)) {
       const { is_exclusive, preview_start_time, preview_end_time } =
         existingSong;
-      if (is_exclusive && userId && !existingSong.purchased_user.includes(userId)) {
-        const ffmpegCmd = ffmpeg(filePath)
-          .setStartTime(preview_start_time)
-          .setDuration(preview_end_time - preview_start_time)
-          .audioCodec("libmp3lame")
-          .format("mp3");
-        res.setHeader("Content-Type", "audio/mpeg");
-        ffmpegCmd.pipe(res, { end: true });
+      if (is_exclusive) {
+        if (userId && existingSong.purchased_user.includes(userId)) {
+          const fileStream = fs.createReadStream(filePath);
+          res.setHeader("Content-Type", "audio/mpeg");
+          fileStream.pipe(res);
+        } else {
+          const ffmpegCmd = ffmpeg(filePath)
+            .setStartTime(preview_start_time)
+            .setDuration(preview_end_time - preview_start_time)
+            .audioCodec("libmp3lame")
+            .format("mp3");
+          res.setHeader("Content-Type", "audio/mpeg");
+          ffmpegCmd.pipe(res, { end: true });
+        }
       } else {
         const fileStream = fs.createReadStream(filePath);
         res.setHeader("Content-Type", "audio/mpeg");
@@ -111,12 +148,13 @@ const uploadSong = async (req, res) => {
       const genre = fields.genre ? fields.genre : null;
       const participatedArtists =
         fields.participatedArtists[0] !== ""
-          ? fields.participatedArtists
+          ? fields.participatedArtists[0].split(",")
           : null;
       const duration = fields.duration ? parseInt(fields.duration[0]) : null;
       const isExclusive = fields.isExclusive
         ? fields.isExclusive[0] === "true"
         : false;
+      const isPublic = fields.isPublic ? fields.isPublic[0] === "true" : false;
       const previewStart = fields.previewStart
         ? parseInt(fields.previewStart[0])
         : null;
@@ -126,6 +164,11 @@ const uploadSong = async (req, res) => {
       const price = fields.price ? parseInt(fields.price[0]) : null;
       // Access the uploaded files
       const coverImage = fields.coverImage ? fields.coverImage[0] : null;
+      const artist = await ArtistRepository.findArtistByUserId(userId);
+      if (!artist) {
+        throw new Error("Unauthorized");
+      }
+      console.log(participatedArtists);
       const audioFile = files.audioFile;
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = dirname(__filename);
@@ -143,11 +186,7 @@ const uploadSong = async (req, res) => {
         fs.copyFileSync(uploadedFile.filepath, newPath);
         fs.unlinkSync(uploadedFile.filepath);
       }
-      const artistResult = await ArtistRepository.findArtistByUserId(userId);
-      if (!artistResult) {
-        throw new Error("Unauthorized");
-      }
-      console.log(participatedArtists);
+
       const result = await SongRepository.uploadSong({
         song_name: songName,
         genre: genre,
@@ -158,8 +197,16 @@ const uploadSong = async (req, res) => {
         preview_start_time: previewStart,
         preview_end_time: previewEnd,
         cover_image: coverImage,
-        artist: artistResult._id,
+        artist: artist._id,
         duration: duration,
+        isPublic,
+      });
+      ArtistRepository.addSongUpload({
+        artistId: artist._id,
+        songId: result._id,
+        songName: result.song_name,
+        songCover: result.cover_image,
+        isExclusive: result.is_exclusive,
       });
       return res.status(201).json({ message: "song uploaded successfully!!" });
     });
@@ -171,16 +218,73 @@ const uploadSong = async (req, res) => {
 const searchSongByName = async (req, res) => {
   try {
     const songs = await SongRepository.searchSongByName(req.params.nameKey);
-    res.status(201).json(songs);
+    return res.status(200).json({ data: songs });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
 
+const getAllSongsByLastest = async (req, res, date) => {
+  try {
+    const songs = await SongRepository.hotestSongByDay(date);
+    res.status(200).json(songs);
+  } catch (error) {
+    getAllSongsByLastest.res.status(500).json({
+      message: error.toString(),
+    });
+  }
+};
+const getUnPublishedSongOfArtist = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const unpublishedSongs = await SongRepository.getUnPublishedSongOfArtist(
+      artist._id
+    );
+    return res.status(200).json({ data: unpublishedSongs });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const getPopularSongOfArtist = async (req, res) => {
+  try {
+    const artistId = req.params.artistId;
+    const result = await SongRepository.getPopularSongOfArtist(artistId);
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const getFeaturedSongs = async (req, res) => {
+  try {
+    const artistId = req.params.artistId;
+    if (!artistId) {
+      return res.status(400).json({ error: "Bad request" });
+    }
+    const artist = await ArtistRepository.findByArtistId(artistId);
+    if (!artist) {
+      return res.status(404).json({ error: "Not found" });
+    }
+    const featuredSongs = await SongRepository.getFeaturedSongs(artistId);
+    return res.status(200).json({ data: featuredSongs });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export default {
   getAllSongs,
   streamSong,
   addStreamSong,
   uploadSong,
   searchSongByName,
+  getAllSongsByLastest,
+  getUnPublishedSongOfArtist,
+  getPopularSongOfArtist,
+  getRecentlyPlayedSongs,
+  getFeaturedSongs
 };

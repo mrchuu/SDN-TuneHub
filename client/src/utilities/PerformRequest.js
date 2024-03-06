@@ -34,8 +34,10 @@ export default function PerformRequest() {
       if (response.status === 401) {
         //calls to refresh token if the accessToken is expired
         return RefreshToken(url, method, body);
+      } else if (response.status === 403) {
+        navigate("/");
+        toast.error(data.error);
       } else {
-        //similiar to success toast, but the attribute must be named error
         toast.error(data.error);
       }
     }

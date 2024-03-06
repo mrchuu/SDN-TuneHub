@@ -3,6 +3,7 @@ import Header from "../component/Header";
 import SideBar from "../component/SideBar";
 import ActionBar from "../component/ActionBar.js";
 import SongQueue from "../component/SongQueue.js";
+import HeaderDefault from "../component/HeaderDefault.js";
 
 export default function DefaultTemplate({ title, children }) {
   const expanded = useSelector((state) => state.sideBar.expanded);
@@ -15,7 +16,8 @@ export default function DefaultTemplate({ title, children }) {
             window.innerWidth > 768 ? (expanded ? "ml-60" : "ml-20") : "ml-20"
           }`}
         >
-          <Header />
+          <HeaderDefault />
+          {/* <div style={{ height: "80px" }}></div> */}
           {children}
         </div>
       </div>

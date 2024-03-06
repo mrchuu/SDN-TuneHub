@@ -19,6 +19,7 @@ export default function SignUp() {
   const [imageSrc, setImageSrc] = useState(
     "https://res.cloudinary.com/djzdhtdpj/image/upload/v1704269768/tempAvatar_juqb4s.jpg"
   );
+  const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const onDrop = useCallback((acceptedFile) => {
     const file = acceptedFile[0];
@@ -48,6 +49,7 @@ export default function SignUp() {
     const updateSignupData = { ...signUpData };
     updateSignupData.profilePicture = imageSrc;
     try {
+      setLoading(true);
       const data = await OriginalRequest(
         `auth/signup`,
         "POST",
@@ -55,12 +57,14 @@ export default function SignUp() {
       );
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
-    <div className="w-full h-screen flex">
+    <div className="w-full min-h-screen flex">
       <div className="md:w-4/6 w-0 bg-cover bg-[url('https://us.images.westend61.de/0001361979pw/crowd-at-music-concert-EYF03813.jpg')] bg-center">
-        <div className="w-full h-screen backdrop-filter backdrop-brightness-50 py-14 px-14">
+        <div className="w-full h-full backdrop-filter backdrop-brightness-50 py-14 px-14">
           <p className="typingText text-light10 text-4xl font-medium">
             Hi there,
           </p>
@@ -75,7 +79,7 @@ export default function SignUp() {
           </p>
         </div>
       </div>
-      <div className="md:w-2/6 w-full bg-light60 p-2 z-10">
+      <div className="md:w-2/6 w-full h-full bg-light60 p-2 z-10">
         <div>
           <Link className="flex items-center" to={"/"}>
             <MdOutlineKeyboardBackspace size={30} />
@@ -93,8 +97,7 @@ export default function SignUp() {
           </h4>
           {/* <h4 className="text-lightTextSecondary">It's simple. we'll help</h4> */}
           <form
-            style={{ paddingTop: "10px" }}
-            className="w-full"
+            className="w-full py-10"
             encType="multipart/form-data"
             onSubmit={(e) => {
               handleSubmit(e);
@@ -174,10 +177,13 @@ export default function SignUp() {
                 )}
               </div>
               <button
-                className="bg-light10 rounded-md py-3 shadow-md"
+                className={`${
+                  loading ? "bg-slate-400" : "bg-light10"
+                } rounded-md py-3 shadow-md`}
                 type="submit"
+                disabled={loading}
               >
-                Sign Up
+                {loading ? "Please wait ..." : "Sign Up"}
               </button>
             </FormControl>
           </form>

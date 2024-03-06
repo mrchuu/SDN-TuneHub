@@ -15,7 +15,7 @@ import {
 } from "../redux/player.js";
 import { RxLoop } from "react-icons/rx";
 import ReactPlayer from "react-player";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Player from "./Player.js";
 import { PiShuffleLight } from "react-icons/pi";
 
@@ -28,9 +28,18 @@ export default function ActionBar() {
   const sliderValue = useSelector((state) => state.player.sliderValue);
   const showBox = useSelector((state) => state.player.showBox);
   const loop = useSelector((state) => state.player.loop);
+  const hasMounted = useRef(false);
+  // useEffect(() => {
+  //   console.log("loop changed: " + loop);
+  // }, [loop]);
   useEffect(() => {
-    console.log("song changed");
-  }, [currentSong]);
+    if (hasMounted.current) {
+      console.log("rerendered");
+    } else {
+      hasMounted.current = true;
+    }
+  }, [hasMounted]);
+
   return (
     <div className="bg-light30 dark:bg-dark30 w-full h-20 fixed bottom-0 z-50 flex items-center justify-between px-4">
       <div className="songInfo h-full px-4 flex items-center w-3/12 ">
@@ -44,13 +53,22 @@ export default function ActionBar() {
           <div className="w-16 h-16 rounded-md bg-zinc-400"></div>
         )}
         {currentSong.artist && currentSong.song_name ? (
-          <div className="ml-2">
+          <div className="ml-4">
             <h4 className="font-semibold text-md text-lightText dark:text-darkText">
               {currentSong.song_name}
             </h4>
-            <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
-              {currentSong.artist.artist_name}
-            </p>
+            <div className="flex items-center">
+              <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
+                {currentSong.artist.artist_name}
+              </p>
+              {currentSong.is_exclusive ? (
+                <span className="text-white px-2 bg-amber-500 text-xs rounded ml-2 font-medium">
+                  EXCLUSIVE
+                </span>
+              ) : (
+                <></>
+              )}
+            </div>
             <FaRegHeart
               className="text-light10 dark:text-dark10 mt-1"
               size={20}
@@ -61,7 +79,7 @@ export default function ActionBar() {
         )}
       </div>
       <div className="playerAction h-full px-4 flex-col w-6/12">
-        <Player />
+       
         <div className="action flex items-center justify-between w-6/12 mx-auto pt-3 pb-1">
           <div className=" p-1 rounded">
             <PiShuffleLight
@@ -98,7 +116,7 @@ export default function ActionBar() {
             className={`p-1 rounded ${
               loop
                 ? "bg-light10 dark:bg-dark10 text-white dark:text-lightText"
-                : " text-lightTextSecondary dark:text-darkTextSecondar"
+                : " text-lightTextSecondary dark:text-darkTextSecondary"
             }`}
           >
             <RxLoop

@@ -49,6 +49,10 @@ const songSchema = new Schema(
       type: Number,
       required: true,
     },
+    is_public: {
+      type: Schema.Types.Boolean,
+      default: true
+    },
     purchased_user: [{ type: Schema.Types.ObjectId }],
   },
   { timestamps: true, collection: "Song" }

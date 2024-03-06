@@ -5,6 +5,7 @@ import GenreRepository from "./genre.js";
 import ArtistRepository from "./artist.js";
 import UserRepository from "./user.js";
 import PlaylistRepository from "./playlist.js"
+import AlbumRepository from "./album.js"
 export {
   AuthenticateRepository,
   SongRepository,
@@ -12,5 +13,6 @@ export {
   UserRepository,
   ArtistRepository,
   GenreRepository,
-  PlaylistRepository
+  PlaylistRepository,
+  AlbumRepository
 };

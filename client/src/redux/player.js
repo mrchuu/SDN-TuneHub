@@ -23,6 +23,7 @@ export const playerSlice = createSlice({
       state.loop = !state.loop
     },
     setCurrentSong: (state, action) => {
+      console.log("Changes cause of navigate");
       state.currentSong = { ...state.currentSong, ...action.payload };
     },
     changeVolume: (state, action) => {
@@ -74,6 +75,9 @@ export const playerSlice = createSlice({
         state.isPlaying = true;
         state.queueIndex++;
         state.currentSong = state.songQueue[state.queueIndex];
+      }else{
+        state.isPlaying = false;
+        state.currentSong = {}
       }
     },
     toogleQueue: (state, action) => {
