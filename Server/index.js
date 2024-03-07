@@ -59,7 +59,7 @@ app.use("/api/songs", SongRouter);
 app.use("/api/genres", GenreRouter);
 app.use("/api/artists", ArtistRouter);
 app.use("/api/user", UserRouter);
-app.use("/playlist", PlaylistRouter);
+app.use("/api/playlist", PlaylistRouter);
 
 const port = process.env.PORT || 9999;
 const MONGODB_URI = process.env.MONGODB_URI;

@@ -42,9 +42,74 @@ const getAllPlaylistsByUserId = async (creator) => {
   }
 };
 
+const createPlaylist = async ({
+  play_list_name,
+  creator,
+  songs,
+  play_list_cover,
+  stream_time,
+}) => {
+  try {
+    if (songs) {
+      const songDTO = await Song.findById(songs);
+      const playlist = await Playlist.create({
+        play_list_name: songDTO.song_name,
+        creator,
+        songs: {
+          songId: songDTO._id,
+          song_name: songDTO.song_name,
+          is_exclusive: songDTO.is_exclusive,
+          start_time: songDTO.preview_start_time,
+          end_time: songDTO.preview_end_time,
+          cover_image: songDTO.cover_image,
+        },
+        play_list_cover,
+        stream_time,
+      });
+
+      return playlist;
+    } else {
+      const playlist = await Playlist.create({
+        play_list_name,
+        creator,
+        songs,
+        play_list_cover,
+        stream_time,
+      });
+
+      return playlist;
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const addSongToPlaylist = async ({ playlistId, songs }) => {
+  try {
+    const songDTO = await Song.findById(songs);
+    const playlist = await Playlist.findByIdAndUpdate(playlistId, {
+      $push: {
+        songs: {
+          songId: songDTO._id,
+          song_name: songDTO.song_name,
+          is_exclusive: songDTO.is_exclusive,
+          start_time: songDTO.preview_start_time,
+          end_time: songDTO.preview_end_time,
+          cover_image: songDTO.cover_image,
+        },
+      },
+    });
+    return playlist;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export default {
   addPlaylist,
   getPlaylistById,
   deletePlaylist,
-  getAllPlaylistsByUserId
+  getAllPlaylistsByUserId,
+  createPlaylist,
+  addSongToPlaylist
 };

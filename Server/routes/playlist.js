@@ -4,8 +4,9 @@ import verifyToken from "../middleware/verifyToken.js";
 
 const playlistRouter = express.Router();
 
-// Route to create a new playlist
-playlistRouter.post("/addPlaylist/:creator", PlaylistController.createPlaylist);
+playlistRouter.post("/create", PlaylistController.createPlaylist);
+
+playlistRouter.post("/push", PlaylistController.addSongToPlaylist);
 
 // Route to get a playlist by ID
 playlistRouter.get("/getPlaylistById/:playlistId", PlaylistController.getPlaylistById);
