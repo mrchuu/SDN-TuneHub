@@ -40,7 +40,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword/>}/>
         <Route path="/profile" element={<UserProfile/>}/>
 
-        <Route path="/playlist" element={<PlaylistScreen />} />
+        <Route path="/playlist/:playlistId" element={<PlaylistScreen />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/artist/:artistId" element={<ArtistProfile />} />

@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { toogleExpand } from "../redux/sideBar.js";
 import ListPlaylist from "./ListPlaylist";
 import { useNavigate } from "react-router-dom";
-import { useDropzone } from "react-dropzone";
 import PerformRequest from "../utilities/PerformRequest.js";
 
 export default function SideBar() {
@@ -22,8 +21,6 @@ export default function SideBar() {
   const [playlists, setPlaylists] = useState([]);
   const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false);
   const [playlistName, setPlaylistName] = useState("");
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
   const [imageSrc, setImageSrc] = useState(auth.profile_picture);
 
   useEffect(() => {
@@ -41,24 +38,6 @@ export default function SideBar() {
     };
   }, []);
 
-  const onDrop = useCallback((acceptedFile) => {
-    const file = acceptedFile[0];
-    setImageFile(file);
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImageSrc(reader.result);
-    };
-    console.log(imageSrc);
-    reader.readAsDataURL(file);
-  });
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-  const dropzoneStyle = {
-    border: "2px dashed #ccc",
-    borderRadius: "4px",
-    padding: "20px",
-    textAlign: "center",
-  };
   const closeCreatePlaylistForm = () => {
     setShowCreatePlaylistModal(false);
   };
@@ -94,16 +73,14 @@ export default function SideBar() {
 
   return (
     <div
-      className={`h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-60 ${
-        expanded ? "w-60" : "w-20"
-      }`}
+      className={`h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-60 ${expanded ? "w-60" : "w-20"
+        }`}
     >
       <nav className="h-full flex flex-col border-r shadow-lg border-lightTextSecondary dark:border-darkTextSecondary">
         <div className="p-4 flex items-center justify-between">
           <div
-            className={`flex items-center overflow-hidden transition-all ${
-              expanded ? "w-36" : "w-0"
-            }`}
+            className={`flex items-center overflow-hidden transition-all ${expanded ? "w-36" : "w-0"
+              }`}
           >
             <BsSoundwave color="#ff5e3a" size={33} />
             <h3 className="text-lightText dark:text-darkText font-bold text-xl">
@@ -164,9 +141,8 @@ export default function SideBar() {
           />
         </ul>
         <hr
-          className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${
-            expanded ? "w-3/5" : "w-0"
-          }`}
+          className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${expanded ? "w-3/5" : "w-0"
+            }`}
         />
         <div className="flex-1 flex-col relative">
           <div className="px-3 mt-2">
@@ -178,18 +154,16 @@ export default function SideBar() {
                 />
 
                 <span
-                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${
-                    expanded ? "w-24" : "w-0 hidden"
-                  }`}
+                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-24" : "w-0 hidden"
+                    }`}
                 >
                   &nbsp;Your Library
                 </span>
               </div>
               <div className="relative">
                 <button
-                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${
-                    expanded ? "w-5" : "w-0 hidden"
-                  }`}
+                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-5" : "w-0 hidden"
+                    }`}
                   onClick={openCreatePlaylistForm}
                 >
                   <FaPlus size={22} />
@@ -198,11 +172,13 @@ export default function SideBar() {
             </div>
           </div>
           <div
-            className={`max-h-44 overflow-hidden transition-all ${
-              expanded ? "w-full" : "w-0 hidden"
-            }`}
+            className={`max-h-44 overflow-hidden transition-all ${expanded ? "w-full" : "w-0 hidden"
+              }`}
             style={{ overflowY: "auto" }}
           >
+
+
+            
             {/* listplaylist ở đây */}
             <div className="px-3 mt-2">
               <div>
@@ -210,15 +186,19 @@ export default function SideBar() {
               </div>
             </div>
           </div>
+          
+          
+          
+          
+          
           <div className="px-3 text-lightText dark:text-darkText">
             <div className="font-medium text-textSecondary py-2 px-3">
               <div className="flex items-center">
                 <FaUser size={22} />
                 &nbsp;
                 <span
-                  className={`overflow-hidden transition-all ${
-                    expanded ? "w-52" : "w-0 hidden"
-                  }`}
+                  className={`overflow-hidden transition-all ${expanded ? "w-52" : "w-0 hidden"
+                    }`}
                 >
                   Followed Artists
                 </span>
@@ -226,14 +206,16 @@ export default function SideBar() {
             </div>
           </div>
           <div
-            className={`max-h-40 overflow-hidden transition-all ${
-              expanded ? "w-full" : "w-0 hidden"
-            }`}
+            className={`max-h-40 overflow-hidden transition-all ${expanded ? "w-full" : "w-0 hidden"
+              }`}
             style={{ overflowY: "auto" }}
           >
+
+
+
             <div className="px-3 mt-2">
               {!userInfo.artist_followed ||
-              userInfo?.artist_followed?.length === 0 ? (
+                userInfo?.artist_followed?.length === 0 ? (
                 <div className="bg-light30 py-2 px-3 font-medium rounded-md dark:bg-dark30">
                   <span className="text-lightText dark:text-darkText">
                     Find some artist to follow
@@ -265,9 +247,11 @@ export default function SideBar() {
           </div>
         </div>
       </nav>
+
+
       {showCreatePlaylistModal && (
-        <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
-          <div className="relative w-80 bg-white rounded-lg shadow-md z-10 p-4">
+        <div className="fixed top-0 left-0 flex items-center z-10000 justify-center w-full h-full bg-black bg-opacity-50 z-100" onClick={closeCreatePlaylistForm}>
+          <div className="relative w-80 bg-white rounded-lg shadow-md z-10 p-4" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={closeCreatePlaylistForm}
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-600"
@@ -317,16 +301,6 @@ export default function SideBar() {
                 className="hidden"
               />
             </div>
-            {selectedImage && (
-              <div {...getRootProps()} style={dropzoneStyle}>
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <p>Drop the files here ...</p>
-                ) : (
-                  <p>Drop or browse your profile picture</p>
-                )}
-              </div>
-            )}
             <button
               onClick={handleCreatePlaylist}
               className="w-full py-2 text-sm bg-primary text-black font-semibold rounded-lg hover:bg-primary-dark focus:outline-none"
@@ -339,6 +313,8 @@ export default function SideBar() {
           </div>
         </div>
       )}
+
+
 
       <div className="h-20"></div>
     </div>

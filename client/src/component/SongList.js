@@ -4,6 +4,7 @@ import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { FaRegHeart } from "react-icons/fa";
+import ListPlaylist from "./ListPlaylist";
 import {
   setCurrentSong,
   toogleIsPlaying,
@@ -13,6 +14,7 @@ import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 export default function SongList({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
@@ -21,7 +23,14 @@ export default function SongList({ url }) {
   const [songMenuAnchor, setSongMenuAnchor] = useState(null);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [songInAction, setSongInAction] = useState(null);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [playlists, setPlaylists] = useState([]);
+
+  const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
+
+  const [playlist, setPlaylist] = useState(null);
+  const [playlistMenuAnchor, setPlaylistMenuAnchor] = useState(null);
   const closeMenu = (e, song) => {
     setMenuIsOpen(false);
     setSongMenuAnchor(null);
@@ -30,6 +39,17 @@ export default function SongList({ url }) {
     setSongInAction(song);
     setMenuIsOpen(true);
     setSongMenuAnchor(e.currentTarget);
+
+  };
+
+  const openMenuPlaylist = (e, song) => {
+    setSubMenuIsOpen(true);
+    setPlaylistMenuAnchor(e.currentTarget);
+  };
+
+  const handleAddToPlaylistClick = (event) => {
+    // Mở menu con
+    setSubMenuIsOpen(true);
   };
 
   useEffect(() => {
@@ -52,6 +72,14 @@ export default function SongList({ url }) {
     };
     fetch();
   }, [hasMounted, url]);
+
+
+  const handleCreatePlaylist = () => {
+    // Your logic for creating a playlist
+    closeMenu();
+  };
+
+
   return (
     <div className="w-full flex items-center mt-5">
       {SongList.length > 0 ? (
@@ -63,7 +91,7 @@ export default function SongList({ url }) {
               <td className="hidden md:table-cell md:w-5/12 text-center">
                 Album
               </td>
-              <td className="w-1/12 text-center">duration</td>
+              <td className="w-1/12 text-center">Time</td>
               <td className="w-1/12"></td>
             </tr>
           </thead>
@@ -143,50 +171,74 @@ export default function SongList({ url }) {
           src="https://static.thenounproject.com/png/2962127-200.png"
         />
       )}
-      <Menu
-        open={menuIsOpen}
-        anchorEl={songMenuAnchor}
-        onClose={closeMenu}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
-        autoFocus={false}
-      >
-        <MenuItem>
-          <ListItemIcon>
-            <FaRegHeart
-              className="text-light10 dark:text-dark10 mt-1"
-              size={18}
-            />
-            <ListItemText>&nbsp;Add To Favorite</ListItemText>
-          </ListItemIcon>
-        </MenuItem>
-        <MenuItem
-          className="flex items-center"
-          onClick={(e) => {
-            console.log(songInAction);
-            dispatch(addSongToQueue(songInAction));
-            closeMenu(e);
+      <div>
+        <Menu
+          open={menuIsOpen}
+          anchorEl={songMenuAnchor}
+          onClose={closeMenu}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+          autoFocus={false}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
           }}
         >
-          <ListItemIcon>
-            <MdOutlineQueueMusic
-              size={22}
-              className="text-light10 dark:text-dark10 mr-3"
-            />
-            <ListItemText className="text-right">Queue Song</ListItemText>
-          </ListItemIcon>
-        </MenuItem>
-        <MenuItem className="flex items-center">
-          <ListItemIcon>
-            <MdLibraryMusic
-              size={20}
-              className="text-light10 dark:text-dark10 mr-3"
-            />
-            <ListItemText className="text-right">Add To Playlist</ListItemText>
-          </ListItemIcon>
-        </MenuItem>
-      </Menu>
+          <MenuItem>
+            <ListItemIcon>
+              <FaRegHeart className="text-light10 dark:text-dark10 mt-1" size={18} />
+              <ListItemText>&nbsp;Add To Favorite</ListItemText>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem
+            className="flex items-center"
+            onClick={(e) => {
+              console.log(songInAction);
+              dispatch(addSongToQueue(songInAction));
+              closeMenu(e);
+            }}
+          >
+            <ListItemIcon>
+              <MdOutlineQueueMusic size={22} className="text-light10 dark:text-dark10 mr-3" />
+              <ListItemText className="text-right">Queue Song</ListItemText>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem
+            className="flex items-center"
+            onClick={(e) => {
+              openMenuPlaylist(e);
+              // console.log(e);
+            }}
+          >
+            <ListItemIcon>
+              <MdLibraryMusic size={20} className="text-light10 dark:text-dark10 mr-3" />
+              <ListItemText className="text-right">Add To Playlist</ListItemText>
+            </ListItemIcon>
+          </MenuItem>
+
+
+          <Menu
+            anchorEl={playlistMenuAnchor}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            open={subMenuIsOpen} // Mở menu con khi subMenuIsOpen === true
+            onClose={() => setSubMenuIsOpen(false)} // Đóng menu con khi nhấn ra ngoài hoặc chọn một tùy chọn
+          >
+            <MenuItem onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
+            <div style={{ overflowY: 'auto', maxHeight: '200px' }}>
+              <ListPlaylist playlists={playlists.slice(0, 3).map(playlist => playlist.play_list_name)} navigate={navigate} />
+            </div>
+
+
+          </Menu>
+
+        </Menu>
+
+
+      </div>
     </div>
   );
 }
