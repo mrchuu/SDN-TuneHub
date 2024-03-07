@@ -21,20 +21,10 @@ const findArtistByUserId = async (userId) => {
 
 const getRisingArtist = async () => {
   try {
-    const currentDate = new Date();
-    const sevenDaysAgo = new Date(
-      currentDate.getTime() - 7 * 24 * 60 * 60 * 1000
-    );
-
-    return await Artist.aggregate([
-      // {
-      //   $match: {
-      //     "followers.createdAt": { $gte: sevenDaysAgo },
-      //   },
-      // },
+    const foundArtist = await Artist.aggregate([
       {
         $lookup: {
-          from: "users",
+          from: "Users",
           localField: "userId",
           foreignField: "_id",
           as: "user",
@@ -67,6 +57,8 @@ const getRisingArtist = async () => {
         },
       },
     ]).exec();
+
+    return foundArtist;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -77,7 +69,7 @@ const searchArtistByName = async (name) => {
     const foundArtist = await Artist.aggregate([
       {
         $match: {
-          artist_name: { $regex: "", $options: "i" },
+          artist_name: { $regex: name, $options: "i" },
         },
       },
       {
@@ -124,14 +116,19 @@ const searchArtistByName = async (name) => {
     throw new Error(error.message);
   }
 };
-const findByArtistId = async (artistId) =>{
+const findByArtistId = async (artistId) => {
   try {
-    const result = await Artist.findById(artistId, "_id artist_name followers userId").populate("userId", "profile_picture").exec();
-    return result._doc
+    const result = await Artist.findById(
+      artistId,
+      "_id artist_name followers userId"
+    )
+      .populate("userId", "profile_picture")
+      .exec();
+    return result._doc;
   } catch (error) {
-    throw new Error(error.message)
+    throw new Error(error.message);
   }
-}
+};
 const addSongUpload = async ({
   artistId,
   songId,
@@ -207,9 +204,8 @@ const hotArtist = async () => {
           "artist_file.profile_picture": 1,
           artist_followed_count: { $size: "$artist_file.artist_followed" },
         },
-      }
-    ]
-    ).exec();
+      },
+    ]).exec();
     return result;
   } catch (error) {
     console.log(error.message);
@@ -248,5 +244,5 @@ export default {
   getRisingArtist,
   hotArtist,
   makeAlbum,
-  findByArtistId
+  findByArtistId,
 };

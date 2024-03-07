@@ -12,6 +12,7 @@ import UserProfile from "./screen/UserProfile";
 import ForgotPassword from "./screen/ForgotPassword";
 import ArtistDashBoard from "./screen/ArtistDashBoard";
 import ArtistUpload from "./screen/ArtistUpload";
+import PlaylistScreen from "./screen/PlaylistScreen"; 
 import ArtistProfile from "./screen/ArtistProfile";
 import Player from "./component/Player";
 import { useEffect } from "react";
@@ -36,6 +37,10 @@ function App() {
         <Route path="/artist/dashboard" element={<ArtistDashBoard />} />
         <Route path="/artist/upload" element={<ArtistUpload />} />
         <Route path="/confirmSignUp/:token" element={<ConfirmSignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword/>}/>
+        <Route path="/profile" element={<UserProfile/>}/>
+
+        <Route path="/playlist" element={<PlaylistScreen />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/artist/:artistId" element={<ArtistProfile />} />
