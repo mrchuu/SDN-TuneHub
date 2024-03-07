@@ -96,6 +96,21 @@ const getAllSongs = async () => {
     throw new Error(error.message);
   }
 };
+const getSongsByAlbum = async (album) => {
+  try {
+    const songList = await Song.find({album})
+      .populate("artist", "_id artist_name")
+      .populate("album", "_id album_name")
+      .select("_id")
+      .select("song_name")
+      .select("cover_image")
+      .select("duration")
+      .select("is_exclusive");
+    return songList;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 const getSongsById = async (songId) => {
   try { 
     const existingSong = await Song.findById(songId)
@@ -504,4 +519,5 @@ export default {
   makePublic,
   getPopularSongOfArtist,
   getSongsByIds,
+  getSongsByAlbum,
 };
