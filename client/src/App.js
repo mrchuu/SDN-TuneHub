@@ -12,6 +12,7 @@ import UserProfile from "./screen/UserProfile";
 import ForgotPassword from "./screen/ForgotPassword";
 import ArtistDashBoard from "./screen/ArtistDashBoard";
 import ArtistUpload from "./screen/ArtistUpload";
+import PlaylistScreen from "./screen/PlaylistScreen"; 
 import ArtistProfile from "./screen/ArtistProfile";
 import SongDetail from "./screen/SongDetail";
 import Player from "./component/Player";
@@ -41,6 +42,8 @@ function App() {
         <Route path="/profile" element={<UserProfile/>}/>
         <Route path="/artist/:artistId" element={<ArtistProfile/>}/>
         <Route path="/songdetail" element={<SongDetail/>}/>
+        <Route path="/playlist" element={<PlaylistScreen />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
       {["/login", "/signup", "/forgot-password"].includes(
         window.location.pathname

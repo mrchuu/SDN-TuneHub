@@ -50,19 +50,17 @@ function Explore() {
         "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/8/18/1082524/1660404545-Fadkeqhve.jpg",
     },
   ];
-  
 
   const { OriginalRequest } = PerformRequest();
 
-  const [artistList, setArtistList] = useState([])
-  const [risingArtist, setRisingArtist] = useState([])
-  const [genres, setGenres] = useState([])
-
+  const [artistList, setArtistList] = useState([]);
+  const [risingArtist, setRisingArtist] = useState([]);
+  const [genres, setGenres] = useState([]);
 
   const searchValue = useSelector((state) => state.search.searchKey);
   console.log(searchValue);
 
-    useEffect(() => {
+  useEffect(() => {
     const fetch = async () => {
       const searchArtistValue = await OriginalRequest(
         `artists/search/${searchValue}`,
@@ -77,10 +75,7 @@ function Explore() {
 
   useEffect(() => {
     const fetchRising = async () => {
-      const risingArtist = await OriginalRequest(
-        `artists/rising`,
-        "GET"
-      );
+      const risingArtist = await OriginalRequest(`artists/explore/rising`, "GET");
       if (risingArtist) {
         setRisingArtist(risingArtist.data);
       }
@@ -88,10 +83,7 @@ function Explore() {
     fetchRising();
 
     const fetchGenres = async () => {
-      const genresSong = await OriginalRequest(
-        `genres/`,
-        "GET"
-      );
+      const genresSong = await OriginalRequest(`genres/`, "GET");
       if (genresSong) {
         setGenres(genresSong.data.slice(0, 12));
       }
@@ -112,15 +104,24 @@ function Explore() {
               </div>
               <div className="container mx-auto flex flex-wrap items-center">
                 {genres.map((genre, index) => (
-                  <div style={{backgroundColor: genre.bgColor ? genre.bgColor : "red"}} className="card w-48 h-72 ml-4 mr-5 mb-10 border rounded-lg relative shadow-2xl shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm overflow-hidden">
-                  <h3 className="text-lg text-white font-bold p-2">
-                    {genre.name}
-                  </h3>
-                  <img
-                    src={genre.image ? genre.image : 'https://i.pinimg.com/736x/90/57/0a/90570addee2645866a597530721f37fd.jpg'}
-                    className="absolute bottom-0 right-0 w-32 h-32 object-cover object-center transform rotate-12 translate-x-3 translate-y-1"
-                  />
-                </div>
+                  <div
+                    style={{
+                      backgroundColor: genre.bgColor ? genre.bgColor : "red",
+                    }}
+                    className="card w-48 h-72 ml-4 mr-5 mb-10 border rounded-lg relative shadow-2xl shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm overflow-hidden"
+                  >
+                    <h3 className="text-lg text-white font-bold p-2">
+                      {genre.name}
+                    </h3>
+                    <img
+                      src={
+                        genre.image
+                          ? genre.image
+                          : "https://i.pinimg.com/736x/90/57/0a/90570addee2645866a597530721f37fd.jpg"
+                      }
+                      className="absolute bottom-0 right-0 w-32 h-32 object-cover object-center transform rotate-12 translate-x-3 translate-y-1"
+                    />
+                  </div>
                 ))}
               </div>
             </div>
@@ -182,9 +183,9 @@ function Explore() {
         ) : (
           <>
             <h2 className="text-2xl font-bold mb-8 dark:text-white ml-4 mt-4">
-              Explore
+              Songs
             </h2>
-            <SongList url={`songs/search/${searchValue}`}/>
+            <SongList url={`songs/search/${searchValue}`} />
 
             <div className="w-full pt-8 ">
               <div className="mx-auto">
@@ -192,32 +193,30 @@ function Explore() {
                   Artist
                 </h2>
               </div>
-              <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
-                {artistList.map((artist, index) => (
-                  <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
-                    <img
-                      src={artist.user?.profile_picture}
-                      className="rounded-full w-40 h-40 object-cover object-center"
-                    />
-                    <h3 className="text-lg font-semibold dark:text-white m-2">
-                      {artist.artist_name}
-                    </h3>
-                    {artist.name ? (
+              {artistList.length > 0 ? (
+                <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+                  {artistList.map((artist, index) => (
+                    <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
+                      <img
+                        src={artist.user?.profile_picture}
+                        className="rounded-full w-40 h-40 object-cover object-center"
+                      />
+                      <h3 className="text-lg font-semibold dark:text-white m-2">
+                        {artist.artist_name}
+                      </h3>
                       <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
                         {artist.user?.introduction}
                       </p>
-                    ) : (
-                      <p className="text-md text-light30 dark:text-dark30 ml-2">
-                        Null
-                      </p>
-                    )}
 
-                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                      Follow: {artist.artist_followed_count}
-                    </p>
-                  </div>
-                ))}
-              </div>
+                      <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                        Follow: {artist.artist_followed_count}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <img className="m-auto" src='https://static.thenounproject.com/png/2962127-200.png'/>
+              )}
             </div>
           </>
         )}
