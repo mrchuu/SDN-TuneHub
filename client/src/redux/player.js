@@ -37,6 +37,9 @@ export const playerSlice = createSlice({
       if (!state.currentSong._id) {
         state.currentSong = state.songQueue[state.queueIndex];
         state.isPlaying = true;
+      }else{
+        state.currentSong = state.songQueue[state.queueIndex];
+        state.isPlaying = true;
       }
     },
     addSongToQueue: (state, action) => {

@@ -7,6 +7,7 @@ import {
     toogleIsPlaying,
     addSongToQueue,
     setSongQueue,
+    setQueueIndex,
 } from "../redux/player.js";
 
 import { Link, useParams } from "react-router-dom";
@@ -63,7 +64,7 @@ const DetailAlbum = () => {
                             <h1 className="text-lg font-normal text-center dark:text-darkText">{album.artist_name}</h1>
                             <p className="font-normal text-center dark:text-darkText">{album.song_count} Songs</p>
                             <div className="flex justify-between mt-1 text-light60">
-                                <button onClick={()=> {dispatch(setSongQueue(songs))}} className="active:scale-75 dark:bg-dark10 text-sm rounded-xl w-36 flex items-center justify-center bg-light10 py-1 px-2"><FaPlay />Play All</button>
+                                <button onClick={()=> {dispatch(setSongQueue(songs));}} className="active:scale-75 dark:bg-dark10 text-sm rounded-xl w-36 flex items-center justify-center bg-light10 py-1 px-2"><FaPlay />Play All</button>
                                 <button className="dark:bg-dark10 text-sm rounded-xl w-36 bg-light10 py-1 px-2">Purchase {album.price}$</button>
                             </div>
                         </div>
