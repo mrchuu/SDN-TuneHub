@@ -9,6 +9,7 @@ import { toogleExpand } from "../redux/sideBar.js";
 import ListPlaylist from "./ListPlaylist";
 import { useNavigate } from "react-router-dom";
 import PerformRequest from "../utilities/PerformRequest.js";
+import { Modal, Box, Typography, Button } from '@mui/material';
 
 export default function SideBar() {
   // const [expanded, setExpanded] = useState(window.innerWidth > 768);
@@ -22,6 +23,12 @@ export default function SideBar() {
   const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false);
   const [playlistName, setPlaylistName] = useState("");
   const [imageSrc, setImageSrc] = useState(auth.profile_picture);
+
+  const [showModal, setShowModal] = useState(false);
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
+
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -164,7 +171,7 @@ export default function SideBar() {
                 <button
                   className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-5" : "w-0 hidden"
                     }`}
-                  onClick={openCreatePlaylistForm}
+                  onClick={openModal}
                 >
                   <FaPlus size={22} />
                 </button>
@@ -178,7 +185,7 @@ export default function SideBar() {
           >
 
 
-            
+
             {/* listplaylist ở đây */}
             <div className="px-3 mt-2">
               <div>
@@ -186,11 +193,11 @@ export default function SideBar() {
               </div>
             </div>
           </div>
-          
-          
-          
-          
-          
+
+
+
+
+
           <div className="px-3 text-lightText dark:text-darkText">
             <div className="font-medium text-textSecondary py-2 px-3">
               <div className="flex items-center">
@@ -248,71 +255,74 @@ export default function SideBar() {
         </div>
       </nav>
 
+      
 
-      {showCreatePlaylistModal && (
-        <div className="fixed top-0 left-0 flex items-center z-10000 justify-center w-full h-full bg-black bg-opacity-50 z-100" onClick={closeCreatePlaylistForm}>
-          <div className="relative w-80 bg-white rounded-lg shadow-md z-10 p-4" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={closeCreatePlaylistForm}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-600"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+      <Modal open={showModal} onClose={closeModal}>
+        <Box sx={{ /* Thêm CSS cho Modal */ }}>
+          <div className="fixed top-0 left-0 flex items-center z-10000 justify-center w-full h-full bg-black bg-opacity-50 z-100" onClick={closeModal}>
+            <div className="relative w-80 bg-white rounded-lg shadow-md z-10 p-4" onClick={(e) => e.stopPropagation()}>
+              <button
+                onClick={closeModal}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-600"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <input
-              type="text"
-              placeholder="Enter playlist name"
-              value={playlistName}
-              onChange={(e) => setPlaylistName(e.target.value)}
-              className="w-full px-4 py-2 border border-black-300 rounded-lg focus:outline-none focus:border-primary mb-4"
-              style={{
-                fontSize: "16px",
-                fontWeight: "bold",
-                color: "#333",
-                backgroundColor: "#f7f7f7",
-                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-              }}
-            />
-            <div className="flex justify-center items-center mb-4">
-              <label
-                htmlFor="imageInput"
-                className="cursor-pointer bg-primary text-black py-2 px-4 rounded-lg hover:bg-primary-dark flex items-center"
-              >
-                <BsFolderPlus size={20} className="mr-2" />
-                <span>Choose Image</span>
-              </label>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
               <input
-                id="imageInput"
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageInputChange(e)}
-                className="hidden"
+                type="text"
+                placeholder="Enter playlist name"
+                value={playlistName}
+                onChange={(e) => setPlaylistName(e.target.value)}
+                className="w-full px-4 py-2 border border-black-300 rounded-lg focus:outline-none focus:border-primary mb-4"
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  color: "#333",
+                  backgroundColor: "#f7f7f7",
+                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                }}
               />
+              <div className="flex justify-center items-center mb-4">
+                <label
+                  htmlFor="imageInput"
+                  className="cursor-pointer bg-primary text-black py-2 px-4 rounded-lg hover:bg-primary-dark flex items-center"
+                >
+                  <BsFolderPlus size={20} className="mr-2" />
+                  <span>Choose Image</span>
+                </label>
+                <input
+                  id="imageInput"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageInputChange(e)}
+                  className="hidden"
+                />
+              </div>
+              <button
+                onClick={handleCreatePlaylist}
+                className="w-full py-2 text-sm bg-primary text-black font-semibold rounded-lg hover:bg-primary-dark focus:outline-none"
+                style={{
+                  transition: "background-color 0.3s ease",
+                }}
+              >
+                Create Playlist
+              </button>
             </div>
-            <button
-              onClick={handleCreatePlaylist}
-              className="w-full py-2 text-sm bg-primary text-black font-semibold rounded-lg hover:bg-primary-dark focus:outline-none"
-              style={{
-                transition: "background-color 0.3s ease",
-              }}
-            >
-              Create Playlist
-            </button>
           </div>
-        </div>
-      )}
+        </Box>
+      </Modal>
 
 
 
