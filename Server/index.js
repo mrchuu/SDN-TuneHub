@@ -9,7 +9,8 @@ import {
   GenreRouter,
   SongRouter,
   ArtistRouter,
-  AlbumRouter
+  AlbumRouter,
+  VnPayRouter
 } from "./routes/index.js";
 import "./utils/google-oauth2.js";
 import path from "path";
@@ -39,6 +40,7 @@ app.use("/api/songs", SongRouter);
 app.use("/api/genres", GenreRouter);
 app.use("/api/artists", ArtistRouter);
 app.use("/api/user", UserRouter);
+app.use("/api/payment", VnPayRouter)
 app.use(
   "/upload/image",
   express.static(path.join(__dirname, `upload`, "image"))

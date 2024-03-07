@@ -28,9 +28,9 @@ export default function SongQueue() {
           {songQueue.map((song, index) => (
             <div
               key={song._id}
-              className={`cursor-pointer w-full py-2 flex items-center justify-between hover:bg-light10 group dark:hover:bg-dark10 ${
+              className={`cursor-pointer w-full py-2 flex items-center justify-between hover:bg-[#cdc8a5] group dark:hover:bg-slate-700 ${
                 currentSong._id === songQueue[index]._id
-                  ? "bg-light10 group dark:bg-dark10"
+                  ? "bg-[#cdc8a5] group dark:bg-slate-700"
                   : ""
               }`}
               onClick={(e) => {
@@ -48,7 +48,7 @@ export default function SongQueue() {
                   <h4
                     className={`w-full font-semibold text-sm group-hover:text-white ${
                       currentSong._id === songQueue[index]._id
-                        ? "text-white dark:text-darkText"
+                        ? "text-lightText dark:text-darkText"
                         : "text-lightTextSecondary dark:text-darkTextSecondary"
                     } text-ellipsis`}
                   >
@@ -57,7 +57,7 @@ export default function SongQueue() {
                   <h6
                     className={`font-normal text-xs group-hover:text-darkText ${
                       currentSong._id === songQueue[index]._id
-                        ? "text-white dark:text-darkText"
+                        ? "text-lightTextSecondary dark:text-darkText"
                         : "text-lightTextSecondary dark:text-darkTextSecondary"
                     } `}
                   >

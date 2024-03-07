@@ -15,6 +15,8 @@ import ArtistUpload from "./screen/ArtistUpload";
 import ArtistProfile from "./screen/ArtistProfile";
 import Player from "./component/Player";
 import { useEffect } from "react";
+import PaymentResult from "./screen/PaymentResult";
+import PurchaseSong from "./screen/PurchaseSong";
 
 function App() {
   // useEffect(()=>{
@@ -39,14 +41,19 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/artist/:artistId" element={<ArtistProfile />} />
+        <Route
+          path="/payment/result/:status/:message"
+          element={<PaymentResult />}
+        />
+        <Route path="/payment/purchase" element={<PurchaseSong/>} />
       </Routes>
-      {["/login", "/signup", "/forgot-password"].includes(
+      {/* {["/login", "/signup", "/forgot-password"].includes(
         window.location.pathname
       ) ? (
         <></>
       ) : (
         <Player />
-      )}
+      )} */}
     </BrowserRouter>
   );
 }

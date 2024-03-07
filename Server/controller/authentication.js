@@ -5,8 +5,7 @@ import jwt from "jsonwebtoken";
 import { sendConfirmEmail } from "../utils/mailTransport.js";
 import jwksClient from "jwks-rsa";
 import User from "../model/RegisteredUser.js";
-import emailTemplate from '../utils/emailTemplate.js';
-
+import emailTemplate from "../utils/emailTemplate.js";
 
 const client = jwksClient({
   jwksUri: "https://www.googleapis.com/oauth2/v3/certs",
@@ -45,7 +44,7 @@ const signUp = async (req, res) => {
       password,
       confirmPassword,
       introduction,
-      profilePicture
+      profilePicture,
     } = req.body;
     if (
       firstName.length == 0 ||
@@ -187,6 +186,11 @@ const refreshToken = async (req, res) => {
         .json({ error: "No cookie for refreshToken was provided" });
     }
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const existingUser = AuthenticateRepository.getUserById(
+      decodedToken.userId
+    );
+    const { createdAt, updatedAt, password, ...filteredUser } =
+      existingUser._doc;
     const accessToken = jwt.sign(
       { userId: decodedToken.userId },
       process.env.JWT_SECRET_KEY,
@@ -203,7 +207,10 @@ const refreshToken = async (req, res) => {
     });
     return res
       .status(200)
-      .json({ message: "accessToken has been succesfully refreshed!" });
+      .json({
+        message: "accessToken has been succesfully refreshed!",
+        data: filteredUser,
+      });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -352,7 +359,11 @@ const sendResetLink = async (req, res) => {
     // Send the new password via emailsendNewPasswordEmail(user.email, newPassword)
     await emailTemplate.sendNewPasswordEmail(user.email, newPassword);
 
-    return res.status(200).json({ message: "New password sent successfully! Please check your email." });
+    return res
+      .status(200)
+      .json({
+        message: "New password sent successfully! Please check your email.",
+      });
   } catch (error) {
     console.error("Forgot password error:", error);
     return res.status(500).json({ error: "Internal server error" });
@@ -361,10 +372,13 @@ const sendResetLink = async (req, res) => {
 const generateRandomPassword = () => {
   // Generate a random string with specified length
   const length = 10;
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let newPassword = '';
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let newPassword = "";
   for (let i = 0; i < length; i++) {
-    newPassword += characters.charAt(Math.floor(Math.random() * characters.length));
+    newPassword += characters.charAt(
+      Math.floor(Math.random() * characters.length)
+    );
   }
   return newPassword;
 };
@@ -379,5 +393,5 @@ export default {
   logOut,
   oauth2GoogleAuthentication,
   googleLogin,
-  sendResetLink
+  sendResetLink,
 };
