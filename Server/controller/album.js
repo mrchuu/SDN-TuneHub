@@ -59,8 +59,17 @@ const getAlbumById = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 }
+const getAllAlbums = async (req, res) => {
+  try {
+    const albums = await AlbumRepository.getAllAlbums();
+    res.status(200).json({ data: albums });
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+}
 export default {
   addAlbum,
   getAlbumsOfArtists,
-  getAlbumById
+  getAlbumById,
+  getAllAlbums,
 };

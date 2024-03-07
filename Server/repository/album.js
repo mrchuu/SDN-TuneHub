@@ -70,8 +70,17 @@ const getAlbumById = async (id) => {
     throw new Error(error.message);
   }
 }
+const getAllAlbums = async()=>{
+  try {
+    const albums = await Album.find({}).select("_id artist album_name description album_cover");
+    return albums;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 export default {
   createAlbum,
   getAlbumsOfArtists,
   getAlbumById,
+  getAllAlbums,
 };
