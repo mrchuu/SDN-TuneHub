@@ -19,7 +19,7 @@ export const playerSlice = createSlice({
     toogleIsPlaying: (state, action) => {
       state.isPlaying = action.payload;
     },
-    toogleLoop: (state, action) =>{
+    toogleLoop: (state, action) => {
       state.loop = !state.loop
     },
     setCurrentSong: (state, action) => {
@@ -31,6 +31,13 @@ export const playerSlice = createSlice({
     },
     updateProgress: (state, action) => {
       state.progress = action.payload;
+    },
+    setSongQueue: (state, action) => {
+      state.songQueue = action.payload;
+      if (!state.currentSong._id) {
+        state.currentSong = state.songQueue[state.queueIndex];
+        state.isPlaying = true;
+      }
     },
     addSongToQueue: (state, action) => {
       const existingSong = state.songQueue.find(
@@ -74,7 +81,7 @@ export const playerSlice = createSlice({
         state.isPlaying = true;
         state.queueIndex++;
         state.currentSong = state.songQueue[state.queueIndex];
-      }else{
+      } else {
         state.isPlaying = false;
         state.currentSong = {}
       }
@@ -82,7 +89,7 @@ export const playerSlice = createSlice({
     toogleQueue: (state, action) => {
       state.showBox = state.showBox ? false : true;
     },
-    setSliderValue: (state, action) =>{
+    setSliderValue: (state, action) => {
       state.progress = action.payload
       state.sliderValue = action.payload;
     }
@@ -99,7 +106,8 @@ export const {
   removeSongFromQueue,
   setQueueIndex,
   toogleQueue,
-  toogleLoop, 
- setSliderValue
+  toogleLoop,
+  setSliderValue,
+  setSongQueue,
 } = playerSlice.actions;
 export default playerSlice.reducer;
