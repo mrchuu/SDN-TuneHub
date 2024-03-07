@@ -22,7 +22,7 @@ import { fileURLToPath } from "url";
 const app = express();
 dotenv.config();
 const corsOptions = {
-  origin: "https://TuneHub.app",
+  origin: "http://localhost:3000",
   methods: "PUT, POST, GET, DELETE, OPTIONS, PATCH",
   credentials: true,
 };
