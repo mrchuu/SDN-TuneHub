@@ -105,7 +105,7 @@ export default function SongListWithStreamCount({url}) {
                       </h4>
                       {song.artist ? (
                         <Link
-                          to={`artist/${song.artist._id}`}
+                          to={`/artist/${song.artist._id}`}
                           className="text-xs hover:underline"
                         >
                           {song.artist.artist_name}

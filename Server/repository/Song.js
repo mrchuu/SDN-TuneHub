@@ -175,7 +175,7 @@ const getPopularSongOfArtist = async (artistId) => {
           _id: 1,
           song_name: 1,
           artist: {
-            id: "$artist._id",
+            _id: "$artist._id",
             artist_name: "$artist.artist_name",
           },
           participated_artist: 1,
@@ -365,19 +365,10 @@ const hotestSongByDay = async (date) => {
                 if: {
                   $and: [
                     {
-                      $gte: [
-                        "$streamTime.createdAt",
-                        new Date(
-                          new Date() -
-                          24 * 60 * 60 * 1000
-                        ),
-                      ],
+                      $gte: ["$streamTime.createdAt", byDay],
                     },
                     {
-                      $lt: [
-                        "$streamTime.createdAt",
-                        new Date(),
-                      ],
+                      $lt: ["$streamTime.createdAt", new Date(),],
                     },
                   ],
                 },
@@ -419,22 +410,25 @@ const hotestSongByDay = async (date) => {
           $group: {
             _id: "$_id",
             song_name: { $first: "$song_name" },
-            album: { $first: "$album" },
-            artist_name: {
-              $first: "$artist_file.artist_name",
+            album: {
+              $first: {
+                _id: "$album_file._id",
+                album_name: "$album_file.album_name",
+              },
+            },
+            artist: {
+              $first: {
+                _id: "$artist_file._id",
+                artist_name: "$artist_file.artist_name",
+              },
             },
             cover_image: { $first: "$cover_image" },
-            profile_picture: {
-              $first: "$users_file.profile_picture",
-            },
-            album_name: {
-              $first: "$album_file.album_name",
-            },
-            intro_user: {
-              $first: "$users_file.introduction",
-            },
-            streamCount: { $sum: "$withinLast24Hours" },
+            streamCount: { $sum: "$count" },
             duration: { $first: "$duration" },
+            is_exclusive: { $first: "$is_exclusive" },
+            lastStreamTime: {
+              $first: "$lastStreamTime",
+            },
           },
         },
         {
@@ -444,16 +438,23 @@ const hotestSongByDay = async (date) => {
         },
         {
           $project: {
-            _id: 1,
-            song_name: 1,
-            artist: 1,
-            artist_name: 1,
-            cover_image: 1,
-            profile_picture: 1,
-            streamCount: 1,
-            intro_user: 1,
-            album_name: 1,
-            duration: 1,
+            _id: "$_id",
+            song_name: "$song_name",
+            album: "$album",
+            artist: "$artist",
+            cover_image: "$cover_image",
+            streamCount: "$streamCount",
+            duration: "$duration",
+            is_exclusive: "$is_exclusive",
+            lastStreamTime: "$lastStreamTime"
+          }
+        },
+        {
+          $limit: 7,
+        },
+        {
+          $sort: {
+            streamCount: -1,
           },
         },
       ]).exec();

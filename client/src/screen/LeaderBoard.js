@@ -140,18 +140,24 @@ export default function LeaderBoard() {
 
                                         <div className="ml-2">
                                             <h4 className="font-semibold text-md">
-                                                <Link
-                                                    to={`songdetail`}
-                                                    className="text-xs hover:underline"
-                                                    onClick={(e) => { e.stopPropagation() }}
-                                                >
-                                                    {song.song_name}
-                                                </Link>
+                                                {song.song_name ? (
+                                                    <Link
+                                                        // to={`/songdetail/${song._id}`}
+                                                        to = {"/songdetail"}
+                                                        className="text-xs hover:underline"
+                                                        style={{ fontSize: "1.125rem", lineHeight: "1.25rem" }}
+                                                        onClick={(e) => { e.stopPropagation() }}
+                                                    >
+                                                        {song.song_name}
+                                                    </Link>
+                                                ) : (
+                                                    <></>
+                                                )}
                                             </h4>
                                             <h6 className=" text-xs">
                                                 {song.artist ? (
                                                     <Link
-                                                        to={`artist/${song.artist._id}`}
+                                                        to={`/artist/${song.artist._id}`}
                                                         className="text-xs hover:underline"
                                                         onClick={(e) => { e.stopPropagation() }}
                                                     >
@@ -165,7 +171,7 @@ export default function LeaderBoard() {
                                     </div>
                                 </td>
                                 <td className="w-4/12">
-                                    {song.album_name ? song.album_name : ""}
+                                    {song.album.album_name ? song.album.album_name : ""}
                                 </td>
                                 <td className="w-1/12">{song.streamCount}</td>
                                 <td className="w-1/12">{Math.floor(song.duration / 60)}:{song.duration % 60}</td>
@@ -250,7 +256,7 @@ export default function LeaderBoard() {
                                     {artist && (
                                         <>
                                             <Link
-                                                to={`artist/${artist._id}`}
+                                                to={`/artist/${artist._id}`}
                                                 className="text-xs hover:underline"
                                                 style={{ fontSize: "1.125rem", lineHeight: "1.25rem" }}
                                                 onClick={(e) => { e.stopPropagation() }}

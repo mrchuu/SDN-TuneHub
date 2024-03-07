@@ -1,44 +1,27 @@
-import { useParams } from "react-router";
-import NoSpaceHeaderTemplate from "../template/NoSpaceHeaderTemplat";
-import { useDispatch, useSelector } from "react-redux";
-import { setScrollPos } from "../redux/window";
-import { useEffect } from "react";
+import DefaultTemplate from "../template/DefaultTemplate";
 import SongListWithStreamCount from "../component/SongListWithStreamCount";
 import AlbumList from "../component/AlbumsList";
-
-export default function   ArtistProfile() {
-  const dispatch = useDispatch();
-  const { artistId } = useParams();
-  const scrollPos = useSelector((state) => state.window.scrollPos);
-  useEffect(() => {
-    const handleScroll = () => {
-      dispatch(setScrollPos(window.scrollY));
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+import AudioVisualizer from "../component/Audio"
+export default function SongDetail() {
   return (
-    <NoSpaceHeaderTemplate>
-      <div className="w-full min-h-screen">
-        <div className="profileHeader w-full h-96 bg-[url('https://gcs.tripi.vn/public-tripi/tripi-feed/img/474095PJn/hinh-anh-am-nhac-dep_103427714.jpg')] bg-center bg-cover">
-          <div className={`w-full h-full pt-56 relative`}>
-            <div
-              className="absolute inset-0 bg-light30 dark:bg-dark30"
-              style={{ opacity: `${(scrollPos * 0.7) / 180}` }}
-            ></div>
-            <h1 className="pl-12 text-6xl font-bold text-white">AURORA</h1>
-            <div className="flex items-center mt-3">
-              <p className="pl-12 text-white">10,040,391 followers</p>
-              <button className="border-2 border-light10 px-5 py-1 text-white rounded-full ml-7">
-                follow
-              </button>
-            </div>
-          </div>
+    <DefaultTemplate>
+      <div className="w-full max-h items-center justify-center relative ">
+        <div className="flex flex-row bg-light60 dark:bg-dark60 ml-10 bo">
+          <img
+            src="https://res.cloudinary.com/djzdhtdpj/image/upload/v1709269357/png-transparent-phonograph-record-lp-record-music-others-miscellaneous-album-disc-jockey-thumbnail_1_dd0lc3.png"
+            className="w-64 h-full left-40 relative animate-spin"
+            style={{ animationDuration: "10000ms" }}
+          />
+          <img
+            className="w-64 h-64 right-100"
+            style={{ position: "absolute" }}
+            src="https://2.bp.blogspot.com/-Nc9YO_-F8yI/TcSIAB-nR-I/AAAAAAAAAGI/hPkuxqkqVcU/s1600/music-clipartMUSIC1.jpg">
+          </img>
         </div>
-        <div className="h-24 w-full bg-gradient-to-b from-light30 to-light60 dark:from-dark30 dark:to-dark60 transition-all"></div>
-        <div className="px-5">
+        <div className="bg-light60 dark:bg-dark60 px-5">
+          <div>
+            <AudioVisualizer />
+          </div>
           <h4 className="text-lightText dark:text-darkText font-semibold text-xl">
             Popular Tracks
           </h4>
@@ -50,11 +33,9 @@ export default function   ArtistProfile() {
           <h4 className="text-lightText dark:text-darkText font-semibold text-xl mt-7">
             Albums
           </h4>
-          <AlbumList 
-        //   url={`album/getAlbumsOfArtist/${artistId}`}
-           />
         </div>
       </div>
-    </NoSpaceHeaderTemplate>
+
+    </DefaultTemplate>
   );
 }

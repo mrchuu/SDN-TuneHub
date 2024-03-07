@@ -40,8 +40,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword/>}/>
         <Route path="/profile" element={<UserProfile/>}/>
         <Route path="/artist/:artistId" element={<ArtistProfile/>}/>
-        <Route path="/leaderboard/artist/:artistId" element={<ArtistProfile/>}/>
-        <Route path="/leaderboard/songdetail" element={<SongDetail/>}/>
+        <Route path="/songdetail" element={<SongDetail/>}/>
       </Routes>
       {["/login", "/signup", "/forgot-password"].includes(
         window.location.pathname
