@@ -14,7 +14,7 @@ const playlistDTO = new Schema({
   play_list_cover: {
     type: String,
   },
-});
+},{_id: false});
 
 const UserSchema = new Schema(
   {
@@ -48,10 +48,10 @@ const UserSchema = new Schema(
       type: [playlistDTO],
       default: [],
     },
-    playlist_created: {
-      type: [{ type: Schema.Types.ObjectId }],
-      default: [],
-    },
+    // playlist_created: {
+    //   type: [{ type: Schema.Types.ObjectId }],
+    //   default: [],
+    // },
     artist_followed: {
       type: [Schema.Types.ObjectId],
       ref: "Artist",

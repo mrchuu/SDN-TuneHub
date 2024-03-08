@@ -23,6 +23,7 @@ export const playerSlice = createSlice({
       state.loop = !state.loop
     },
     setCurrentSong: (state, action) => {
+      console.log("Changes cause of navigate");
       state.currentSong = { ...state.currentSong, ...action.payload };
     },
     changeVolume: (state, action) => {

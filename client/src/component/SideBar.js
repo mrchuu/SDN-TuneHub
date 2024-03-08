@@ -2,16 +2,31 @@ import SideBarItem from "./SideBarItem";
 import { FaHome, FaSearch, FaChartBar, FaPlus, FaUser } from "react-icons/fa";
 import { MdLibraryMusic } from "react-icons/md";
 import { LuChevronLast, LuChevronFirst } from "react-icons/lu";
-import { createContext, useEffect, useState } from "react";
-import { BsSoundwave } from "react-icons/bs";
+import { createContext, useEffect, useState, useCallback } from "react";
+import { BsSoundwave, BsFolderPlus } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { toogleExpand } from "../redux/sideBar.js";
+import ListPlaylist from "./ListPlaylist";
+import PerformRequest from "../utilities/PerformRequest.js";
+import { Modal, Box, Typography, Button } from '@mui/material';
 
 export default function SideBar() {
   // const [expanded, setExpanded] = useState(window.innerWidth > 768);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const auth = useSelector((state) => state.auth.userInfo);
   const expanded = useSelector((state) => state.sideBar.expanded);
   const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
+  const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false);
+  const [playlistName, setPlaylistName] = useState("");
+  const [imageSrc, setImageSrc] = useState(auth.profile_picture);
+
+  const [showModal, setShowModal] = useState(false);
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
+
+
+
   useEffect(() => {
     const handleResize = () => {
       // setExpanded(window.innerWidth > 768);
@@ -26,9 +41,66 @@ export default function SideBar() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const closeCreatePlaylistForm = () => {
+    setShowCreatePlaylistModal(false);
+  };
+
+  const [baseImage, setBaseImage] = useState("");
+
+  const handleImageInputChange = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    setBaseImage(base64);
+
+    console.log(base64);
+  };
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  const openCreatePlaylistForm = () => {
+    setShowCreatePlaylistModal(true);
+  };
+
+  const { OriginalRequest } = PerformRequest();
+
+  const handleCreatePlaylist = () => {
+    const fetch = async () => {
+      const searchArtistValue = await OriginalRequest(
+        `playlist/create`,
+        "POST",
+        {
+          play_list_name: playlistName,
+          play_list_cover: baseImage,
+          creator: userInfo
+        }
+      );
+
+      console.log(searchArtistValue);
+    };
+    fetch();
+    setPlaylistName('');
+    setImageSrc('');
+    setShowCreatePlaylistModal(false);
+  };
+
+
   return (
     <div
-      className={`h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-10 ${expanded ? "w-60" : "w-20"
+      className={`h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-60 ${expanded ? "w-60" : "w-20"
         }`}
     >
       <nav className="h-full flex flex-col border-r shadow-lg border-lightTextSecondary dark:border-darkTextSecondary">
@@ -68,7 +140,7 @@ export default function SideBar() {
             }
             text={"Homepage"}
             url={"/"}
-            active={window.location.href === "http://localhost:3000/"} 
+            active={window.location.href === "http://localhost:3000/"}
           />
           <SideBarItem
             icon={
@@ -79,7 +151,7 @@ export default function SideBar() {
             }
             text={"Explore"}
             url={"/explore"}
-            active={window.location.href === "http://localhost:3000/explore"} 
+            active={window.location.href === "http://localhost:3000/explore"}
           />
           <SideBarItem
             icon={
@@ -90,7 +162,9 @@ export default function SideBar() {
             }
             text={"Leaderboard"}
             url={"/leaderboard"}
-            active={window.location.href === "http://localhost:3000/leaderboard"} 
+            active={
+              window.location.href === "http://localhost:3000/leaderboard"
+            }
           />
         </ul>
         <hr
@@ -113,11 +187,15 @@ export default function SideBar() {
                   &nbsp;Your Library
                 </span>
               </div>
-              <FaPlus
-                className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-5" : "w-0 hidden"
-                  }`}
-                size={22}
-              />
+              <div className="relative">
+                <button
+                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-5" : "w-0 hidden"
+                    }`}
+                  onClick={openModal}
+                >
+                  <FaPlus size={22} />
+                </button>
+              </div>
             </div>
           </div>
           <div
@@ -125,70 +203,21 @@ export default function SideBar() {
               }`}
             style={{ overflowY: "auto" }}
           >
+
+
+
+            {/* listplaylist ở đây */}
             <div className="px-3 mt-2">
-              {/* <div className="bg-light30 dark:bg-dark30 py-2 px-3 text-textSecondary font-medium rounded-md  ">
-                <span
-                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-32" : "w-0 hidden"
-                    }`}
-                >
-                  Create your first playlist!
-                </span>
-                <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
-                  it's easy !! We'll help
-                </p>
-                <button
-                  className={`bg-light10 dark:bg-dark10 w-full py-2 my-2 rounded-lg text-lightText dark:text-darkText hover:text-slate-950 hover:dark:text-white`}
-                >
-                  Create playlist
-                </button>
-              </div> */}
-              <div className="px-3 text-textSecondary text-sm font-medium">
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://yt3.googleusercontent.com/QiI-c4cFyRPD0qVwTQooC3dlgJqHA_t6CpEAv818om-mqL9bqNDL4L_qXQVXx_eY76D_7cLD=s900-c-k-c0x00ffffff-no-rj"
-                  />
-                  &nbsp;<span>The Weeknd</span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://i.pinimg.com/originals/f5/43/d0/f543d0c69e43ce9f9ac9cb7b0023b2f0.jpg"
-                  />
-                  &nbsp;<span>Aurora</span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://www.rollingstone.com/wp-content/uploads/2018/06/eric-clapton-documentary-radio-interview-bbc-listen-read-5fcacf6b-b855-4bff-baa6-35beef77bdc6.jpg"
-                  />
-                  &nbsp;<span>Eric Clapton</span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://asset-2.tstatic.net/tribunnews/foto/bank/images/two-door-cinema-club-asdfg-etrg.jpg"
-                  />
-                  &nbsp;<span>Two Door Cinema Club</span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://rnbstellar.com/wp-content/uploads/2021/03/stellar-35.jpg"
-                  />
-                  &nbsp;<span>Stellar</span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://i.scdn.co/image/ab6761610000e5eb7da39dea0a72f581535fb11f"
-                  />
-                  &nbsp;<span>Artic Monkeys</span>
-                </div>
+              <div>
+                <ListPlaylist/>
               </div>
             </div>
-            {/* <div style={{ height: "1000px" }}></div> */}
           </div>
+
+
+
+
+
           <div className="px-3 text-lightText dark:text-darkText">
             <div className="font-medium text-textSecondary py-2 px-3">
               <div className="flex items-center">
@@ -204,14 +233,16 @@ export default function SideBar() {
             </div>
           </div>
           <div
-            className={`max-h-40 overflow-hidden transition-all ${
-              expanded ? "w-full" : "w-0 hidden"
-            }`}
+            className={`max-h-40 overflow-hidden transition-all ${expanded ? "w-full" : "w-0 hidden"
+              }`}
             style={{ overflowY: "auto" }}
           >
+
+
+
             <div className="px-3 mt-2">
               {!userInfo.artist_followed ||
-              userInfo?.artist_followed?.length === 0 ? (
+                userInfo?.artist_followed?.length === 0 ? (
                 <div className="bg-light30 py-2 px-3 font-medium rounded-md dark:bg-dark30">
                   <span className="text-lightText dark:text-darkText">
                     Find some artist to follow
@@ -231,60 +262,90 @@ export default function SideBar() {
                         className="w-10 h-10 rounded-full border-slate-600  border-2"
                         src={artist.userId.profile_picture}
                       />
-                      &nbsp;<span className="text-lightText dark:text-darkTextSecondary">{artist.artist_name}</span>
+                      &nbsp;
+                      <span className="text-lightText dark:text-darkTextSecondary">
+                        {artist.artist_name}
+                      </span>
                     </div>
                   ))}
                 </div>
               )}
-
-              {/* <div className="px-3 text-textSecondary text-sm font-medium">
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://yt3.googleusercontent.com/QiI-c4cFyRPD0qVwTQooC3dlgJqHA_t6CpEAv818om-mqL9bqNDL4L_qXQVXx_eY76D_7cLD=s900-c-k-c0x00ffffff-no-rj"
-                  />
-                  &nbsp;<span>The Weeknd</span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://i.pinimg.com/originals/f5/43/d0/f543d0c69e43ce9f9ac9cb7b0023b2f0.jpg"
-                  />
-                  &nbsp;<span>Aurora</span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://www.rollingstone.com/wp-content/uploads/2018/06/eric-clapton-documentary-radio-interview-bbc-listen-read-5fcacf6b-b855-4bff-baa6-35beef77bdc6.jpg"
-                  />
-                  &nbsp;<span>Eric Clapton</span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://asset-2.tstatic.net/tribunnews/foto/bank/images/two-door-cinema-club-asdfg-etrg.jpg"
-                  />
-                  &nbsp;<span>Two Door Cinema Club</span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://rnbstellar.com/wp-content/uploads/2021/03/stellar-35.jpg"
-                  />
-                  &nbsp;<span>Stellar</span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <img
-                    className="w-10 h-10 rounded-full border-slate-600  border-2"
-                    src="https://i.scdn.co/image/ab6761610000e5eb7da39dea0a72f581535fb11f"
-                  />
-                  &nbsp;<span>Artic Monkeys</span>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>
       </nav>
+
+      
+
+      <Modal open={showModal} onClose={closeModal}>
+        <Box sx={{ /* Thêm CSS cho Modal */ }}>
+          <div className="fixed top-0 left-0 flex items-center z-10000 justify-center w-full h-full bg-black bg-opacity-50 z-100" onClick={closeModal}>
+            <div className="relative w-80 bg-white rounded-lg shadow-md z-10 p-4" onClick={(e) => e.stopPropagation()}>
+              <button
+                onClick={closeModal}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-600"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              <input
+                type="text"
+                placeholder="Enter playlist name"
+                value={playlistName}
+                onChange={(e) => setPlaylistName(e.target.value)}
+                className="w-full px-4 py-2 border border-black-300 rounded-lg focus:outline-none focus:border-primary mb-4"
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  color: "#333",
+                  backgroundColor: "#f7f7f7",
+                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                }}
+              />
+              <div className="flex justify-center items-center mb-4">
+                <label
+                  htmlFor="imageInput"
+                  className="cursor-pointer bg-primary text-black py-2 px-4 rounded-lg hover:bg-primary-dark flex items-center"
+                >
+                  <BsFolderPlus size={20} className="mr-2" />
+                  <span>Choose Image</span>
+                </label>
+                <input
+                  id="imageInput"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageInputChange(e)}
+                  className="hidden"
+                />
+              </div>
+              <button
+                onClick={handleCreatePlaylist}
+                className="w-full py-2 text-sm bg-primary text-black font-semibold rounded-lg hover:bg-primary-dark focus:outline-none"
+                style={{
+                  transition: "background-color 0.3s ease",
+                }}
+              >
+                Create Playlist
+              </button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+
+
+
       <div className="h-20"></div>
     </div>
   );
