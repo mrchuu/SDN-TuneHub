@@ -31,6 +31,9 @@ export default function SongList({ url }) {
 
   const [playlist, setPlaylist] = useState(null);
   const [playlistMenuAnchor, setPlaylistMenuAnchor] = useState(null);
+
+  const userInfo = useSelector((state) => state.auth.userInfo);
+
   const closeMenu = (e, song) => {
     setMenuIsOpen(false);
     setSongMenuAnchor(null);
@@ -74,8 +77,12 @@ export default function SongList({ url }) {
   }, [hasMounted, url]);
 
 
-  const handleCreatePlaylist = () => {
-    // Your logic for creating a playlist
+  const handleCreatePlaylist = async () => {
+    await OriginalRequest(`playlist/create`, "POST", {
+      songs: songInAction,
+      creator: userInfo._id
+    });
+
     closeMenu();
   };
 
@@ -229,7 +236,7 @@ export default function SongList({ url }) {
           >
             <MenuItem onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
             <div style={{ overflowY: 'auto', maxHeight: '200px' }}>
-              <ListPlaylist playlists={playlists.slice(0, 3).map(playlist => playlist.play_list_name)} navigate={navigate} />
+              <ListPlaylist songId={songInAction}/>
             </div>
 
 
