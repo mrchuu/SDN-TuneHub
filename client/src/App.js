@@ -43,6 +43,7 @@ function App() {
         <Route path="/artist/:artistId" element={<ArtistProfile/>}/>
         <Route path="/songdetail" element={<SongDetail/>}/>
         <Route path="/playlist" element={<PlaylistScreen />} />
+        <Route path="/playlist/:playlistId" element={<PlaylistScreen />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
       {["/login", "/signup", "/forgot-password"].includes(

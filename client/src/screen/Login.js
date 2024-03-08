@@ -40,6 +40,9 @@ export default function Login() {
       );
       if (data) {
         dispatch(login(data.data));
+
+        console.log(data.data);
+
         navigate("/");
       }
     } catch (error) {
