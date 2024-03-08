@@ -1,4 +1,6 @@
-import Playlist from '../model/Playlist.js'; // Import Playlist model
+import Playlist from "../model/Playlist.js"; // Import Playlist model
+import User from "../model/RegisteredUser.js";
+import Song from "../model/Song.js";
 
 // Add a new playlist
 const addPlaylist = async (playlistData) => {
@@ -10,7 +12,7 @@ const addPlaylist = async (playlistData) => {
   }
 };
 
-// Get playlist by ID 
+// Get playlist by ID
 const getPlaylistById = async (playlistId) => {
   console.log("sos" + playlistId);
   try {
@@ -31,11 +33,10 @@ const deletePlaylist = async (playlistId) => {
   }
 };
 
-
 // Get all playlists by user ID
 const getAllPlaylistsByUserId = async (creator) => {
   try {
-    const playlists = await Playlist.find({creator:creator}); // Use Playlist model to get all playlists by a user ID
+    const playlists = await Playlist.find({ creator: creator }); // Use Playlist model to get all playlists by a user ID
     return playlists;
   } catch (error) {
     throw new Error(error.message);
@@ -77,6 +78,21 @@ const createPlaylist = async ({
         stream_time,
       });
 
+      await User.findOneAndUpdate(
+        {
+          _id: creator,
+        },
+        {
+          $push: {
+            playlist_created: {
+              playlistId: playlist._id,
+              play_list_name: play_list_name,
+              play_list_cover: play_list_cover,
+            },
+          },
+        }
+      );
+
       return playlist;
     }
   } catch (error) {
@@ -111,5 +127,5 @@ export default {
   deletePlaylist,
   getAllPlaylistsByUserId,
   createPlaylist,
-  addSongToPlaylist
+  addSongToPlaylist,
 };
