@@ -7,7 +7,6 @@ import { BsSoundwave, BsFolderPlus } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { toogleExpand } from "../redux/sideBar.js";
 import ListPlaylist from "./ListPlaylist";
-import { useNavigate } from "react-router-dom";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { Modal, Box, Typography, Button } from '@mui/material';
 
@@ -18,8 +17,6 @@ export default function SideBar() {
   const expanded = useSelector((state) => state.sideBar.expanded);
   const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [playlists, setPlaylists] = useState([]);
   const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false);
   const [playlistName, setPlaylistName] = useState("");
   const [imageSrc, setImageSrc] = useState(auth.profile_picture);
@@ -48,9 +45,32 @@ export default function SideBar() {
   const closeCreatePlaylistForm = () => {
     setShowCreatePlaylistModal(false);
   };
-  const handleImageInputChange = (event) => {
-    // Your implementation here
+
+  const [baseImage, setBaseImage] = useState("");
+
+  const handleImageInputChange = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    setBaseImage(base64);
+
+    console.log(base64);
   };
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   const openCreatePlaylistForm = () => {
     setShowCreatePlaylistModal(true);
   };
@@ -64,7 +84,7 @@ export default function SideBar() {
         "POST",
         {
           play_list_name: playlistName,
-          play_list_cover: imageSrc,
+          play_list_cover: baseImage,
           creator: userInfo
         }
       );
@@ -189,7 +209,7 @@ export default function SideBar() {
             {/* listplaylist ở đây */}
             <div className="px-3 mt-2">
               <div>
-                <ListPlaylist playlists={playlists} navigate={navigate} />
+                <ListPlaylist/>
               </div>
             </div>
           </div>
