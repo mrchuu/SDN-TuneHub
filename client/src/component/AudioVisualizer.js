@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-
+import { useSelector } from "react-redux";
 function AudioVisualizer() {
     const [audioSrc, setAudioSrc] = useState('');
     const audioRef = React.useRef();
     const canvasRef = React.useRef();
     const contextRef = React.useRef();
     const analyserRef = React.useRef();
+
+    const theme = useSelector((state) => state.theme.theme);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -31,10 +33,16 @@ function AudioVisualizer() {
             requestAnimationFrame(renderFrame);
             let x = 0;
             analyser.getByteFrequencyData(dataArray);
-            ctx.fillStyle = '#000';
+            
+            if (theme) {
+                ctx.fillStyle = "#08172B"
+            } else {
+                ctx.fillStyle = '#EAEBE4';
+            }
+
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const barWidth = (canvas.width / bufferLength) * 2.5;
+            const barWidth = (canvas.width / bufferLength) * 1.5;
             let barHeight;
 
             for (let i = 0; i < bufferLength; i++) {
@@ -59,11 +67,11 @@ function AudioVisualizer() {
                 accept="audio/*"
                 onChange={handleFileChange}
             />
-            <canvas style={{ background: "red" }}
+            <canvas className="bg-light60 dark:bg-dark60"
                 ref={canvasRef}
                 id="canvas"
                 width="800"
-                height="600"
+                height="100"
             ></canvas>
             <audio
                 ref={audioRef}
