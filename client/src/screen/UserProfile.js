@@ -173,17 +173,12 @@ export default function UserProfile() {
     return (
         <DefaultTemplate>
             <div className="w-full min-h-screen">
-                <div className="profile-contain">
+                <div className="profile-contain pb-5">
                     <div className="profile-header bg-light30 dark:bg-dark30">
-                        {/* <div className="profile-back">
-                            <Link className="flex items-center" to={"/"}>
-                                <MdOutlineKeyboardBackspace size={30} />
-                                <p className="text-lg font-semibold text-light10">HomePage</p>
-                            </Link>
-                        </div> */}
+                        
                         <div className="profile-info">
                             <div className="picture">
-                                <img src={auth.profile_picture} alt="Girl in a jacket" />
+                                <img className="object-cover object-center" src={auth.profile_picture} alt="Girl in a jacket" />
                             </div>
                             <div className="info-user text-lightText dark:text-darkText">
                                 <p>Profile</p>
@@ -335,8 +330,8 @@ export default function UserProfile() {
                             <h1 className="text-lg font-semibold">Recent song</h1>
                             <SongList url={`songs/recentSong/${auth._id}`} />
                         </div>
-                        <div className="px-4 mt-1">
-                            <h2 className="text-2xl font-bold mb-4 text-lightText dark:text-darkText">Public Playlists</h2>
+                        <div className="px-4 mt-1 mt-5">
+                            <h2 className="text-lg font-semibold mb-4 text-lightText dark:text-darkText">Public Playlists</h2>
                             <div className="flex flex-wrap justify-between px-4 space-x-4">
                                 {playlists.map((playlist, index) => (
                                     <div className="playlist-item w-1/6 p-4 bg-light30 dark:bg-dark30 rounded-lg" key={index}>
