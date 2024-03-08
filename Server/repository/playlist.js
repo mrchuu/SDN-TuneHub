@@ -1,5 +1,7 @@
 import Playlist from '../model/Playlist.js'; // Import Playlist model
 
+import Song from '../model/Song.js';// Import PlaylistRepository module
+
 // Add a new playlist
 const addPlaylist = async (playlistData) => {
   try {
@@ -12,7 +14,7 @@ const addPlaylist = async (playlistData) => {
 
 // Get playlist by ID 
 const getPlaylistById = async (playlistId) => {
-  console.log("sos" + playlistId);
+
   try {
     const playlist = await Playlist.findById(playlistId);
     return playlist;
@@ -105,11 +107,49 @@ const addSongToPlaylist = async ({ playlistId, songs }) => {
   }
 };
 
+// const getPlaylistById = async (playlistId) => {
+
+//   try {
+//     const playlist = await Playlist.findById(playlistId);
+//     return playlist;
+//   } catch (error) {
+//     throw new Error(error.message);
+//   }
+// };
+
+const getAllSongsByPlaylistId = async (playlistId) => {
+  try {
+    const playlist = await Playlist.findById(playlistId);
+    if (!playlist) {
+      throw new Error("Playlist not found");
+    }
+    const songIds = playlist.songs.map(song => song.songId);
+    const songList = await Song.find({ _id: { $in: songIds } })
+      .populate({
+        path: 'artist',
+        select: '_id artist_name'
+      })
+      .populate({
+        path: 'album',
+        select: '_id album_name'
+      })
+      .select('_id song_name is_exclusive album cover_image artist duration');
+    return songList;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+
+
+
+
 export default {
   addPlaylist,
   getPlaylistById,
   deletePlaylist,
   getAllPlaylistsByUserId,
   createPlaylist,
-  addSongToPlaylist
+  addSongToPlaylist,
+  getAllSongsByPlaylistId
 };

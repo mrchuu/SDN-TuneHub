@@ -36,21 +36,6 @@ const getSongsByIds = async (songId) => {
                   _id: "$$this._id",
                   // artist: "$$this.artist",
                   album_name: "$$this.album_name",
-                  // songs: {
-                  //   $map: {
-                  //     input: "$$this.songs",
-                  //     as: "song",
-                  //     in: {
-                  //       _id: "$$song._id",
-                  //       song_name: "$$song.song_name",
-                  //       // song_cover: "$$song.cover_image"
-                  //     }
-                  //   }
-                  // },
-                  // description: "$$this.description",
-                  // purchasers: "$$this.purchasers",
-                  // album_cover: "$$this.album_cover",
-                  // price: "$$this.price"
                 },
               },
             },

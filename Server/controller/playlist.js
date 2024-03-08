@@ -1,4 +1,7 @@
-import PlaylistRepository from "../repository/playlist.js"; // Import PlaylistRepository module
+import Playlist from "../model/Playlist.js";
+import PlaylistRepository from "../repository/playlist.js";
+
+import Song from '../model/Song.js';// Import PlaylistRepository module
 
 // Create a new playlist
 // const createPlaylist = async (req, res) => {
@@ -79,10 +82,32 @@ const addSongToPlaylist = async (req, res) => {
   }
 };
 
+
+const getAllSongsByPlaylistId = async (req, res) => {
+  try {
+    const playlistId = req.params.playlistId;
+    const songList = await PlaylistRepository.getAllSongsByPlaylistId(playlistId);
+
+    if (!songList) {
+      return res.status(404).json({ error: "Playlist not found" });
+    }
+
+    res.status(200).json(songList);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
+
+
 export default {
   getPlaylistById,
   deletePlaylist,
   getAllPlaylistsByUserId,
   createPlaylist,
   addSongToPlaylist,
+  getAllSongsByPlaylistId
 };
