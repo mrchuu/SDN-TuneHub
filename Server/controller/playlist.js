@@ -3,22 +3,12 @@ import PlaylistRepository from "../repository/playlist.js";
 
 import Song from '../model/Song.js';// Import PlaylistRepository module
 
-// Create a new playlist
-// const createPlaylist = async (req, res) => {
-//   try {
-//     const playlistData = req.body;
-//     const newPlaylist = await PlaylistRepository.addPlaylist(playlistData);
-//     res.status(201).json(newPlaylist);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
+
 
 // Get a playlist by ID
 const getPlaylistById = async (req, res) => {
   try {
     const playlistId = req.params.playlistId;
-    console.log(playlistId);
     const playlist = await PlaylistRepository.getPlaylistById(playlistId);
     if (!playlist) {
       res.status(404).json({ error: "Playlist not found" });
@@ -40,6 +30,8 @@ const deletePlaylist = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 // Get all playlists by user ID
 const getAllPlaylistsByUserId = async (req, res) => {
@@ -100,7 +92,15 @@ const getAllSongsByPlaylistId = async (req, res) => {
 
 
 
-
+const deleteSongInPlaylist = async (req, res) => {
+  try {
+    const { playlistId, songId } = req.params;
+    const updatedPlaylist = await PlaylistRepository.deleteSongInPlaylist(playlistId, songId);
+    res.status(200).json(updatedPlaylist);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 
 export default {
@@ -109,5 +109,6 @@ export default {
   getAllPlaylistsByUserId,
   createPlaylist,
   addSongToPlaylist,
-  getAllSongsByPlaylistId
+  getAllSongsByPlaylistId,
+  deleteSongInPlaylist
 };

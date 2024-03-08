@@ -1,8 +1,8 @@
 import Playlist from "../model/Playlist.js"; // Import Playlist model
 import User from "../model/RegisteredUser.js";
-import Song from "../model/Song.js";
-
 import Song from '../model/Song.js';// Import PlaylistRepository module
+import mongoose from 'mongoose';
+
 
 // Add a new playlist
 const addPlaylist = async (playlistData) => {
@@ -14,7 +14,7 @@ const addPlaylist = async (playlistData) => {
   }
 };
 
-// Get playlist by ID
+// Get playlist by ID 
 const getPlaylistById = async (playlistId) => {
 
   try {
@@ -28,17 +28,18 @@ const getPlaylistById = async (playlistId) => {
 // Delete playlist
 const deletePlaylist = async (playlistId) => {
   try {
-    const deletedPlaylist = await Playlist.findByIdAndDelete(playlistId);
+    const deletedPlaylist = await Playlist.findOneAndDelete(playlistId);
     return deletedPlaylist;
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
+
 // Get all playlists by user ID
 const getAllPlaylistsByUserId = async (creator) => {
   try {
-    const playlists = await Playlist.find({ creator: creator }); // Use Playlist model to get all playlists by a user ID
+    const playlists = await Playlist.find({ creator: creator });
     return playlists;
   } catch (error) {
     throw new Error(error.message);
@@ -120,8 +121,8 @@ const addSongToPlaylist = async ({ playlistId, songs }) => {
     return playlist;
   } catch (error) {
     throw new Error(error.message);
-  }
-};
+  };
+}
 
 // const getPlaylistById = async (playlistId) => {
 
@@ -156,10 +157,25 @@ const getAllSongsByPlaylistId = async (playlistId) => {
   }
 };
 
+const deleteSongInPlaylist = async (playlistId, songId) => {
+  try {
+    // Tìm playlist bằng playlistId
+    const playlist = await Playlist.findById(playlistId);
 
-
-
-
+    if (!playlist) {
+      throw new Error("Playlist not found");
+    }
+    const songIndex = playlist.songs.find(song => song.songId === songId);
+    if (songIndex === -1) {
+      throw new Error("Song not found in the playlist");
+    }
+    playlist.songs.splice(songIndex, 1);
+    await playlist.save();
+    return playlist;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   addPlaylist,
   getPlaylistById,
@@ -167,8 +183,6 @@ export default {
   getAllPlaylistsByUserId,
   createPlaylist,
   addSongToPlaylist,
-<<<<<<< HEAD
-  getAllSongsByPlaylistId
-=======
->>>>>>> 56211eda0632e925327be1110355dd71629b5aa4
+  getAllSongsByPlaylistId,
+  deleteSongInPlaylist
 };
