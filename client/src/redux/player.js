@@ -33,6 +33,16 @@ export const playerSlice = createSlice({
     updateProgress: (state, action) => {
       state.progress = action.payload;
     },
+    setSongQueue: (state, action) => {
+      state.songQueue = action.payload;
+      if (!state.currentSong._id) {
+        state.currentSong = state.songQueue[state.queueIndex];
+        state.isPlaying = true;
+      }else{
+        state.currentSong = state.songQueue[state.queueIndex];
+        state.isPlaying = true;
+      }
+    },
     addSongToQueue: (state, action) => {
       const existingSong = state.songQueue.find(
         (song) => song._id == action.payload._id
@@ -102,6 +112,6 @@ export const {
   toogleQueue,
   toogleLoop,
   setSliderValue,
-  setAudioFile
+  setSongQueue,
 } = playerSlice.actions;
 export default playerSlice.reducer;
