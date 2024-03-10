@@ -29,7 +29,7 @@ const getAllSongs = async () => {
     const songList = await Song.find()
       .populate("artist", "_id artist_name")
       .populate("album", "_id album_name")
-      .select("_id")
+      .select("_id price")
       .select("song_name")
       .select("cover_image")
       .select("duration")
@@ -279,7 +279,7 @@ const searchSongByName = async (name) => {
           duration: "$duration",
           cover_image: "$cover_image",
           streamCount: "streamCount",
-          lastStreamTime: "$lastStreamTime"
+          lastStreamTime: "$lastStreamTime",
         },
       },
       {
@@ -669,7 +669,20 @@ const makePublic = async ({ songIds, album }) => {
     throw new Error(error.message);
   }
 };
-
+const addPurchaser = async (userId, songId) => {
+  try {
+    const result = await Song.findByIdAndUpdate(
+      songId,
+      {
+        $push: { purchased_user: userId },
+      },
+      { new: true }
+    ).populate("artist", "artist_name");
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   getAllSongs,
   streamSong,
@@ -683,5 +696,6 @@ export default {
   getSongsByIds,
   getSongsByAlbum,
   getFeaturedSongs,
-  hotestSong
+  hotestSong,
+  addPurchaser
 };

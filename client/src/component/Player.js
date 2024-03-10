@@ -9,6 +9,8 @@ import {
 } from "../redux/player.js";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { Box, Fade, Modal, Typography } from "@mui/material";
+import { setPurchaseSong } from "../redux/purchase.js";
+import { useNavigate } from "react-router-dom";
 export default function Player() {
   const dispatch = useDispatch();
   const currentSong = useSelector((state) => state.player.currentSong);
@@ -21,6 +23,7 @@ export default function Player() {
   const { OriginalRequest } = PerformRequest();
   const [apiCalled, setApiCalled] = useState(false);
   const hasMounted = useRef(false);
+  const navigate = useNavigate();
   const handleProgress = async (e) => {
     dispatch(updateProgress(playerRef.current.getCurrentTime()));
     if (Math.floor(playerRef.current.getCurrentTime()) > 10 && !apiCalled) {
@@ -128,7 +131,7 @@ export default function Player() {
               color={"#ADADAD"}
             >
               This is a preview version of an{" "}
-              <span className="text-amber-500">exclusive release</span>. You can
+              <span>exclusive release</span>. You can
               purchase the song to enjoy the full version and support{" "}
               <a
                 href={`/artist/${currentSong?.artist?._id}`}
@@ -137,7 +140,10 @@ export default function Player() {
                 {currentSong?.artist?.artist_name}
               </a>
             </Typography>
-            <button className="bg-dark10 px-5 py-3 rounded-md mt-3 mx-auto">
+            <button className="bg-dark10 px-5 py-3 rounded-md mt-3 mx-auto" onClick={(e)=>{
+              dispatch(setPurchaseSong(currentSong));
+              navigate("payment/purchase")
+            }}>
               Buy The Song
             </button>
           </Box>

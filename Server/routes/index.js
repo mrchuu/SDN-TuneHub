@@ -5,6 +5,7 @@ import ArtistRouter from "./artist.js";
 import UserRouter from "./user.js";
 import PlaylistRouter from "./playlist.js";
 import AlbumRouter from "./album.js";
+import VnPayRouter from "./vnpay.js"
 export {
   AuthenticationRouter,
   SongRouter,
@@ -12,6 +13,6 @@ export {
   ArtistRouter,
   GenreRouter,
   PlaylistRouter,
-  AlbumRouter
-
+  AlbumRouter,
+  VnPayRouter
 };

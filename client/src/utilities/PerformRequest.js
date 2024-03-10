@@ -1,12 +1,13 @@
 import SERVER_URL from "../config.js";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { logOut } from "../redux/auth.js";
+import { useDispatch, useSelector } from "react-redux";
+import { logOut, setUserInfo } from "../redux/auth.js";
 import { useNavigate } from "react-router-dom";
 
 export default function PerformRequest() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const userInfo = useSelector((state) => state.auth.userInfo);
   //TODO: use navigate doesn't need to be passed as a parameter
   const OriginalRequest = async (url, method, body) => {
     const requestOption = {
@@ -54,6 +55,7 @@ export default function PerformRequest() {
     const data = await response.json();
     if (response.ok) {
       console.log(data.message);
+      dispatch(setUserInfo(data.data));
       // Return the result of OriginalRequest after refreshing the token
       return await OriginalRequest(url, method, body);
     } else {

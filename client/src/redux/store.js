@@ -9,6 +9,7 @@ import themeReducer from "./theme.js";
 import playerReducer from "./player.js";
 import searchReducer from "./search.js";
 import windowReducer from "./window.js";
+import purchaseReducer from "./purchase.js"
 import storage from "redux-persist/lib/storage";
 import artistUploadReducer from "./artistUpload.js";
 import { persistStore, persistReducer } from "redux-persist";
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   artistUpload: artistUploadReducer,
   search: searchReducer,
   window: windowReducer,
+  purchase: purchaseReducer
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
