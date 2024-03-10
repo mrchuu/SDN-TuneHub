@@ -47,13 +47,13 @@ function App() {
         />
         <Route path="/payment/purchase" element={<PurchaseSong/>} />
       </Routes>
-      {/* {["/login", "/signup", "/forgot-password"].includes(
+      {["/login", "/signup", "/forgot-password"].includes(
         window.location.pathname
       ) ? (
         <></>
       ) : (
         <Player />
-      )} */}
+      )}
     </BrowserRouter>
   );
 }

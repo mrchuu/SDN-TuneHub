@@ -79,17 +79,17 @@ const vnpayReturn = async (req, res) => {
       const updatedSong = await SongRepository.addPurchaser(userId, songId);
       console.log("giao dich thanh cong");
       res.redirect(
-        200,
+        302,
         `http://localhost:3000/payment/result/ok/Purchased Successfully, you can now enjoy the full version of ${updatedSong.song_name} by ${updatedSong.artist.artist_name}`
       );
     } else {
       res.redirect(
-        500,
+        302,
         `http://localhost:3000/failed/Something went wrong! Please try again later`
       );
     }
   } else {
-    res.redirect(500, "http://localhost:3000/failed/Invalid Signature");
+    res.redirect(302, "http://localhost:3000/failed/Invalid Signature");
   }
 };
 export default {

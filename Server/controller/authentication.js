@@ -186,7 +186,7 @@ const refreshToken = async (req, res) => {
         .json({ error: "No cookie for refreshToken was provided" });
     }
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    const existingUser = AuthenticateRepository.getUserById(
+    const existingUser = await AuthenticateRepository.getUserById(
       decodedToken.userId
     );
     const { createdAt, updatedAt, password, ...filteredUser } =
@@ -205,12 +205,10 @@ const refreshToken = async (req, res) => {
       sameSite: "lax",
       secure: false,
     });
-    return res
-      .status(200)
-      .json({
-        message: "accessToken has been succesfully refreshed!",
-        data: filteredUser,
-      });
+    return res.status(200).json({
+      message: "accessToken has been succesfully refreshed!",
+      data: filteredUser,
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -359,11 +357,9 @@ const sendResetLink = async (req, res) => {
     // Send the new password via emailsendNewPasswordEmail(user.email, newPassword)
     await emailTemplate.sendNewPasswordEmail(user.email, newPassword);
 
-    return res
-      .status(200)
-      .json({
-        message: "New password sent successfully! Please check your email.",
-      });
+    return res.status(200).json({
+      message: "New password sent successfully! Please check your email.",
+    });
   } catch (error) {
     console.error("Forgot password error:", error);
     return res.status(500).json({ error: "Internal server error" });

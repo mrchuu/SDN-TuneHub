@@ -13,6 +13,7 @@ import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import "../style/soundWave.css"
 export default function SongList({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
@@ -22,6 +23,7 @@ export default function SongList({ url }) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [songInAction, setSongInAction] = useState(null);
   const [loading, setLoading] = useState(false);
+  const currentSong = useSelector((state) => state.player.currentSong);
   const closeMenu = (e, song) => {
     setMenuIsOpen(false);
     setSongMenuAnchor(null);
@@ -79,14 +81,55 @@ export default function SongList({ url }) {
           ) : (
             SongList.map((song, index) => (
               <tr
-                className="border-b border-neutral-300 hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group"
+                className={`border-b border-neutral-300 ${song._id === currentSong._id ? "dark:bg-dark30 bg-light30" : ""} hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group`}
                 key={song._id}
                 onClick={(e) => {
                   dispatch(setCurrentSong(song));
                   dispatch(toogleIsPlaying(true));
                 }}
               >
-                <td className="w-1/12 text-center">{index + 1}</td>
+                <td className="w-1/12 text-center">
+                  {song._id === currentSong._id ? (
+                    <div className="loader">
+                      <svg
+                        id="wave"
+                        data-name="Layer 1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 50 38.05"
+                        className="relative left-2 fill-light10 dark:fill-light10"
+                      >
+                        <title>Audio Wave</title>
+                        <path
+                          id="Line_1"
+                          data-name="Line 1"
+                          d="M0.91,15L0.78,15A1,1,0,0,0,0,16v6a1,1,0,1,0,2,0s0,0,0,0V16a1,1,0,0,0-1-1H0.91Z"
+                        />
+                        <path
+                          id="Line_2"
+                          data-name="Line 2"
+                          d="M6.91,9L6.78,9A1,1,0,0,0,6,10V28a1,1,0,1,0,2,0s0,0,0,0V10A1,1,0,0,0,7,9H6.91Z"
+                        />
+                        <path
+                          id="Line_3"
+                          data-name="Line 3"
+                          d="M12.91,0L12.78,0A1,1,0,0,0,12,1V37a1,1,0,1,0,2,0s0,0,0,0V1a1,1,0,0,0-1-1H12.91Z"
+                        />
+                        <path
+                          id="Line_4"
+                          data-name="Line 4"
+                          d="M18.91,10l-0.12,0A1,1,0,0,0,18,11V27a1,1,0,1,0,2,0s0,0,0,0V11a1,1,0,0,0-1-1H18.91Z"
+                        />
+                        <path
+                          id="Line_5"
+                          data-name="Line 5"
+                          d="M24.91,15l-0.12,0A1,1,0,0,0,24,16v6a1,1,0,0,0,2,0s0,0,0,0V16a1,1,0,0,0-1-1H24.91Z"
+                        />
+                      </svg>
+                    </div>
+                  ) : (
+                    index + 1
+                  )}
+                </td>
                 <td className="w-4/12 py-2">
                   <div className="flex items-center">
                     <div

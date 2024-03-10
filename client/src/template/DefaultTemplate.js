@@ -24,7 +24,6 @@ export default function DefaultTemplate({ title, children }) {
       </div>
       <SongQueue />
       <ActionBar />
-      <Player />
     </div>
   );
 }
