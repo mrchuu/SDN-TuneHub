@@ -17,4 +17,5 @@ songRouter.get(
 );
 songRouter.get("/getArtistPopularSongs/:artistId", SongController.getPopularSongOfArtist)
 songRouter.get("/getFeaturedSongs/:artistId", SongController.getFeaturedSongs)
+songRouter.get("/getHotestSong", SongController.getSongsByLastest)
 export default songRouter;

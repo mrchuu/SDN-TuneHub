@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DefaultTemplate from "../template/DefaultTemplate";
 import PerformRequest from "../utilities/PerformRequest.js";
+import ArtistList from "../component/ArtistList.js";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
 import { useDispatch } from "react-redux";
@@ -54,7 +55,6 @@ export default function LeaderBoard() {
             setArtist(data.data);
         }
     };
-
     const getDateText = () => {
         switch (date) {
             case '1':
@@ -142,8 +142,7 @@ export default function LeaderBoard() {
                                             <h4 className="font-semibold text-md">
                                                 {song.song_name ? (
                                                     <Link
-                                                        // to={`/songdetail/${song._id}`}
-                                                        to = {"/songdetail"}
+                                                        to={`/songdetail/${song._id}`}
                                                         className="text-xs hover:underline"
                                                         style={{ fontSize: "1.125rem", lineHeight: "1.25rem" }}
                                                         onClick={(e) => { e.stopPropagation() }}
@@ -296,38 +295,7 @@ export default function LeaderBoard() {
                         {showAllArtists ? "Ẩn đi" : "Xem thêm"}
                     </a>
                 </div>
-                <div className="w-full pt-8">
-                    <div className="mx-auto">
-                        <h2 className="text-2xl font-semibold mb-8 dark:text-white ml-4">
-                            Album
-                        </h2>
-                    </div>
-                    <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary ml-8">
-                        {ArtistList.map((artist, index) => (
-                            <div key={artist._id} className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8">
-                                <img
-                                    src={artist.artist_file.profile_picture}
-                                    className="rounded-md w-40 h-40 object-cover object-center"
-                                />
-                                <h3 className="text-lg font-semibold dark:text-white m-2">
-                                    {artist.artist_name}
-                                </h3>
-                                {artist.artist_file.introduction ? (
-                                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                                        {artist.artist_file.introduction}
-                                    </p>
-                                ) : (
-                                    <p className="text-md text-light30 dark:text-dark30 ml-2">
-                                        Null
-                                    </p>
-                                )}
-                                <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                                    Follow: {artist.artist_followed_count}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <ArtistList/>
             </div>
             <div className="h-5"></div>
         </DefaultTemplate>

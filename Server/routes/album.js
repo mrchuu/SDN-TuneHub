@@ -7,4 +7,5 @@ albumRouter.get(
   "/getAlbumsOfArtist/:artistId",
   AlbumController.getAlbumsOfArtists
 );
+albumRouter.get("/getHotAlbum", AlbumController.getAllHotAlbums)
 export default albumRouter;

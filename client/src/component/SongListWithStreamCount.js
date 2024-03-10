@@ -7,13 +7,13 @@ import { FaRegHeart } from "react-icons/fa";
 import {
   setCurrentSong,
   toogleIsPlaying,
-  addSongToQueue,
+  addSongToQueue
 } from "../redux/player.js";
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
-export default function SongListWithStreamCount({url}) {
+export default function SongListWithStreamCount({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
@@ -123,7 +123,7 @@ export default function SongListWithStreamCount({url}) {
                   song.duration / 60
                 )}:${song.duration % 60}`}</td>
                 <td className="w-1/12 text-center">
-                    {song.streamCount}
+                  {song.streamCount}
                 </td>
                 <td className="w-1/12">
                   <IoEllipsisHorizontal

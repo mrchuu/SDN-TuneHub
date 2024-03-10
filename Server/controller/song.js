@@ -236,6 +236,18 @@ const getAllSongsByLastest = async (req, res) => {
   }
 };
 
+const getSongsByLastest = async (req, res) => {
+  try {
+    const { date } = req.params;
+    const songs = await SongRepository.hotestSong();
+    res.status(200).json({ data: songs });
+  } catch (error) {
+    res.status(500).json({
+      message: error.toString(),
+    });
+  }
+};
+
 const getUnPublishedSongOfArtist = async (req, res) => {
   try {
     const decodedToken = req.decodedToken;
@@ -267,7 +279,7 @@ const getSongDetail = async (req, res) => {
     const songId = req.params.songId;
     const result = await SongRepository.getSongsById(songId);
     return res.status(200).json({ data: result });
-  } catch {
+  } catch(error) {
     return res.status(500).json({ error: error.message });
   }
 };
@@ -300,5 +312,6 @@ export default {
   getPopularSongOfArtist,
   getRecentlyPlayedSongs,
   getSongDetail,
-  getFeaturedSongs
+  getFeaturedSongs,
+  getSongsByLastest
 };

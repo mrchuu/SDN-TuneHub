@@ -35,7 +35,26 @@ const getAlbumsOfArtists = async (artistId) => {
     throw new Error(error.message);
   }
 };
+const getHotestAlbums = async () => {
+  try {
+    const result = await Album.aggregate([
+      {
+        $addFields: {
+          totalPurchases: { $sum: "$purchases" } 
+        }
+      },
+      {
+        $sort: { totalPurchases: -1 } 
+      }
+    ]);
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export default {
   createAlbum,
   getAlbumsOfArtists,
+  getHotestAlbums
 };
