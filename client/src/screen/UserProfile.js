@@ -111,25 +111,25 @@ export default function UserProfile() {
 
 
 
-  const [changePassword, setChangePassword] = useState({
-    id: auth._id,
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-
-  const [passwordMatch, setPasswordMatch] = useState(true);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setChangePassword({
-      ...changePassword,
-      [name]: value,
+    const [changePassword, setChangePassword] = useState({
+        id: auth._id,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
     });
-    if (name === "confirmPassword") {
-      setPasswordMatch(changePassword.newPassword === value);
-    }
-  };
+
+    const [passwordMatch, setPasswordMatch] = useState(true);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setChangePassword({
+            ...changePassword,
+            [name]: value,
+        });
+        if (name === "confirmPassword") {
+            setPasswordMatch(changePassword.newPassword === value);
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -145,45 +145,40 @@ export default function UserProfile() {
         }
     };
 
-  function openPopup() {
-    setIsOpen(true);
-  }
+    function openPopup() {
+        setIsOpen(true);
+    }
 
-  function closePopup() {
-    setIsOpen(false);
-  }
-  const openPopup0 = () => {
-    setIsOpen0(true);
-  };
+    function closePopup() {
+        setIsOpen(false);
+    }
+    const openPopup0 = () => {
+        setIsOpen0(true);
+    };
 
-  const closePopup0 = () => {
-    setIsOpen0(false);
-  };
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "background.paper",
-    // border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
-  return (
-    <DefaultTemplate>
-      <div className="w-full min-h-screen">
-        <div className="profile-contain">
-          <div className="profile-header bg-light30 dark:bg-dark30">
-            {/* <div className="profile-back">
-                            <Link className="flex items-center" to={"/"}>
-                                <MdOutlineKeyboardBackspace size={30} />
-                                <p className="text-lg font-semibold text-light10">HomePage</p>
-                            </Link>
-                        </div> */}
+    const closePopup0 = () => {
+        setIsOpen0(false);
+    };
+    const style = {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 400,
+        bgcolor: "background.paper",
+        // border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
+    return (
+        <DefaultTemplate>
+            <div className="w-full min-h-screen">
+                <div className="profile-contain pb-5">
+                    <div className="profile-header bg-light30 dark:bg-dark30">
+                        
                         <div className="profile-info">
                             <div className="picture">
-                                <img src={auth.profile_picture} alt="Girl in a jacket" />
+                                <img className="object-cover object-center" src={auth.profile_picture} alt="Girl in a jacket" />
                             </div>
                             <div className="info-user text-lightText dark:text-darkText">
                                 <p>Profile</p>
@@ -331,12 +326,12 @@ export default function UserProfile() {
                                 </Modal>
                             </div>
                         </div>
-                         <div className="px-5">
-                                                        <h1 className="text-lg font-semibold">Recent song</h1>
-                              <SongList url={`songs/recentSong`}/>
-                         </div>                              
-                        <div className="px-4 mt-1">
-                            <h2 className="text-2xl font-bold mb-4 text-lightText dark:text-darkText">Public Playlists</h2>
+                        <div className="px-5">
+                            <h1 className="text-lg font-semibold">Recent song</h1>
+                            <SongList url={`songs/recentSong/${auth._id}`} />
+                        </div>
+                        <div className="px-4 mt-1 mt-5">
+                            <h2 className="text-lg font-semibold mb-4 text-lightText dark:text-darkText">Public Playlists</h2>
                             <div className="flex flex-wrap justify-between px-4 space-x-4">
                                 {playlists.map((playlist, index) => (
                                     <div className="playlist-item w-1/6 p-4 bg-light30 dark:bg-dark30 rounded-lg" key={index}>
