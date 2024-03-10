@@ -12,22 +12,14 @@ import jwt from "jsonwebtoken";
 import formidable from "formidable";
 const getRecentlyPlayedSongs = async (req, res) => {
   try {
-    // let userId;
-    // if (token) {
-    //   const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    //   const existingUser = await AuthenticateRepository.getUserById(
-    //     decodedToken.userId
-    //   );
-    //   if (!existingUser) {
-    //     return res.status(400).json({ error: "User was not found" });
-    //   }
-    //   userId = existingUser._id;
-    // }
-    const currentUserId = req.decodedToken.userId;
+    const currentUserId = req.params.id;
     const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(
       currentUserId
     );
-    console.log(`songStreams: ${songStreams}`);
+    console.log(`songStreams: ${songStreams[0].song}`);
+    console.log(`songStreams: ${songStreams[1].song}`);
+    console.log(`songStreams: ${songStreams[2].song}`);
+    console.log(`songStreams: ${songStreams[3].song}`);
     const songs = await Promise.all(
       songStreams.map(async (stream) => {
         const song = await SongRepository.getSongsByIds(stream.song);
@@ -49,6 +41,15 @@ const getAllSongs = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getSongsByAlbum = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const songs = await SongRepository.getSongsByAlbum(id);
+    return res.status(200).json({ data: songs });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
 
 const streamSong = async (req, res) => {
   try {
@@ -224,16 +225,30 @@ const searchSongByName = async (req, res) => {
   }
 };
 
-const getAllSongsByLastest = async (req, res, date) => {
+const getAllSongsByLastest = async (req, res) => {
   try {
+    const { date } = req.params;
     const songs = await SongRepository.hotestSongByDay(date);
-    res.status(200).json(songs);
+    res.status(200).json({ data: songs });
   } catch (error) {
-    getAllSongsByLastest.res.status(500).json({
+    res.status(500).json({
       message: error.toString(),
     });
   }
 };
+
+const getSongsByLastest = async (req, res) => {
+  try {
+    const { date } = req.params;
+    const songs = await SongRepository.hotestSong();
+    res.status(200).json({ data: songs });
+  } catch (error) {
+    res.status(500).json({
+      message: error.toString(),
+    });
+  }
+};
+
 const getUnPublishedSongOfArtist = async (req, res) => {
   try {
     const decodedToken = req.decodedToken;
@@ -260,6 +275,16 @@ const getPopularSongOfArtist = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getSongDetail = async (req, res) => {
+  try {
+    const songId = req.params.songId;
+    const result = await SongRepository.getSongsById(songId);
+    return res.status(200).json({ data: result });
+  } catch(error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 const getFeaturedSongs = async (req, res) => {
   try {
     const artistId = req.params.artistId;
@@ -286,5 +311,8 @@ export default {
   getUnPublishedSongOfArtist,
   getPopularSongOfArtist,
   getRecentlyPlayedSongs,
-  getFeaturedSongs
+  getSongDetail,
+  getFeaturedSongs,
+  getSongsByLastest,
+  getSongsByAlbum,
 };

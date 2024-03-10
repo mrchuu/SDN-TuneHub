@@ -8,7 +8,7 @@ import AlbumList from "../component/AlbumsList";
 import PerformRequest from "../utilities/PerformRequest";
 import FeaturedIn from "../component/artistProfile/FeaturedIn";
 
-export default function ArtistProfile() {
+export default function   ArtistProfile() {
   const dispatch = useDispatch();
   const { artistId } = useParams();
   const scrollPos = useSelector((state) => state.window.scrollPos);
