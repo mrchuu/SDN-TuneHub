@@ -4,77 +4,24 @@ import SongStreamRepository from "./songStream.js";
 import artist from "./artist.js";
 import mongoose from "mongoose";
 const getSongsByIds = async (songId) => {
-  return await Song.aggregate([
-    { $match: { _id: songId } },
-    {
-      $lookup: {
-        from: "Album",
-        localField: "album",
-        foreignField: "_id",
-        as: "album",
-      },
-    },
-    {
-      $lookup: {
-        from: "Artist",
-        localField: "artist",
-        foreignField: "_id",
-        as: "artist",
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        song_name: 1,
-        is_exclusive: 1,
-        album: {
-          $arrayElemAt: [
-            {
-              $map: {
-                input: "$album",
-                in: {
-                  _id: "$$this._id",
-                  // artist: "$$this.artist",
-                  album_name: "$$this.album_name",
-                  // songs: {
-                  //   $map: {
-                  //     input: "$$this.songs",
-                  //     as: "song",
-                  //     in: {
-                  //       _id: "$$song._id",
-                  //       song_name: "$$song.song_name",
-                  //       // song_cover: "$$song.cover_image"
-                  //     }
-                  //   }
-                  // },
-                  // description: "$$this.description",
-                  // purchasers: "$$this.purchasers",
-                  // album_cover: "$$this.album_cover",
-                  // price: "$$this.price"
-                },
-              },
-            },
-            0,
-          ],
-        },
-
-        cover_image: 1,
-        artist: {
-          $arrayElemAt: [
-            {
-              $map: {
-                input: "$artist",
-                in: { _id: "$$this._id", artist_name: "$$this.artist_name" },
-              },
-            },
-            0,
-          ],
-        },
-        duration: 1,
-      },
-    },
-    { $limit: 1 }, // Giới hạn kết quả trả về thành 1 đối tượng
-  ]);
+  try {
+    const song = await Song.aggregate(
+      [
+        { $match: { _id: new mongoose.Types.ObjectId(songId) } },
+          {
+            $lookup: {
+              from: "Artist",
+              localField: "participated_artist",
+              foreignField: "_id",
+              as: "participatedArtistsInfo"
+            }
+          }
+      ]
+    );
+    return song;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 const getAllSongs = async () => {
@@ -370,7 +317,10 @@ const hotestSongByDay = async (date) => {
                       $gte: ["$streamTime.createdAt", byDay],
                     },
                     {
-                      $lt: ["$streamTime.createdAt", new Date(),],
+                      $lt: [
+                        "$streamTime.createdAt",
+                        new Date(),
+                      ],
                     },
                   ],
                 },
@@ -409,6 +359,20 @@ const hotestSongByDay = async (date) => {
           },
         },
         {
+          $lookup: {
+            from: "Artist",
+            localField: "participated_artist",
+            foreignField: "_id",
+            as: "participated_artists",
+          },
+        },
+        {
+          $unwind: {
+            path: "$participated_artists",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
           $group: {
             _id: "$_id",
             song_name: { $first: "$song_name" },
@@ -431,6 +395,12 @@ const hotestSongByDay = async (date) => {
             lastStreamTime: {
               $first: "$lastStreamTime",
             },
+            participated_artists: {
+              $addToSet: {
+                _id: "$participated_artists._id",
+                artist_name: "$participated_artists.artist_name",
+              },
+            },
           },
         },
         {
@@ -440,15 +410,16 @@ const hotestSongByDay = async (date) => {
         },
         {
           $project: {
-            _id: "$_id",
-            song_name: "$song_name",
-            album: "$album",
-            artist: "$artist",
-            cover_image: "$cover_image",
-            streamCount: "$streamCount",
-            duration: "$duration",
-            is_exclusive: "$is_exclusive",
-            lastStreamTime: "$lastStreamTime"
+            _id: 1,
+            song_name: 1,
+            album: 1,
+            artist: 1,
+            cover_image: 1,
+            streamCount: 1,
+            duration: 1,
+            is_exclusive: 1,
+            lastStreamTime: 1,
+            participated_artists: 1,
           }
         },
         {
@@ -459,7 +430,8 @@ const hotestSongByDay = async (date) => {
             streamCount: -1,
           },
         },
-      ]).exec();
+      ]
+    ).exec();
     return results;
   } catch (error) {
     console.error("Error in hotestSongByDay:", error);
@@ -493,7 +465,10 @@ const hotestSong = async () => {
                 if: {
                   $and: [
                     {
-                      $lt: ["$streamTime.createdAt", new Date(),],
+                      $lt: [
+                        "$streamTime.createdAt",
+                        new Date(),
+                      ],
                     },
                   ],
                 },
@@ -532,6 +507,20 @@ const hotestSong = async () => {
           },
         },
         {
+          $lookup: {
+            from: "Artist",
+            localField: "participated_artist",
+            foreignField: "_id",
+            as: "participated_artists",
+          },
+        },
+        {
+          $unwind: {
+            path: "$participated_artists",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
           $group: {
             _id: "$_id",
             song_name: { $first: "$song_name" },
@@ -554,6 +543,12 @@ const hotestSong = async () => {
             lastStreamTime: {
               $first: "$lastStreamTime",
             },
+            participated_artists: {
+              $addToSet: {
+                _id: "$participated_artists._id",
+                artist_name: "$participated_artists.artist_name",
+              },
+            },
           },
         },
         {
@@ -563,15 +558,16 @@ const hotestSong = async () => {
         },
         {
           $project: {
-            _id: "$_id",
-            song_name: "$song_name",
-            album: "$album",
-            artist: "$artist",
-            cover_image: "$cover_image",
-            streamCount: "$streamCount",
-            duration: "$duration",
-            is_exclusive: "$is_exclusive",
-            lastStreamTime: "$lastStreamTime"
+            _id: 1,
+            song_name: 1,
+            album: 1,
+            artist: 1,
+            cover_image: 1,
+            streamCount: 1,
+            duration: 1,
+            is_exclusive: 1,
+            lastStreamTime: 1,
+            participated_artists: 1,
           }
         },
         {
@@ -582,7 +578,8 @@ const hotestSong = async () => {
             streamCount: -1,
           },
         },
-      ]).exec();
+      ]
+    ).exec();
     return results;
   } catch (error) {
     console.error("Error in hotestSongByDay:", error);

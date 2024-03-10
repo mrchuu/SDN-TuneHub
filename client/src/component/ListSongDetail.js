@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import PerformRequest from "../utilities/PerformRequest";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { FaRegHeart } from "react-icons/fa";
 import {
     setCurrentSong,
@@ -11,9 +11,8 @@ import {
 } from "../redux/player.js";
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
-export default function SongListWithStreamCount({ url, onSongChange }) {
+export default function SongListDetail({ url, onSongChange }) {
     const [SongList, setSongList] = useState([]);
     const { OriginalRequest } = PerformRequest();
     const dispatch = useDispatch();
@@ -73,6 +72,7 @@ export default function SongListWithStreamCount({ url, onSongChange }) {
                             onClick={(e) => {
                                 dispatch(setCurrentSong(song));
                                 dispatch(toogleIsPlaying(true));
+                                onSongChange(song._id);
                             }}
                         >
                             <td className="w-1/12 text-center">{index + 1}</td>
@@ -91,7 +91,7 @@ export default function SongListWithStreamCount({ url, onSongChange }) {
                                         <h4 className="font-semibold text-md">
                                             {song.song_name}
                                         </h4>
-                                        <h6 className=" text-xs">
+                                        <h6 className="text-xs">
                                             {song.artist ? (
                                                 <Link
                                                     to={`/artist/${song.artist._id}`}
@@ -102,6 +102,22 @@ export default function SongListWithStreamCount({ url, onSongChange }) {
                                                 </Link>
                                             ) : (
                                                 <></>
+                                            )}
+                                            {song.participated_artists && song.participated_artists.length > 1 && (
+                                                <>
+                                                    {song.participated_artists.map((artist, index) => (
+                                                        <span key={index}>
+                                                            {index >= 0 && ', '}
+                                                            <Link
+                                                                to={`/artist/${artist._id}`}
+                                                                className="text-xs hover:underline"
+                                                                onClick={(e) => { e.stopPropagation() }}
+                                                            >
+                                                                {artist.artist_name}
+                                                            </Link>
+                                                        </span>
+                                                    ))}
+                                                </>
                                             )}
                                         </h6>
                                     </div>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DefaultTemplate from "../template/DefaultTemplate";
 import PerformRequest from "../utilities/PerformRequest.js";
-import ArtistList from "../component/ArtistList.js";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
 import { useDispatch } from "react-redux";
@@ -19,6 +18,7 @@ export default function LeaderBoard() {
     const { OriginalRequest } = PerformRequest();
     const [SongList, setSong] = useState([]);
     const [ArtistList, setArtist] = useState([]);
+    const [albums, setAlbums] = useState([]);
     const [songMenuAnchor, setSongMenuAnchor] = useState(null);
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const [songInAction, setSongInAction] = useState(null);
@@ -55,6 +55,13 @@ export default function LeaderBoard() {
             setArtist(data.data);
         }
     };
+    const fetchAlbum = async (date) => {
+        const data = await OriginalRequest(`album/getHotAlbum`, "GET");
+        console.log(date);
+        if (data) {
+            setAlbums(data.data);
+        }
+    };
     const getDateText = () => {
         switch (date) {
             case '1':
@@ -70,6 +77,7 @@ export default function LeaderBoard() {
     useEffect(() => {
         fetchSong(date);
         fetchArtist();
+        fetchAlbum();
         return () => clearInterval(intervalId);
     }, [date]);
 
@@ -82,21 +90,21 @@ export default function LeaderBoard() {
                 <div class="flex flex-row">
                     <button
                         onClick={() => handleDateChange('1')}
-                        class={`rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1 ${date === '1' ? 'bg-light10 dark:bg-dark10' : ''}`}
+                        className={`px-4 py-2 text-lightText dark:text-darkText m-1 ${date === '1' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
                     >
-                        <span class="cursor-pointer">Day</span>
+                        <span className="cursor-pointer">Day</span>
                     </button>
 
                     <button
                         onClick={() => handleDateChange('7')}
-                        class={`rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1 ${date === '7' ? 'bg-light10 dark:bg-dark10' : ''}`}
+                        class={`px-4 py-2 text-lightText dark:text-darkText m-1 ${date === '7' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
                     >
                         <span class="cursor-pointer">Week</span>
                     </button>
 
                     <button
                         onClick={() => handleDateChange('30')}
-                        class={`rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10 m-1 ${date === '30' ? 'bg-light10 dark:bg-dark10' : ''}`}
+                        class={`px-4 py-2 text-lightText dark:text-darkText m-1 ${date === '30' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
                     >
                         <span class="cursor-pointer">Month</span>
                     </button>
@@ -153,7 +161,7 @@ export default function LeaderBoard() {
                                                     <></>
                                                 )}
                                             </h4>
-                                            <h6 className=" text-xs">
+                                            <h6 className="text-xs">
                                                 {song.artist ? (
                                                     <Link
                                                         to={`/artist/${song.artist._id}`}
@@ -164,6 +172,22 @@ export default function LeaderBoard() {
                                                     </Link>
                                                 ) : (
                                                     <></>
+                                                )}
+                                                {song.participated_artists && song.participated_artists.length > 1 && (
+                                                    <>
+                                                        {song.participated_artists.map((artist, index) => (
+                                                            <span key={index}>
+                                                                {index >= 0 && ', '}
+                                                                <Link
+                                                                    to={`/artist/${artist._id}`}
+                                                                    className="text-xs hover:underline"
+                                                                    onClick={(e) => { e.stopPropagation() }}
+                                                                >
+                                                                    {artist.artist_name}
+                                                                </Link>
+                                                            </span>
+                                                        ))}
+                                                    </>
                                                 )}
                                             </h6>
                                         </div>
@@ -198,7 +222,7 @@ export default function LeaderBoard() {
                             e.preventDefault();
                             setShowAllSongs(!showAllSongs);
                         }}
-                        className=" border border-neutral-300 rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10"
+                        className="  rounded-full px-4 py-2 text-lightText dark:text-darkText hover:underline"
                     >
                         {showAllSongs ? "Ẩn đi" : "Xem thêm"}
                     </a>
@@ -290,14 +314,50 @@ export default function LeaderBoard() {
                             e.preventDefault();
                             setShowAllArtists(!showAllArtists);
                         }}
-                        className=" border border-neutral-300 rounded-full px-4 py-2 text-lightText dark:text-darkText hover:bg-light10 dark:hover:bg-dark10"
+                        className=" rounded-full px-4 py-2 text-lightText dark:text-darkText hover:underline"
                     >
                         {showAllArtists ? "Ẩn đi" : "Xem thêm"}
                     </a>
                 </div>
-                <ArtistList/>
+                <div className="w-full pt-8">
+                    <div className="mx-auto">
+                        <h2 className="text-2xl font-semibold mb-8 dark:text-white ml-4">
+                            Album
+                        </h2>
+                    </div>
+                    <div className="mt-5">
+                        {albums.length > 0 ? (
+                            <div className="w-full flex flex-wrap">
+                                {albums.map((album) => (
+                                    <div
+                                        key={album.id}
+                                        className="card border lg:w-2/12 md:w-4/12 sm:w-6/12 pb-2 rounded hover:bg-light30 hover:dark:bg-dark30 hover:shadow-md hover:shadow-neutral-400 hover:dark:shadow-blue-600/40 dark:border-none"
+                                    >
+                                        <div className="p-2">
+                                            <img
+                                                src={album.album_cover}
+                                                className="w-44 h-44 rounded-md mx-auto border-2 border-neutral-400/20 object-cover object-center"
+                                            />
+                                        </div>
+                                        <div className="lg:px-3 md:px-3 sm:px-8">
+                                            <p className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis">
+                                                {album.album_name}
+                                            </p>
+                                            <p className="text-lightTextSecondary text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
+                                                {album.description}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <></>
+                        )}
+
+                    </div>
+                </div>
             </div>
-            <div className="h-5"></div>
+
         </DefaultTemplate>
     );
 }
