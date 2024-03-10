@@ -27,7 +27,10 @@ export default function ArtistProfile() {
   useEffect(() => {
     const fetchInfo = async () => {
       try {
-        const artist = await OriginalRequest(`artists/${artistId}`, "GET");
+        const artist = await OriginalRequest(
+          `artists/getArtistInfo/${artistId}`,
+          "GET"
+        );
         setArtistInfo(artist.data);
       } catch (error) {
         console.log(error);

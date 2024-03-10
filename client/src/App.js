@@ -18,11 +18,6 @@ import Player from "./component/Player";
 import { useEffect } from "react";
 
 function App() {
-  // useEffect(()=>{
-  //   console.log(["/login", "/signup", "/forgot-password"].includes(
-  //     window.location.pathname
-  //   ));
-  // }, [])
   return (
     <BrowserRouter>
       <Toaster position="top-center" />
