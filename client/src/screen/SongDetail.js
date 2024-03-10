@@ -63,7 +63,7 @@ export default function SongDetail() {
               style={{ animationDuration: "10000ms" }}
             />
             <img
-              className="w-64 h-64 border border-gray-500 rounded-md"
+              className="w-64 h-64 rounded-md"
               style={{ position: "absolute", ...song.over }}
               src={song.cover_image}
             />
