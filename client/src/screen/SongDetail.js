@@ -54,7 +54,7 @@ export default function SongDetail() {
 
   return (
     <DefaultTemplate>
-      <div className="w-full max-h items-center justify-center relative">
+      <div className="w-full min-h-screen items-center justify-center relative overflow-x-auto">
         {song && (
           <div className="flex flex-row bg-light60 dark:bg-dark60 ml-20">
             <img

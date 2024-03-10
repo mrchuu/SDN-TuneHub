@@ -90,21 +90,21 @@ export default function LeaderBoard() {
                 <div class="flex flex-row">
                     <button
                         onClick={() => handleDateChange('1')}
-                        className={`px-4 py-2 text-lightText dark:text-darkText m-1 ${date === '1' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
+                        className={`px-4 py-2 font-semibold text-lightText dark:text-darkText m-1 ${date === '1' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
                     >
                         <span className="cursor-pointer">Day</span>
                     </button>
 
                     <button
                         onClick={() => handleDateChange('7')}
-                        class={`px-4 py-2 text-lightText dark:text-darkText m-1 ${date === '7' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
+                        class={`px-4 py-2 font-semibold text-lightText dark:text-darkText m-1 ${date === '7' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
                     >
                         <span class="cursor-pointer">Week</span>
                     </button>
 
                     <button
                         onClick={() => handleDateChange('30')}
-                        class={`px-4 py-2 text-lightText dark:text-darkText m-1 ${date === '30' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
+                        class={`px-4 py-2 font-semibold text-lightText dark:text-darkText m-1 ${date === '30' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
                     >
                         <span class="cursor-pointer">Month</span>
                     </button>

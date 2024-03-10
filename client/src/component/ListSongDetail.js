@@ -52,7 +52,7 @@ export default function SongListDetail({ url, onSongChange }) {
         fetch();
     }, [hasMounted, url]);
     return (
-        <div className="w-full flex items-center mt-5">
+        <div className="w-full flex items-center mt-5 overflow-x-auto">
             <table className="w-full text-lightText dark:text-darkText">
                 <thead className="font-semibold">
                     <tr className="border-b border-neutral-300">

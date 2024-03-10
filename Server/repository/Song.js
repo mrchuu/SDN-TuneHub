@@ -443,161 +443,162 @@ const hotestSongByDay = async (date) => {
 const hotestSong = async () => {
   try {
     const results = await Song.aggregate(
-      [
-        {
-          $lookup: {
-            from: "SongStream",
-            localField: "_id",
-            foreignField: "song",
-            as: "streamTime",
+        [
+          {
+            $lookup: {
+              from: "SongStream",
+              localField: "_id",
+              foreignField: "song",
+              as: "streamTime",
+            },
           },
-        },
-        {
-          $unwind: {
-            path: "$streamTime",
-            preserveNullAndEmptyArrays: true,
+          {
+            $unwind: {
+              path: "$streamTime",
+              preserveNullAndEmptyArrays: true,
+            },
           },
-        },
-        {
-          $addFields: {
-            count: {
-              $cond: {
-                if: {
-                  $and: [
-                    {
-                      $lt: [
-                        "$streamTime.createdAt",
-                        new Date(),
-                      ],
-                    },
-                  ],
+          {
+            $addFields: {
+              count: {
+                $cond: {
+                  if: {
+                    $and: [
+                      {
+                        $lt: [
+                          "$streamTime.createdAt",
+                          new Date(),
+                        ],
+                      },
+                    ],
+                  },
+                  then: 1,
+                  else: 0,
                 },
-                then: 1,
-                else: 0,
               },
-            },
-            lastStreamTime: {
-              $max: "$streamTime.createdAt",
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: "Artist",
-            localField: "artist",
-            foreignField: "_id",
-            as: "artist_file",
-          },
-        },
-        {
-          $unwind: "$artist_file",
-        },
-        {
-          $lookup: {
-            from: "Album",
-            localField: "album",
-            foreignField: "_id",
-            as: "album_file",
-          },
-        },
-        {
-          $unwind: {
-            path: "$album_file",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $lookup: {
-            from: "Artist",
-            localField: "participated_artist",
-            foreignField: "_id",
-            as: "participated_artists",
-          },
-        },
-        {
-          $unwind: {
-            path: "$participated_artists",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $group: {
-            _id: "$_id",
-            song_name: { $first: "$song_name" },
-            album: {
-              $first: {
-                _id: "$album_file._id",
-                album_name: "$album_file.album_name",
-              },
-            },
-            artist: {
-              $first: {
-                _id: "$artist_file._id",
-                artist_name: "$artist_file.artist_name",
-              },
-            },
-            cover_image: { $first: "$cover_image" },
-            streamCount: { $sum: "$count" },
-            duration: { $first: "$duration" },
-            is_exclusive: { $first: "$is_exclusive" },
-            lastStreamTime: {
-              $first: "$lastStreamTime",
-            },
-            participated_artists: {
-              $addToSet: {
-                _id: "$participated_artists._id",
-                artist_name: "$participated_artists.artist_name",
+              lastStreamTime: {
+                $max: "$streamTime.createdAt",
               },
             },
           },
-        },
-        {
-          $sort: {
-            streamCount: -1,
+          {
+            $lookup: {
+              from: "Artist",
+              localField: "artist",
+              foreignField: "_id",
+              as: "artist_file",
+            },
           },
-        },
-        {
-          $project: {
-            _id: 1,
-            song_name: 1,
-            album: 1,
-            artist: 1,
-            cover_image: 1,
-            streamCount: 1,
-            duration: 1,
-            is_exclusive: 1,
-            lastStreamTime: 1,
-            participated_artists: 1,
-          }
-        },
-        {
-          $limit: 7,
-        },
-        {
-          $sort: {
-            streamCount: -1,
+          {
+            $unwind: "$artist_file",
           },
-        },
-        {
-          $sort: {
-            streamCount: -1,
+          {
+            $lookup: {
+              from: "Album",
+              localField: "album",
+              foreignField: "_id",
+              as: "album_file",
+            },
           },
-        },
-        {
-          $project: {
-            _id: 1,
-            song_name: 1,
-            artist: 1,
-            artist_name: 1,
-            cover_image: 1,
-            profile_picture: 1,
-            streamCount: 1,
-            intro_user: 1,
-            album: 1,
-            duration: 1,
+          {
+            $unwind: {
+              path: "$album_file",
+              preserveNullAndEmptyArrays: true,
+            },
           },
-        },
-      ]).exec();
+          {
+            $lookup: {
+              from: "Artist",
+              localField: "participated_artist",
+              foreignField: "_id",
+              as: "participated_artists",
+            },
+          },
+          {
+            $unwind: {
+              path: "$participated_artists",
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $group: {
+              _id: "$_id",
+              song_name: { $first: "$song_name" },
+              album: {
+                $first: {
+                  _id: "$album_file._id",
+                  album_name: "$album_file.album_name",
+                },
+              },
+              artist: {
+                $first: {
+                  _id: "$artist_file._id",
+                  artist_name: "$artist_file.artist_name",
+                },
+              },
+              cover_image: { $first: "$cover_image" },
+              streamCount: { $sum: "$count" },
+              duration: { $first: "$duration" },
+              is_exclusive: { $first: "$is_exclusive" },
+              lastStreamTime: {
+                $first: "$lastStreamTime",
+              },
+              participated_artists: {
+                $addToSet: {
+                  _id: "$participated_artists._id",
+                  artist_name: "$participated_artists.artist_name",
+                },
+              },
+            },
+          },
+          {
+            $sort: {
+              streamCount: -1,
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              song_name: 1,
+              album: 1,
+              artist: 1,
+              cover_image: 1,
+              streamCount: 1,
+              duration: 1,
+              is_exclusive: 1,
+              lastStreamTime: 1,
+              participated_artists: 1,
+            }
+          },
+          {
+            $limit: 7,
+          },
+          {
+            $sort: {
+              streamCount: -1,
+            },
+          },
+          {
+            $sort: {
+              streamCount: -1,
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              song_name: 1,
+              artist: 1,
+              artist_name: 1,
+              cover_image: 1,
+              profile_picture: 1,
+              streamCount: 1,
+              intro_user: 1,
+              album: 1,
+              duration: 1,
+              participated_artists: 1,
+            },
+          },
+        ]).exec();
     return results;
   } catch (error) {
     console.error("Error in hotestSongByDay:", error);
