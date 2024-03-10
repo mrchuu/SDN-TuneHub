@@ -21,7 +21,6 @@ export default function Player() {
   const { OriginalRequest } = PerformRequest();
   const [apiCalled, setApiCalled] = useState(false);
   const hasMounted = useRef(false);
-
   const handleProgress = async (e) => {
     dispatch(updateProgress(playerRef.current.getCurrentTime()));
     if (Math.floor(playerRef.current.getCurrentTime()) > 10 && !apiCalled) {

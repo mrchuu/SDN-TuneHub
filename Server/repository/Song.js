@@ -578,8 +578,26 @@ const hotestSong = async () => {
             streamCount: -1,
           },
         },
-      ]
-    ).exec();
+        {
+          $sort: {
+            streamCount: -1,
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            song_name: 1,
+            artist: 1,
+            artist_name: 1,
+            cover_image: 1,
+            profile_picture: 1,
+            streamCount: 1,
+            intro_user: 1,
+            album: 1,
+            duration: 1,
+          },
+        },
+      ]).exec();
     return results;
   } catch (error) {
     console.error("Error in hotestSongByDay:", error);
