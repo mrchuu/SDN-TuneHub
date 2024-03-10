@@ -63,7 +63,7 @@ export default function SongDetail() {
               style={{ animationDuration: "10000ms" }}
             />
             <img
-              className="w-64 h-64 rounded-md"
+              className="w-64 h-64 rounded-md object-cover object-center"
               style={{ position: "absolute", ...song.over }}
               src={song.cover_image}
             />
@@ -71,7 +71,7 @@ export default function SongDetail() {
               <div className="ml-20">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <h1 className="text-lightText dark:text-darkText font-bold text-4xl mb-5">
+                    <h1 className="text-lightText dark:text-darkText font-semibold text-3xl mb-5">
                       {song.song_name}
                     </h1>
                   </div>

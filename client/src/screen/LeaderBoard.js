@@ -152,7 +152,7 @@ export default function LeaderBoard() {
                                                     <Link
                                                         to={`/songdetail/${song._id}`}
                                                         className="text-xs hover:underline"
-                                                        style={{ fontSize: "1.125rem", lineHeight: "1.25rem" }}
+                                                        style={{ fontSize: "1rem", lineHeight: "1rem" }}
                                                         onClick={(e) => { e.stopPropagation() }}
                                                     >
                                                         {song.song_name}
