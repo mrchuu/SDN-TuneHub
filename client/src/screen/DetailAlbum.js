@@ -57,15 +57,15 @@ const DetailAlbum = () => {
                 <div className="detail-contain">
                     <div className="detail-left-ablum">
                         <div className="cont ml-auto mr-auto w-10/12">
-                            <h1 className="text-2xl font-semibold dark:text-darkText">
+                            <h1 className="text-lg overflow-hidden line-clamp-1 font-semibold dark:text-darkText">
                                 {album.album_name}
                             </h1>
-                            <img className="object-cover object-center" src={album.album_cover} />
-                            <h1 className="text-lg font-normal text-center dark:text-darkText">{album.artist_name}</h1>
-                            <p className="font-normal text-center dark:text-darkText">{album.song_count} Songs</p>
+                            <img className="object-cover object-center m-auto" src={album.album_cover} />
+                            <h2 className="text-lg font-normal text-center dark:text-darkText">{album.artist_name}</h2>
+                            <p className="font-normal text-center dark:text-darkText">{album.song_count} Songs | {album.price}$</p>
                             <div className="flex justify-between mt-1 text-light60">
                                 <button onClick={()=> {dispatch(setSongQueue(songs));}} className="active:scale-75 dark:bg-dark10 text-sm rounded-xl w-36 flex items-center justify-center bg-light10 py-1 px-2"><FaPlay />Play All</button>
-                                <button className="dark:bg-dark10 text-sm rounded-xl w-36 bg-light10 py-1 px-2">Purchase {album.price}$</button>
+                                <button className="dark:bg-dark10 text-sm rounded-xl w-36 bg-light10 py-1 px-2">Purchase</button>
                             </div>
                         </div>
                     </div>
@@ -76,13 +76,9 @@ const DetailAlbum = () => {
                 </div>
                 <div className="more-album-contain">
                     <div className="w-full p-7">
-                        <div className="mx-auto">
-                            <h2 className="text-2xl font-semibold mb-8 dark:text-white ml-4">
-                                More From {album.artist_name}
-                            </h2>
-                        </div>
-                        {/* <ListAlbums url={`album/getAlbumsOfArtist/${artistId}`} idAlbum={id}/> */}
-                        <ListAlbums/>
+                        
+                        <ListAlbums url={`album/getAlbumsOfArtist/${artistId}`} idAlbum={id}/>
+                        {/* <ListAlbums/> */}
                     </div>
                 </div>
             </div>

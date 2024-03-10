@@ -30,7 +30,7 @@ const getAlbumsOfArtists = async (artistId) => {
     const result = await Album.find(
       { artist: artistId, is_public: true },
       "createdAt _id album_cover album_name description"
-    );
+    ).populate("artist","_id artist_name");
     return result;
   } catch (error) {
     throw new Error(error.message);
