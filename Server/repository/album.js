@@ -36,6 +36,24 @@ const getAlbumsOfArtists = async (artistId) => {
     throw new Error(error.message);
   }
 };
+const getHotestAlbums = async () => {
+  try {
+    const result = await Album.aggregate([
+      {
+        $addFields: {
+          totalPurchases: { $sum: "$purchases" } 
+        }
+      },
+      {
+        $sort: { totalPurchases: -1 } 
+      }
+    ]);
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const getAlbumById = async (id) => {
   try {
     // const album = await Album.findById(id).populate("artist", "artist_name").select("_id album_cover album_name songs description price is_public");
@@ -83,4 +101,5 @@ export default {
   getAlbumsOfArtists,
   getAlbumById,
   getAllAlbums,
+  getHotestAlbums
 };

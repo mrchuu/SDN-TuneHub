@@ -10,8 +10,8 @@ songRouter.get("/streamSong/:songId", SongController.streamSong);
 songRouter.post("/uploadSingle", verifyToken, SongController.uploadSong);
 songRouter.get("/search/:nameKey", SongController.searchSongByName);
 songRouter.post("/addSongStream/:songId", SongController.addStreamSong);
-
-songRouter.get("/leaderboard/topSong/1m", SongController.getAllSongsByLastest);
+songRouter.get("/detailSong/:songId", SongController.getSongDetail)
+songRouter.get("/leaderboard/topSong/:date", SongController.getAllSongsByLastest);
 songRouter.get(
   "/unpublished",
   verifyToken,
@@ -19,4 +19,5 @@ songRouter.get(
 );
 songRouter.get("/getArtistPopularSongs/:artistId", SongController.getPopularSongOfArtist)
 songRouter.get("/getFeaturedSongs/:artistId", SongController.getFeaturedSongs)
+songRouter.get("/getHotestSong", SongController.getSongsByLastest)
 export default songRouter;

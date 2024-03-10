@@ -96,7 +96,7 @@ export const playerSlice = createSlice({
     setSliderValue: (state, action) => {
       state.progress = action.payload
       state.sliderValue = action.payload;
-    }
+    },
   },
 });
 //hehe
