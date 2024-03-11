@@ -28,7 +28,7 @@ const getPlaylistById = async (playlistId) => {
 // Delete playlist
 const deletePlaylist = async (playlistId) => {
   try {
-    const deletedPlaylist = await Playlist.findOneAndDelete(playlistId);
+    const deletedPlaylist = await Playlist.findByIdAndDelete(playlistId);
     return deletedPlaylist;
   } catch (error) {
     throw new Error(error.message);

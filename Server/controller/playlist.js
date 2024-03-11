@@ -13,7 +13,7 @@ const getPlaylistById = async (req, res) => {
     if (!playlist) {
       res.status(404).json({ error: "Playlist not found" });
     } else {
-      res.status(200).json(playlist);
+      res.status(200).json({data: playlist});
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -38,7 +38,7 @@ const getAllPlaylistsByUserId = async (req, res) => {
   try {
     const creator = req.params.creator;
     const playlists = await PlaylistRepository.getAllPlaylistsByUserId(creator);
-    res.status(200).json(playlists);
+    res.status(200).json({data: playlists});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -55,7 +55,7 @@ const createPlaylist = async (req, res) => {
       play_list_cover,
       stream_time,
     });
-    return res.status(200).json({ data: result });
+    return res.status(200).json({ data: result, message: "Create successfully" });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -84,7 +84,7 @@ const getAllSongsByPlaylistId = async (req, res) => {
       return res.status(404).json({ error: "Playlist not found" });
     }
 
-    res.status(200).json(songList);
+    return res.status(200).json({ data: songList });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

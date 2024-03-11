@@ -94,7 +94,7 @@ export default function SideBar() {
     fetch();
     setPlaylistName('');
     setImageSrc('');
-    setShowCreatePlaylistModal(false);
+    closeModal();
   };
 
 

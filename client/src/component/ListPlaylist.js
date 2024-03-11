@@ -41,7 +41,7 @@ const ListPlaylist = ({ songId }) => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setPlaylists(data);
+                setPlaylists(data.data);
             } else {
                 console.error('Response not ok:', response.statusText);
             }

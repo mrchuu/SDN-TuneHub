@@ -15,28 +15,6 @@ const PlaylistScreen = () => {
   const [userInfo, setUserInfo] = useState(userInfoFromStore); 
   
 
-
-  const fetchUserInfo = async () => {
-    try {
-      const response = await fetch(`http://localhost:9999/api/playlist/getPlaylistById/${playlistId}`, {
-        method: "GET"
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setPlaylist(data);
-      } else {
-        console.error('Response not ok:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error fetching playlist:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [playlistId]);
-
   const fetchData = async () => {
     try {
       const response = await fetch(`http://localhost:9999/api/playlist/getPlaylistById/${playlistId}`, {
@@ -45,7 +23,7 @@ const PlaylistScreen = () => {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        setPlaylist(data);
+        setPlaylist(data.data);
       } else {
         console.error('Response not ok:', response.statusText);
       }
@@ -84,7 +62,7 @@ const PlaylistScreen = () => {
               </div>
             </div>
           )}
-          {playlist && <SongList songs={playlist.songs} navigate={navigate} />}
+          {playlist && <SongList url={`playlist/getAllSongsByPlaylistId/${playlistId}`} />}
         </div>
       </div>
 
