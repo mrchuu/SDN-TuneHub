@@ -171,8 +171,8 @@ const getUserInfo = async (req, res) => {
     const decodedToken = req.decodedToken;
     // console.log(decodedToken);
     const user = await AuthenticateRepository.getUserById(decodedToken.userId);
-    const { password, createdAt, updatedAt, ...filterdUser } = user;
-    return res.status(200).json(filterdUser);
+    const { password, createdAt, updatedAt, ...filterdUser } = user._doc;
+    return res.status(200).json({data: filterdUser});
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

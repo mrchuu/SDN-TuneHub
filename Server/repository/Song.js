@@ -4,7 +4,6 @@ import SongStreamRepository from "./songStream.js";
 import artist from "./artist.js";
 import mongoose from "mongoose";
 const getSongsByIds = async (songId) => {
-<<<<<<< HEAD
   return await Song.aggregate([
     { $match: { _id: songId } },
     {
@@ -61,26 +60,6 @@ const getSongsByIds = async (songId) => {
     },
     { $limit: 1 }, // Giới hạn kết quả trả về thành 1 đối tượng
   ]);
-=======
-  try {
-    const song = await Song.aggregate(
-      [
-        { $match: { _id: new mongoose.Types.ObjectId(songId) } },
-          {
-            $lookup: {
-              from: "Artist",
-              localField: "participated_artist",
-              foreignField: "_id",
-              as: "participatedArtistsInfo"
-            }
-          }
-      ]
-    );
-    return song;
-  } catch (error) {
-    throw new Error(error.message);
-  }
->>>>>>> ee1ec69816ab6c80976cfba880f357fc8d9f43fb
 };
 
 const getAllSongs = async () => {
