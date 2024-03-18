@@ -84,6 +84,7 @@ const ListPlaylist = ({ songId }) => {
                             alt={playlist.play_list_name}
                         />
                         &nbsp;<span>{playlist.play_list_name}</span>
+                        
                     </div>
                 ))}
             </div>

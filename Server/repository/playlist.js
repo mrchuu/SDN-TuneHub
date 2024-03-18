@@ -28,13 +28,12 @@ const getPlaylistById = async (playlistId) => {
 // Delete playlist
 const deletePlaylist = async (playlistId) => {
   try {
-    const deletedPlaylist = await Playlist.findOneAndDelete(playlistId);
+    const deletedPlaylist = await Playlist.findByIdAndDelete(playlistId);
     return deletedPlaylist;
   } catch (error) {
     throw new Error(error.message);
   }
 };
-
 
 // Get all playlists by user ID
 const getAllPlaylistsByUserId = async (creator) => {
@@ -157,6 +156,7 @@ const getAllSongsByPlaylistId = async (playlistId) => {
   }
 };
 
+
 const deleteSongInPlaylist = async (playlistId, songId) => {
   try {
     // Tìm playlist bằng playlistId
@@ -165,17 +165,19 @@ const deleteSongInPlaylist = async (playlistId, songId) => {
     if (!playlist) {
       throw new Error("Playlist not found");
     }
-    const songIndex = playlist.songs.find(song => song.songId === songId);
-    if (songIndex === -1) {
+    // Kiểm tra xem có bài hát có songId được cung cấp trong playlist hay không
+    const songExists = playlist.songs.some(song => song.songId === songId);
+    if (!songExists) {
       throw new Error("Song not found in the playlist");
     }
-    playlist.songs.splice(songIndex, 1);
+    playlist.songs = playlist.songs.filter(song => song.songId !== songId);
+    // Lưu playlist sau khi đã xoá bài hát
     await playlist.save();
     return playlist;
   } catch (error) {
     throw new Error(error.message);
   }
-};
+};//viết bằng update  mongo
 export default {
   addPlaylist,
   getPlaylistById,

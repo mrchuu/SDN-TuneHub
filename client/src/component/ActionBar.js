@@ -52,31 +52,33 @@ export default function ActionBar() {
         ) : (
           <div className="w-16 h-16 rounded-md bg-zinc-400"></div>
         )}
-        {currentSong.artist && currentSong.song_name ? (
+        {currentSong.song_name ? (
           <div className="ml-4">
             <h4 className="font-semibold text-md text-lightText dark:text-darkText">
               {currentSong.song_name}
             </h4>
-            <div className="flex items-center">
-              <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
-                {currentSong.artist.artist_name}
-              </p>
-              {currentSong.is_exclusive ? (
-                <span className="text-white px-2 bg-amber-500 text-xs rounded ml-2 font-medium">
-                  EXCLUSIVE
-                </span>
-              ) : (
-                <></>
-              )}
-            </div>
-            <FaRegHeart
-              className="text-light10 dark:text-dark10 mt-1"
-              size={20}
-            />
+            {currentSong.artist.artist_name ? (
+              <div className="flex items-center">
+                <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
+                  {currentSong.artist.artist_name}
+                </p>
+                {currentSong.is_exclusive ? (
+                  <span className="text-white px-2 bg-amber-500 text-xs rounded ml-2 font-medium">
+                    EXCLUSIVE
+                  </span>
+                ) : (
+                  <></>
+                )}
+              </div>
+            ) : (
+              <></>
+            )}
+            <FaRegHeart className="text-light10 dark:text-dark10 mt-1" size={20} />
           </div>
         ) : (
           <div className="ml-2"></div>
         )}
+
       </div>
       <div className="playerAction h-full px-4 flex-col w-6/12">
        
@@ -113,11 +115,10 @@ export default function ActionBar() {
             size={30}
           />
           <div
-            className={`p-1 rounded ${
-              loop
+            className={`p-1 rounded ${loop
                 ? "bg-light10 dark:bg-dark10 text-white dark:text-lightText"
                 : " text-lightTextSecondary dark:text-darkTextSecondary"
-            }`}
+              }`}
           >
             <RxLoop
               size={20}
@@ -158,11 +159,10 @@ export default function ActionBar() {
         </div>
         <MdOutlineQueueMusic
           size={25}
-          className={`${
-            showBox
+          className={`${showBox
               ? "text-white bg-light10 dark:bg-dark10"
               : "text-light10 dark:text-dark10"
-          } mr-3 rounded-sm`}
+            } mr-3 rounded-sm`}
           onClick={(e) => {
             dispatch(toogleQueue());
           }}

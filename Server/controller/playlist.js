@@ -84,12 +84,11 @@ const getAllSongsByPlaylistId = async (req, res) => {
       return res.status(404).json({ error: "Playlist not found" });
     }
 
-    res.status(200).json(songList);
+    return res.status(200).json({ data: songList });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 
 const deleteSongInPlaylist = async (req, res) => {

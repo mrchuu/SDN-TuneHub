@@ -4,6 +4,7 @@ import SideBar from "../component/SideBar";
 import ActionBar from "../component/ActionBar.js";
 import SongQueue from "../component/SongQueue.js";
 import HeaderDefault from "../component/HeaderDefault.js";
+import Player from "../component/Player.js";
 
 export default function DefaultTemplate({ title, children }) {
   const expanded = useSelector((state) => state.sideBar.expanded);

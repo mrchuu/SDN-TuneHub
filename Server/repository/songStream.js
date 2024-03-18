@@ -25,6 +25,7 @@ const getRecentlyPlayedSongStreams = async (currentUserId) => {
         }
       },
       { $replaceRoot: { newRoot: "$document" } },
+      { $sort: { createdAt: -1 } },
       { $limit: 10 }
     ]);
   } catch (error) {

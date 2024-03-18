@@ -48,10 +48,6 @@ const UserSchema = new Schema(
       type: [playlistDTO],
       default: [],
     },
-    // playlist_created: {
-    //   type: [{ type: Schema.Types.ObjectId }],
-    //   default: [],
-    // },
     artist_followed: {
       type: [Schema.Types.ObjectId],
       ref: "Artist",
