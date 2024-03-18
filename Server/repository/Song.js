@@ -4,24 +4,62 @@ import SongStreamRepository from "./songStream.js";
 import artist from "./artist.js";
 import mongoose from "mongoose";
 const getSongsByIds = async (songId) => {
-  try {
-    const song = await Song.aggregate(
-      [
-        { $match: { _id: new mongoose.Types.ObjectId(songId) } },
-          {
-            $lookup: {
-              from: "Artist",
-              localField: "participated_artist",
-              foreignField: "_id",
-              as: "participatedArtistsInfo"
-            }
-          }
-      ]
-    );
-    return song;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  return await Song.aggregate([
+    { $match: { _id: songId } },
+    {
+      $lookup: {
+        from: "Album",
+        localField: "album",
+        foreignField: "_id",
+        as: "album",
+      },
+    },
+    {
+      $lookup: {
+        from: "Artist",
+        localField: "artist",
+        foreignField: "_id",
+        as: "artist",
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        song_name: 1,
+        is_exclusive: 1,
+        album: {
+          $arrayElemAt: [
+            {
+              $map: {
+                input: "$album",
+                in: {
+                  _id: "$$this._id",
+                  // artist: "$$this.artist",
+                  album_name: "$$this.album_name",
+                },
+              },
+            },
+            0,
+          ],
+        },
+
+        cover_image: 1,
+        artist: {
+          $arrayElemAt: [
+            {
+              $map: {
+                input: "$artist",
+                in: { _id: "$$this._id", artist_name: "$$this.artist_name" },
+              },
+            },
+            0,
+          ],
+        },
+        duration: 1,
+      },
+    },
+    { $limit: 1 }, // Giới hạn kết quả trả về thành 1 đối tượng
+  ]);
 };
 
 const getAllSongs = async () => {

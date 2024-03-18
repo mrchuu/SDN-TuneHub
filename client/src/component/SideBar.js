@@ -9,6 +9,7 @@ import { toogleExpand } from "../redux/sideBar.js";
 import ListPlaylist from "./ListPlaylist";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { Modal, Box, Typography, Button } from '@mui/material';
+import auth, { setUserInfo } from "../redux/auth.js";
 
 export default function SideBar() {
   // const [expanded, setExpanded] = useState(window.innerWidth > 768);
@@ -42,10 +43,6 @@ export default function SideBar() {
     };
   }, []);
 
-  const closeCreatePlaylistForm = () => {
-    setShowCreatePlaylistModal(false);
-  };
-
   const [baseImage, setBaseImage] = useState("");
 
   const handleImageInputChange = async (e) => {
@@ -71,13 +68,10 @@ export default function SideBar() {
     });
   };
 
-  const openCreatePlaylistForm = () => {
-    setShowCreatePlaylistModal(true);
-  };
 
   const { OriginalRequest } = PerformRequest();
 
-  const handleCreatePlaylist = () => {
+  const handleCreatePlaylist = async () => {
     const fetch = async () => {
       const searchArtistValue = await OriginalRequest(
         `playlist/create`,
@@ -94,7 +88,9 @@ export default function SideBar() {
     fetch();
     setPlaylistName('');
     setImageSrc('');
-    setShowCreatePlaylistModal(false);
+    const user = await OriginalRequest('auth/user', 'GET');
+    dispatch(setUserInfo(user.data))
+    closeModal();
   };
 
 

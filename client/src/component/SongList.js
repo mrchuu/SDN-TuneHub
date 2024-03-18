@@ -15,6 +15,7 @@ import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import "../style/soundWave.css";
+import auth, { setUserInfo } from "../redux/auth.js";
 export default function SongList({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
@@ -76,7 +77,8 @@ export default function SongList({ url }) {
       songs: songInAction,
       creator: userInfo._id,
     });
-
+    const user = await OriginalRequest('auth/user', 'GET');
+    dispatch(setUserInfo(user.data))
     closeMenu();
   };
 

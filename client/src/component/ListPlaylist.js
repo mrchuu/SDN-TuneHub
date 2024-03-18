@@ -1,43 +1,34 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import PerformRequest from "../utilities/PerformRequest.js";
 
 const ListPlaylist = ({ songId }) => {
-    console.log(songId);
+  const userInfo = useSelector((state) => state.auth.userInfo);
   const navigate = useNavigate();
   // const [playlists, setPlaylists] = useState([]);
-  const playlists = useSelector(
-    (state) => state.auth.userInfo.playlist_created
-  );
-
-  const detailPlaylist = (playlistId) => {
-    navigate(`/playlist/${playlistId}`);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const contextMenuRef = useRef(null);
+  const [deleteMenu, setDeleteMenu] = useState(false);
+  const handlePlaylistClick = (e, playlistId) => {
+    console.log(e.button);
+    if (e.button == 2) {
+      setDeleteMenu(true);
+    } else {
+      navigate(`/playlist/${playlistId}`);
+    }
   };
 
-  const { OriginalRequest } = PerformRequest();
-
-  const addSongToPlaylist = async (playlistId) => {
-    await OriginalRequest(`playlist/push`, "POST", {
-      playlistId: playlistId,
-      songs: songId,
-    });
-  };
 
   return (
     <div className="px-3 mt-2">
       <div className="px-3 text-textSecondary text-lightText dark:text-darkText text-sm font-medium">
-        {playlists?.map((playlist) => (
+        {userInfo.playlist_created?.map((playlist) => (
+          // !playlist.songs.find(song => song.songId === songId) && // Sử dụng songId từ props để kiểm tra
           <div
-            onClick={() => {
-              if (songId == undefined) {
-                detailPlaylist(playlist.playlistId);
-              } else {
-                addSongToPlaylist(playlist.playlistId);
-              }
-            }}
-            className="flex items-center mb-3"
             key={playlist._id}
+            // onContextMenu={(e) => handleContextMenu(e, playlist)}
+            onMouseDown={(e) => handlePlaylistClick(e, playlist.playlistId)}
+            className="flex items-center mb-3"
           >
             <img
               className="w-10 h-10 rounded-full border-slate-600 border-2 text-lightText dark:text-darkText"
