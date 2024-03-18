@@ -438,7 +438,7 @@ const hotestSongByDay = async (date) => {
           }
         },
         {
-          $limit: 7,
+          $limit: 15,
         },
         {
           $sort: {
@@ -586,7 +586,7 @@ const hotestSong = async () => {
             }
           },
           {
-            $limit: 7,
+            $limit: 15,
           },
           {
             $sort: {
