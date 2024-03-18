@@ -16,6 +16,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import "../style/soundWave.css";
 import auth, { setUserInfo } from "../redux/auth.js";
+import PlayListAddMenu from "./PlayListAddMenu.js";
 export default function SongList({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
@@ -77,8 +78,8 @@ export default function SongList({ url }) {
       songs: songInAction,
       creator: userInfo._id,
     });
-    const user = await OriginalRequest('auth/user', 'GET');
-    dispatch(setUserInfo(user.data))
+    const user = await OriginalRequest("auth/user", "GET");
+    dispatch(setUserInfo(user.data));
     closeMenu();
   };
 
@@ -182,7 +183,7 @@ export default function SongList({ url }) {
                         </h4>
                         {song.artist ? (
                           <Link
-                            to={`artist/${song.artist._id}`}
+                            to={`/artist/${song.artist._id}`}
                             className="text-xs hover:underline"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -195,8 +196,18 @@ export default function SongList({ url }) {
                     </div>
                   </td>
                   <td className="hidden md:table-cell md:w-5/12 text-center">
-                  {song.album ? <Link to={"/album/"+song.album._id+"/"+song.artist._id}>{song.album.album_name}</Link> : ""}
-                    
+                    {song.album ? (
+                      <Link
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        to={"/album/" + song.album._id + "/" + song.artist._id}
+                      >
+                        {song.album.album_name}
+                      </Link>
+                    ) : (
+                      ""
+                    )}
                   </td>
                   <td className="w-1/12 text-center">{`${Math.floor(
                     song.duration / 60
@@ -290,7 +301,7 @@ export default function SongList({ url }) {
               Create a Playlist
             </MenuItem>
             <div style={{ overflowY: "auto", maxHeight: "200px" }}>
-              <ListPlaylist songId={songInAction} />
+              <PlayListAddMenu songId={songInAction} />
             </div>
           </Menu>
         </Menu>

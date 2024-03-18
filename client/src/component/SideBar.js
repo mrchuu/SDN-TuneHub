@@ -50,7 +50,6 @@ export default function SideBar() {
     const base64 = await convertBase64(file);
     setBaseImage(base64);
 
-    console.log(base64);
   };
 
   const convertBase64 = (file) => {

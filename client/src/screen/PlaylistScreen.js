@@ -45,7 +45,7 @@ const PlaylistScreen = () => {
           {playlist && (
             <div className="relative flex items-center mb-8 bg-light30 dark:bg-dark30 rounded-lg p-6 shadow-lg">
               <div className="w-64 h-64 mr-8 overflow-hidden rounded-lg shadow-lg">
-                <img src={playlist.play_list_cover} alt={playlist.play_list_name} className="w-full h-full object-cover" />
+                <img src={playlist.play_list_cover} alt={playlist.play_list_name} className="w-full h-full object-cover object-center" />
               </div>
               <div className="flex flex-col text-lightText dark:text-darkText">
                 <span className="text-sm text-lightText dark:text-darkText font-medium mb-2">Playlist</span>
