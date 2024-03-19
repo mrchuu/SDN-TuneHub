@@ -49,7 +49,7 @@ const getSongsByAlbum = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
 
 const streamSong = async (req, res) => {
   try {
@@ -280,7 +280,7 @@ const getSongDetail = async (req, res) => {
     const songId = req.params.songId;
     const result = await SongRepository.getSongsById(songId);
     return res.status(200).json({ data: result });
-  } catch(error) {
+  } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
@@ -301,6 +301,16 @@ const getFeaturedSongs = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getLatestSongs = async (req, res) => {
+  try {
+    const limit = req.params.limit;
+    const songType = req.params.songType;
+    const result = await SongRepository.getLatestSongs(limit, songType);
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export default {
   getAllSongs,
   streamSong,
@@ -315,4 +325,5 @@ export default {
   getFeaturedSongs,
   getSongsByLastest,
   getSongsByAlbum,
+  getLatestSongs
 };

@@ -84,7 +84,7 @@ export default function SideBar() {
 
       console.log(searchArtistValue);
     };
-    fetch();
+    await fetch();
     setPlaylistName('');
     setImageSrc('');
     const user = await OriginalRequest('auth/user', 'GET');
