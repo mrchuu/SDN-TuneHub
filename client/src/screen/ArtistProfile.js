@@ -7,6 +7,7 @@ import SongListWithStreamCount from "../component/SongListWithStreamCount";
 import AlbumList from "../component/AlbumsList";
 import PerformRequest from "../utilities/PerformRequest";
 import FeaturedIn from "../component/artistProfile/FeaturedIn";
+import { setUserInfo } from "../redux/auth.js";
 
 export default function ArtistProfile() {
   const dispatch = useDispatch();
@@ -31,7 +32,10 @@ export default function ArtistProfile() {
   const handleFollowArtist = async () => {
     try {
       await OriginalRequest(`user/follow/`, "POST", { artistId });
-      setFollowed(!followed)
+      setFollowed(!followed);
+
+      const user = await OriginalRequest("auth/user", "GET");
+      dispatch(setUserInfo(user.data));
     } catch (error) {
       console.log(error);
     }
@@ -78,10 +82,10 @@ export default function ArtistProfile() {
               }}
             >
               <div className={`w-full h-full pt-56 relative`}>
-                {/* <div
+                <div
                   className="absolute inset-0 bg-light30 dark:bg-dark30"
                   style={{ opacity: `${(scrollPos * 0.7) / 180}` }}
-                ></div> */}
+                ></div>
                 <h1 className="pl-12 text-6xl font-bold text-white">
                   {artistInfo.artist_name}
                 </h1>
@@ -92,14 +96,14 @@ export default function ArtistProfile() {
                   {!followed ? (
                     <button
                       onClick={handleFollowArtist}
-                      className="cursor-pointer border-2 border-light10 px-5 py-1 text-white rounded-full ml-7 font-bold"
+                      className="z-50 cursor-pointer border-2 border-light10 px-5 py-1 text-white rounded-full ml-7 font-bold"
                     >
                       follow
                     </button>
                   ) : (
                     <button
                       onClick={handleFollowArtist}
-                      className="cursor-pointer bg-orange-500 border-2 border-light10 px-5 py-1 text-white rounded-full ml-7 font-bold"
+                      className="z-50 cursor-pointer bg-orange-500 border-2 border-light10 px-5 py-1 text-white rounded-full ml-7 font-bold"
                     >
                       followed
                     </button>

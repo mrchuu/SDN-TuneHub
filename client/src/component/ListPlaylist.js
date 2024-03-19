@@ -6,8 +6,6 @@ const ListPlaylist = ({ songId }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const navigate = useNavigate();
   // const [playlists, setPlaylists] = useState([]);
-  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
-  const contextMenuRef = useRef(null);
   const [deleteMenu, setDeleteMenu] = useState(false);
   const handlePlaylistClick = (e, playlistId) => {
     console.log(e.button);

@@ -199,7 +199,7 @@ export default function SideBar() {
           >
             <div className="px-3 mt-2">
               <div>
-                {userInfo.playlist_created.length > 0 ? (
+                {userInfo.playlist_created?.length > 0 ? (
                   <ListPlaylist />
                 ) : (
                   <div className="bg-light30 py-2 px-3 font-medium rounded-md dark:bg-dark30">
