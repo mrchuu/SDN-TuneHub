@@ -42,25 +42,21 @@ export default function SongList({ url }) {
   };
   const openMenu = async (e, song) => {
     setSongInAction(song);
-    const log = await checkFavorite();
-    setMenuIsOpen(true);
+    checkFavorite(song);
     setSongMenuAnchor(e.currentTarget);
+    setMenuIsOpen(true);
 
-    console.log(log);
+    // console.log(log);
   };
 
-
-  useEffect(() => {
-    
-  }, [Favorite]);
-  const checkFavorite = async () => {
+  const checkFavorite = async (song) => {
     try {
       const check = await OriginalRequest(
-        `songs/checkFavorite/${songInAction._id}`,
+        `songs/checkFavorite/${song._id}`,
         "GET"
       );
       if (check) {
-        return check;
+        setFavorite(check);
       }
     } catch (error) {
       console.log(error);
@@ -101,7 +97,17 @@ export default function SongList({ url }) {
     };
     fetch();
   }, [hasMounted, url]);
-
+  const handleFavouriteClick = async (songId) => {
+    try {
+      const response = await OriginalRequest(
+        `songs/favourited/${songId}`,
+        "POST"
+      );
+      closeMenu();
+    } catch (error) {
+      console.error("Error toggling favourite:", error);
+    }
+  };
   const handleCreatePlaylist = async () => {
     const response = await OriginalRequest(`playlist/create`, "POST", {
       songs: songInAction,
@@ -290,7 +296,9 @@ export default function SongList({ url }) {
             horizontal: "left",
           }}
         >
-          <MenuItem>
+          <MenuItem onClick={(e)=>{
+            handleFavouriteClick(songInAction._id)
+          }}>
             <ListItemIcon>
               {!Favorite ? (
                 <FaRegHeart
@@ -303,8 +311,9 @@ export default function SongList({ url }) {
                   size={18}
                 />
               )}
-
-              <ListItemText>&nbsp;Add To Favorite</ListItemText>
+              <ListItemText>
+                &nbsp; {Favorite ? "Remove From Favourite" : "Add To Favorite"}
+              </ListItemText>
             </ListItemIcon>
           </MenuItem>
           <MenuItem
@@ -327,7 +336,6 @@ export default function SongList({ url }) {
             className="flex items-center"
             onClick={(e) => {
               openMenuPlaylist(e);
-              // console.log(e);
             }}
           >
             <ListItemIcon>

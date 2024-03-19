@@ -375,6 +375,7 @@ const favouritedSong = async (req, res) => {
     if (!existingSong) {
       return res.status(400).json({ error: "Song was not found" });
     }
+    let opperation = "remove from favourite"
     if (existingSong.favourited.includes(userId)) {
       const favourited = await SongRepository.removeFavouriteSong({
         songId,
@@ -382,15 +383,16 @@ const favouritedSong = async (req, res) => {
       });
       favourited.favouritedByUser = false;
       console.log(favourited);
-      return res.status(201).json({ result: favourited, favourited: false });
+      return res.status(201).json({ result: favourited, favourited: false, message: "Successfully " + opperation });
     } else {
+      opperation = "added to favourite"
       const favourited = await SongRepository.addFavouriteSong({
         songId,
         userId: new mongoose.Types.ObjectId(userId),
       });
       favourited.favouritedByUser = true;
       console.log(favourited);
-      return res.status(201).json({ result: favourited, favourited: true });
+      return res.status(201).json({ result: favourited, favourited: true, message: "Successfully " + opperation });
     }
   } catch (error) {
     return res.status(500).json({ error: error.message });
