@@ -18,7 +18,7 @@ const getRecentlyPlayedSongs = async (req, res) => {
     const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(
       currentUserId
     );
-    
+
     const songs = await Promise.all(
       songStreams.map(async (stream) => {
         const song = await SongRepository.getSongsByIds(stream.song);
@@ -270,12 +270,12 @@ const getAllSongsByLastest = async (req, res) => {
       }
       userId = new mongoose.Types.ObjectId(existingUser._id);
       songs.map((s, index) => {
-        s.favouritedByUser = s.favourited.some(id => id.equals(userId));
-      })
+        s.favouritedByUser = s.favourited.some((id) => id.equals(userId));
+      });
     } else {
       songs.map((s, index) => {
         s.favouritedByUser = false;
-      })
+      });
     }
     return res.status(200).json({ data: songs });
   } catch (error) {
@@ -299,12 +299,12 @@ const getSongsByLastest = async (req, res) => {
       }
       userId = new mongoose.Types.ObjectId(existingUser._id);
       songs.map((s, index) => {
-        s.favouritedByUser = s.favourited.some(id => id.equals(userId));
-      })
+        s.favouritedByUser = s.favourited.some((id) => id.equals(userId));
+      });
     } else {
       songs.map((s, index) => {
         s.favouritedByUser = false;
-      })
+      });
     }
     return res.status(200).json({ data: songs });
   } catch (error) {
@@ -383,8 +383,7 @@ const favouritedSong = async (req, res) => {
       favourited.favouritedByUser = false;
       console.log(favourited);
       return res.status(201).json({ result: favourited, favourited: false });
-    }
-    else {
+    } else {
       const favourited = await SongRepository.addFavouriteSong({
         songId,
         userId: new mongoose.Types.ObjectId(userId),
@@ -396,7 +395,33 @@ const favouritedSong = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
+
+const checkFavouriteSong = async (req, res) => {
+  try {
+    const token = req.cookies.accessToken;
+    let userId;
+    if (token) {
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const existingUser = await AuthenticateRepository.getUserById(
+        decodedToken.userId
+      );
+      if (!existingUser) {
+        return res.status(400).json({ error: "User was not found" });
+      }
+      userId = existingUser._id;
+    }
+
+    const songId = req.params.songId;
+    const check = await SongRepository.checkFavouriteSong({
+      userId,
+      songId,
+    });
+    return res.status(200).json(check);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 const getFavouritedSong = async (req, res) => {
   try {
@@ -414,13 +439,29 @@ const getFavouritedSong = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
 const getLatestSongs = async (req, res) => {
   try {
     const limit = req.params.limit;
     const songType = req.params.songType;
     const result = await SongRepository.getLatestSongs(limit, songType);
     return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const getSongByGenre = async (req, res) => {
+  try {
+    const genreId = req.params.genreId;
+    const limit = req.params.limit;
+    const songType = req.params.songType;
+    const songs = await SongRepository.getSongByGenre({
+      limit,
+      songType,
+      genreId,
+    });
+    return res.status(200).json({ data: songs });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -442,5 +483,6 @@ export default {
   getSongsByAlbum,
   favouritedSong,
   getFavouritedSong,
-  getLatestSongs
+  getLatestSongs,
+  getSongByGenre,checkFavouriteSong
 };
