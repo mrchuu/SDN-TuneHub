@@ -1134,7 +1134,8 @@ const checkFavouriteSong = async ({ songId, userId }) => {
   try {
     const song = await Song.findById(songId);
     if (song) {
-      const isLove = song.favourited.includes(userId);
+      const isLove = song.favourited.includes(new mongoose.Types.ObjectId(userId));
+      console.log(isLove);
       return isLove;
     } else {
       return false;

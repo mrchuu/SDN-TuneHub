@@ -399,7 +399,19 @@ const favouritedSong = async (req, res) => {
 
 const checkFavouriteSong = async (req, res) => {
   try {
-    const userId = req.decodedToken.userId;
+    const token = req.cookies.accessToken;
+    let userId;
+    if (token) {
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const existingUser = await AuthenticateRepository.getUserById(
+        decodedToken.userId
+      );
+      if (!existingUser) {
+        return res.status(400).json({ error: "User was not found" });
+      }
+      userId = existingUser._id;
+    }
+
     const songId = req.params.songId;
     const check = await SongRepository.checkFavouriteSong({
       userId,
