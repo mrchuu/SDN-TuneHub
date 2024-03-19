@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import Artist from "./Artist.js";
 import Album from "./Album.js";
+import User from "./RegisteredUser.js";
 
 const songSchema = new Schema(
   {
@@ -51,14 +52,24 @@ const songSchema = new Schema(
     },
     is_public: {
       type: Schema.Types.Boolean,
-      default: true
+      default: true,
     },
-    favourited:
-      [{ type: Schema.Types.ObjectId }],
-    purchased_user:
-      [{ type: Schema.Types.ObjectId }],
+    favourited: [{ type: Schema.Types.ObjectId }],
+    purchased_user: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+        createdDate: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true, collection: "Song" }
 );
+songSchema.path("purchased_user");
 const Song = mongoose.model("Song", songSchema);
 export default Song;

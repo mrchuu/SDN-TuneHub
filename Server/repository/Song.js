@@ -531,7 +531,169 @@ const hotestSongByDay = async (date, check) => {
     throw error;
   }
 };
+const hotestSongByDay1 = async (date, check) => {
+  try {
+    const byDay = new Date(new Date() - 24 * date * 60 * 60 * 1000);
+    let aggregationPipeline = [
+      {
+        $lookup: {
+          from: "SongStream",
+          localField: "_id",
+          foreignField: "song",
+          as: "streamTime",
+        },
+      },
+      {
+        $unwind: {
+          path: "$streamTime",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          count: {
+            $cond: {
+              if: {
+                $and: [
+                  {
+                    $gte: ["$streamTime.createdAt", byDay],
+                  },
+                  {
+                    $lt: [
+                      "$streamTime.createdAt",
+                      new Date(),
+                    ],
+                  },
+                ],
+              },
+              then: 1,
+              else: 0,
+            },
+          },
+          lastStreamTime: {
+            $max: "$streamTime.createdAt",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "Artist",
+          localField: "artist",
+          foreignField: "_id",
+          as: "artist_file",
+        },
+      },
+      {
+        $unwind: "$artist_file",
+      },
+      {
+        $lookup: {
+          from: "Album",
+          localField: "album",
+          foreignField: "_id",
+          as: "album_file",
+        },
+      },
+      {
+        $unwind: {
+          path: "$album_file",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "Artist",
+          localField: "participated_artist",
+          foreignField: "_id",
+          as: "participated_artists",
+        },
+      },
+      {
+        $unwind: {
+          path: "$participated_artists",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          song_name: { $first: "$song_name" },
+          album: {
+            $first: {
+              _id: "$album_file._id",
+              album_name: "$album_file.album_name",
+            },
+          },
+          artist: {
+            $first: {
+              _id: "$artist_file._id",
+              artist_name: "$artist_file.artist_name",
+            },
+          },
+          cover_image: { $first: "$cover_image" },
+          streamCount: { $sum: "$count" },
+          duration: { $first: "$duration" },
+          is_exclusive: { $first: "$is_exclusive" },
+          lastStreamTime: {
+            $first: "$lastStreamTime",
+          },
+          participated_artists: {
+            $addToSet: {
+              _id: "$participated_artists._id",
+              artist_name:
+                "$participated_artists.artist_name",
+            },
+          },
+          favourited: {
+            $first: "$favourited",
+          },
+        },
+      },
+      {
+        $sort: {
+          streamCount: -1,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          song_name: 1,
+          album: 1,
+          artist: 1,
+          cover_image: 1,
+          streamCount: 1,
+          duration: 1,
+          is_exclusive: 1,
+          lastStreamTime: 1,
+          participated_artists: 1,
+          favourited: 1,
+        },
+      },
+      {
+        $sort: {
+          streamCount: -1,
+        },
+      },
+      {
+        $limit: 5
+      }
+    ];
 
+    if (check !== "all") {
+      aggregationPipeline.unshift({
+        $match: {
+          is_exclusive: check === 'true' ? true : false,
+        },
+      });
+    }
+
+    const results = await Song.aggregate(aggregationPipeline).exec();
+    return results;
+  } catch (error) {
+    console.error("Error in hotestSongByDay:", error);
+    throw error;
+  }
+};
 
 
 const hotestSong = async () => {
@@ -730,7 +892,7 @@ const addPurchaser = async (userId, songId) => {
     const result = await Song.findByIdAndUpdate(
       songId,
       {
-        $push: { purchased_user: userId },
+        $push: { purchased_user: new mongoose.Types.ObjectId(userId) },
       },
       { new: true }
     ).populate("artist", "artist_name");
@@ -782,5 +944,6 @@ export default {
   addPurchaser,
   addFavouriteSong,
   removeFavouriteSong,
-  getLatestSongs
+  getLatestSongs,
+  hotestSongByDay1
 };

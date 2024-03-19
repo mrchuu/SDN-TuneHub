@@ -224,6 +224,36 @@ const searchSongByName = async (req, res) => {
   }
 };
 
+const getAllSongsByLastest1 = async (req, res) => {
+  try {
+    const { date, check } = req.params;
+    const songs = await SongRepository.hotestSongByDay1(date, check);
+    const token = req.cookies.accessToken;
+    let userId;
+    if (token) {
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const existingUser = await AuthenticateRepository.getUserById(
+        decodedToken.userId
+      );
+      if (!existingUser) {
+        return res.status(400).json({ error: "User was not found" });
+      }
+      userId = new mongoose.Types.ObjectId(existingUser._id);
+      songs.map((s, index) => {
+        s.favouritedByUser = s.favourited.some(id => id.equals(userId));
+      })
+    } else {
+      songs.map((s, index) => {
+        s.favouritedByUser = false;
+      })
+    }
+    return res.status(200).json({ data: songs });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.toString(),
+    });
+  }
+};
 const getAllSongsByLastest = async (req, res) => {
   try {
     const { date, check } = req.params;
@@ -254,7 +284,6 @@ const getAllSongsByLastest = async (req, res) => {
     });
   }
 };
-
 const getSongsByLastest = async (req, res) => {
   try {
     const songs = await SongRepository.hotestSong();
@@ -403,6 +432,7 @@ export default {
   uploadSong,
   searchSongByName,
   getAllSongsByLastest,
+  getAllSongsByLastest1,
   getUnPublishedSongOfArtist,
   getPopularSongOfArtist,
   getRecentlyPlayedSongs,
