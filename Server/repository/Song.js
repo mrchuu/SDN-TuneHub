@@ -557,13 +557,9 @@ const hotestSong = async () => {
             count: {
               $cond: {
                 if: {
-                  $and: [
-                    {
-                      $lt: [
-                        "$streamTime.createdAt",
-                        new Date(),
-                      ],
-                    },
+                  $lt: [
+                    "$streamTime.createdAt",
+                    new Date(),
                   ],
                 },
                 then: 1,
@@ -640,7 +636,8 @@ const hotestSong = async () => {
             participated_artists: {
               $addToSet: {
                 _id: "$participated_artists._id",
-                artist_name: "$participated_artists.artist_name",
+                artist_name:
+                  "$participated_artists.artist_name",
               },
             },
             favourited: {
@@ -666,11 +663,11 @@ const hotestSong = async () => {
             lastStreamTime: 1,
             participated_artists: 1,
             favourited: 1,
-          }
+          },
         },
         {
           $limit: 15,
-        }
+        },
       ]
     ).exec();
     return results;
@@ -742,6 +739,32 @@ const addPurchaser = async (userId, songId) => {
     throw new Error(error.message);
   }
 };
+const getLatestSongs = async (limit, songType) => {
+  let filter = {}; // Initialize an empty filter object
+
+  // Check the songType and construct the filter condition accordingly
+  if (songType === "Exclusive") {
+    filter.is_exclusive = true;
+  } else if (songType === "Free") {
+    filter.is_exclusive = false;
+  }
+  try {
+    const result = await Song.find(filter)
+      .populate("artist", "_id artist_name")
+      .populate("album", "_id album_name")
+      .select("_id price")
+      .select("song_name")
+      .select("cover_image")
+      .select("duration")
+      .select("is_exclusive")
+      .select("file_name createdAt")
+      .sort({ createdAt: -1 })
+      .limit(limit);
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   getAllSongs,
   streamSong,
@@ -758,5 +781,6 @@ export default {
   hotestSong,
   addPurchaser,
   addFavouriteSong,
-  removeFavouriteSong
+  removeFavouriteSong,
+  getLatestSongs
 };

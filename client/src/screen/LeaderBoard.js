@@ -5,7 +5,7 @@ import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { FaRegHeart, FaSearch } from "react-icons/fa";
-import "../style/leaderboard.css"
+import "../style/leaderboard.css";
 import {
     setCurrentSong,
     toogleIsPlaying,

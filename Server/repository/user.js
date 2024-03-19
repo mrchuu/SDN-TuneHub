@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import User from "../model/RegisteredUser.js";
+import Artist from "../model/Artist.js";
 
 const findById = async (id) => {
   try {
@@ -44,4 +45,50 @@ const addSongPurchased = async (userId, songId) => {
   }
 };
 
-export default { findById, updateProfile, addSongPurchased };
+const followArtist = async ({ artistId, userId }) => {
+  try {
+    const user = await User.findById(userId);
+    const isFollowed = user.artist_followed.includes(artistId);
+    let registerUser;
+    if (!isFollowed) {
+      registerUser = await User.findByIdAndUpdate(userId, {
+        $push: { artist_followed: new mongoose.Types.ObjectId(artistId) },
+      });
+      await Artist.findByIdAndUpdate(artistId, {
+        $push: { followers: new mongoose.Types.ObjectId(userId) },
+      });
+    } else {
+      registerUser = await User.findByIdAndUpdate(userId, {
+        $pull: { artist_followed: artistId },
+      });
+      await Artist.findByIdAndUpdate(artistId, {
+        $pull: { followers: userId },
+      });
+    }
+    return registerUser;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const checkArtistFollowed = async ({ artistId, userId }) => {
+  try {
+    const registerUser = await User.findById(userId);
+    if (registerUser) {
+      const isFollowed = registerUser.artist_followed.includes(artistId);
+      return isFollowed;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export default {
+  findById,
+  updateProfile,
+  addSongPurchased,
+  followArtist,
+  checkArtistFollowed,
+};

@@ -5,4 +5,6 @@ const userRouter = express.Router();
 
 userRouter.put('/change-password',verifyToken, UserController.changePassword);
 userRouter.put('/edit-profile', UserController.editProfile);
+userRouter.post('/follow',verifyToken, UserController.followArtist);
+userRouter.get('/checkFollowed/:artistId',verifyToken, UserController.checkArtistFollowed);
 export default userRouter;

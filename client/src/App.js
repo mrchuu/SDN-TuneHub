@@ -20,6 +20,7 @@ import Player from "./component/Player";
 import { useEffect } from "react";
 import PaymentResult from "./screen/PaymentResult";
 import PurchaseSong from "./screen/PurchaseSong";
+import SongListExpand from "./screen/SongListExpand";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           element={<PaymentResult />}
         />
         <Route path="/payment/purchase" element={<PurchaseSong/>} />
+        <Route path="/songList/:url/:title" element={<SongListExpand/>} />
       </Routes>
       {["/login", "/signup", "/forgot-password"].includes(
         window.location.pathname

@@ -24,9 +24,22 @@ const getPlaylistById = async (playlistId) => {
 };
 
 // Delete playlist
-const deletePlaylist = async (playlistId) => {
+const deletePlaylist = async (playlistId, creator) => {
   try {
     const deletedPlaylist = await Playlist.findByIdAndDelete(playlistId);
+
+    await User.findOneAndUpdate(
+      {
+        _id: creator,
+      },
+      {
+        $pull: {
+          playlist_created: {
+            playlistId: playlistId,
+          },
+        },
+      }
+    );
     return deletedPlaylist;
   } catch (error) {
     throw new Error(error.message);
@@ -115,6 +128,16 @@ const createPlaylist = async ({
   }
 };
 
+const findSongInPlaylist = async ({ playlistId, songs }) => {
+  const playlistDTO = await Playlist.findById(playlistId);
+  for (const song of playlistDTO.songs) {
+    if (song.songId == songs) {
+      return false;
+    }
+  }
+  return true;
+};
+
 const addSongToPlaylist = async ({ playlistId, songs }) => {
   try {
     const songDTO = await Song.findById(songs);
@@ -197,4 +220,5 @@ export default {
   addSongToPlaylist,
   getAllSongsByPlaylistId,
   deleteSongInPlaylist,
+  findSongInPlaylist,
 };

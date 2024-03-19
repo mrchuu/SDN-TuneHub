@@ -6,8 +6,6 @@ const ListPlaylist = ({ songId }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const navigate = useNavigate();
   // const [playlists, setPlaylists] = useState([]);
-  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
-  const contextMenuRef = useRef(null);
   const [deleteMenu, setDeleteMenu] = useState(false);
   const handlePlaylistClick = (e, playlistId) => {
     console.log(e.button);
@@ -21,7 +19,7 @@ const ListPlaylist = ({ songId }) => {
 
   return (
     <div className="px-3 mt-2">
-      <div className="px-3 text-textSecondary text-lightText dark:text-darkText text-sm font-medium">
+      <div className="text-textSecondary text-lightText dark:text-darkText text-sm font-medium">
         {userInfo.playlist_created?.map((playlist) => (
           // !playlist.songs.find(song => song.songId === songId) && // Sử dụng songId từ props để kiểm tra
           <div
