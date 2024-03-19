@@ -136,7 +136,7 @@ export default function LeaderBoard() {
                     <Select
                         value={check}
                         onChange={(e) => handleChange(e.target.value, 'check')}
-                        className="font-normal w-32 text-lightText dark:text-darkText rounded-full"
+                        className="font-normal w-32 text-lightText dark:text-darkText rounded-lg"
                     >
                         <MenuItem value="all">All</MenuItem>
                         <MenuItem value="true">Exclusive</MenuItem>
