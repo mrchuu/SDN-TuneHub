@@ -72,7 +72,7 @@ export default function TopTrackCarousle() {
     const fetchTopTRack = async () => {
       try {
         const result = await OriginalRequest(
-          "songs/leaderboard/topSong/7",
+          "songs/leaderboard/topSong/7/all",
           "GET"
         );
         if (result.data) {

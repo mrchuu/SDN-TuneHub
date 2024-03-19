@@ -4,14 +4,13 @@ import verifyToken from "../middleware/verifyToken.js";
 const songRouter = express.Router();
 songRouter.get("/getAll", SongController.getAllSongs);
 songRouter.get("/getSongByAlbum/:id",SongController.getSongsByAlbum);
-songRouter.get("/recentSong/:id", verifyToken,SongController.getRecentlyPlayedSongs)
 songRouter.get("/recentSong", verifyToken,SongController.getRecentlyPlayedSongs)
 songRouter.get("/streamSong/:songId", SongController.streamSong);
 songRouter.post("/uploadSingle", verifyToken, SongController.uploadSong);
 songRouter.get("/search/:nameKey", SongController.searchSongByName);
 songRouter.post("/addSongStream/:songId", SongController.addStreamSong);
 songRouter.get("/detailSong/:songId", SongController.getSongDetail)
-songRouter.get("/leaderboard/topSong/:date", SongController.getAllSongsByLastest);
+songRouter.get("/leaderboard/topSong/:date/:check", verifyToken, SongController.getAllSongsByLastest);
 songRouter.get(
   "/unpublished",
   verifyToken,
@@ -19,6 +18,8 @@ songRouter.get(
 );
 songRouter.get("/getArtistPopularSongs/:artistId", SongController.getPopularSongOfArtist)
 songRouter.get("/getFeaturedSongs/:artistId", SongController.getFeaturedSongs)
+songRouter.get("/getHotestSong", verifyToken, SongController.getSongsByLastest)
+songRouter.post("/favourited/:songId", verifyToken, SongController.favouritedSong);
 songRouter.get("/getHotestSong", SongController.getSongsByLastest)
 songRouter.get("/getLatest/:limit/:songType", SongController.getLatestSongs)
 export default songRouter;
