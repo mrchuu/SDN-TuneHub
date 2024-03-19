@@ -84,7 +84,10 @@ export default function SideBar() {
     await fetch();
     setPlaylistName("Playlist default");
     const user = await OriginalRequest("auth/user", "GET");
-    dispatch(setUserInfo(user.data));
+    if (user) {
+      dispatch(setUserInfo(user.data));
+    }
+
     closeModal();
   };
 
@@ -211,7 +214,10 @@ export default function SideBar() {
                     <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
                       Personalize your experience at TuneHub
                     </p>
-                    <button onClick={openModal} className="bg-light10 dark:bg-dark10 px-5 py-2 my-2 rounded-lg text-white hover:text-slate-950">
+                    <button
+                      onClick={openModal}
+                      className="bg-light10 dark:bg-dark10 px-5 py-2 my-2 rounded-lg text-white hover:text-slate-950"
+                    >
                       Create Playlist
                     </button>
                   </div>

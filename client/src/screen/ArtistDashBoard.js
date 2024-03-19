@@ -1,11 +1,12 @@
 import SongList from "../component/SongList";
 import ArtistTemplate from "../template/ArtistTemplate";
-
+import { Chart as ChartJS } from "chart.js/auto";
+import { Line } from "react-chartjs-2";
 export default function ArtistDashBoard() {
   return (
     <ArtistTemplate>
       <div className="w-full min-h-screen px-5">
-        <h4 className="text-lightText dark:text-darkText text-2xl font-semibold pl-3">
+        <h4 className="text-lightTextSecondary dark:text-darkTextSecondary text-2xl font-semibold pl-3">
           Artist DashBoard
         </h4>
         <div className="w-full h-[1px] bg-black/60 shadow-lg"></div>
@@ -67,8 +68,22 @@ export default function ArtistDashBoard() {
                 </div>
               </div>
             </div>
-            <div className="mt-5 rounded-md bg-light30 dark:bg-dark30 w-full h-[550px]">
-
+            <div className="mt-5 rounded-md bg-light30 dark:bg-dark30 w-full h-[450px] pt-5 px-4">
+              <Line
+                data={{
+                  labels: ["A", "B", "C"],
+                  datasets: [
+                    {
+                      label: "Revenue",
+                      data: [10, 50, 30],
+                      tension: 0.5,
+                      fill: true,
+                      borderColor: "rgb(242, 120, 92)",
+                      backgroundColor: "rgb(242, 120, 92, 0.5)",
+                    },
+                  ],
+                }}
+              />
             </div>
           </div>
           <div className="rightSide  w-4/12"></div>

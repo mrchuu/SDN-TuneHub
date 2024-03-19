@@ -18,6 +18,7 @@ import "../style/soundWave.css";
 import auth, { setUserInfo } from "../redux/auth.js";
 import PlayListAddMenu from "./PlayListAddMenu.js";
 import { RiVipDiamondFill } from "react-icons/ri";
+import { BsHeartFill } from "react-icons/bs";
 export default function SongList({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
@@ -31,16 +32,39 @@ export default function SongList({ url }) {
   const [playlistMenuAnchor, setPlaylistMenuAnchor] = useState(null);
 
   const userInfo = useSelector((state) => state.auth.userInfo);
+  const [Favorite, setFavorite] = useState(false);
 
   const currentSong = useSelector((state) => state.player.currentSong);
   const closeMenu = (e, song) => {
     setMenuIsOpen(false);
     setSongMenuAnchor(null);
+    setFavorite(false);
   };
-  const openMenu = (e, song) => {
+  const openMenu = async (e, song) => {
     setSongInAction(song);
+    const log = await checkFavorite();
     setMenuIsOpen(true);
     setSongMenuAnchor(e.currentTarget);
+
+    console.log(log);
+  };
+
+
+  useEffect(() => {
+    
+  }, [Favorite]);
+  const checkFavorite = async () => {
+    try {
+      const check = await OriginalRequest(
+        `songs/checkFavorite/${songInAction._id}`,
+        "GET"
+      );
+      if (check) {
+        return check;
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const openMenuPlaylist = (e, song) => {
@@ -79,13 +103,15 @@ export default function SongList({ url }) {
   }, [hasMounted, url]);
 
   const handleCreatePlaylist = async () => {
-    await OriginalRequest(`playlist/create`, "POST", {
+    const response = await OriginalRequest(`playlist/create`, "POST", {
       songs: songInAction,
-      creator: userInfo._id,
     });
-    const user = await OriginalRequest("auth/user", "GET");
-    dispatch(setUserInfo(user.data));
-    closeMenuPlaylist();
+    if (response) {
+      const user = await OriginalRequest("auth/user", "GET");
+      dispatch(setUserInfo(user.data));
+      closeMenuPlaylist();
+    }
+
     closeMenu();
   };
 
@@ -266,10 +292,18 @@ export default function SongList({ url }) {
         >
           <MenuItem>
             <ListItemIcon>
-              <FaRegHeart
-                className="text-light10 dark:text-dark10 mt-1"
-                size={18}
-              />
+              {!Favorite ? (
+                <FaRegHeart
+                  className="text-light10 dark:text-dark10 mt-1"
+                  size={18}
+                />
+              ) : (
+                <BsHeartFill
+                  className="text-light10 dark:text-dark10 mt-1"
+                  size={18}
+                />
+              )}
+
               <ListItemText>&nbsp;Add To Favorite</ListItemText>
             </ListItemIcon>
           </MenuItem>

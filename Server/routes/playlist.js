@@ -4,7 +4,7 @@ import verifyToken from "../middleware/verifyToken.js";
 
 const playlistRouter = express.Router();
 
-playlistRouter.post("/create", PlaylistController.createPlaylist);
+playlistRouter.post("/create", verifyToken, PlaylistController.createPlaylist);
 
 playlistRouter.post("/push", PlaylistController.addSongToPlaylist);
 
