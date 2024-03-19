@@ -14,6 +14,9 @@ import {
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { BsHeartFill } from "react-icons/bs";
+import Select from '@mui/material/Select';
+
 export default function LeaderBoard() {
     const { OriginalRequest } = PerformRequest();
     const [SongList, setSong] = useState([]);
@@ -26,8 +29,27 @@ export default function LeaderBoard() {
     const [showAllSongs, setShowAllSongs] = useState(false);
     const [showAllArtists, setShowAllArtists] = useState(false);
     const [date, setDate] = useState('1');
+    const [check, setCheck] = useState('all');
     let intervalId;
-
+    const handleFavouriteClick = async (songId) => {
+        try {
+            const response = await OriginalRequest(`songs/favourited/${songId}`, "POST");
+            if (response) {
+                const updatedSongList = [...SongList]
+                updatedSongList.map((song, index) => {
+                    if (song._id === response.result._id) {
+                        song.favouritedByUser = response.favourited
+                    }
+                })
+                setSong(updatedSongList);
+            }
+        } catch (error) {
+            console.error("Error toggling favourite:", error);
+        }
+    };
+    useEffect(() => {
+        console.log("rerender");
+    }, [SongList]);
     const closeMenu = (e, song) => {
         setMenuIsOpen(false);
         setSongMenuAnchor(null);
@@ -38,12 +60,16 @@ export default function LeaderBoard() {
         setSongMenuAnchor(e.currentTarget);
     };
 
-    const handleDateChange = (value) => {
-        setDate(value);
+    const handleChange = (value, type) => {
+        if (type === 'date') {
+            setDate(value);
+        } else if (type === 'check') {
+            setCheck(value);
+        }
     };
 
-    const fetchSong = async (date) => {
-        const data = await OriginalRequest(`songs/leaderboard/topSong/${date}`, "GET");
+    const fetchSong = async (date, check) => {
+        const data = await OriginalRequest(`songs/leaderboard/topSong/${date}/${check}`, "GET");
         console.log(date);
         if (data) {
             setSong(data.data);
@@ -74,12 +100,13 @@ export default function LeaderBoard() {
                 return 'Time';
         }
     };
+
     useEffect(() => {
-        fetchSong(date);
+        fetchSong(date, check);
         fetchArtist();
         fetchAlbum();
         return () => clearInterval(intervalId);
-    }, [date]);
+    }, [date, check]);
 
     return (
         <DefaultTemplate>
@@ -89,27 +116,33 @@ export default function LeaderBoard() {
                 </h1>
                 <div class="flex flex-row">
                     <button
-                        onClick={() => handleDateChange('1')}
+                        onClick={() => handleChange('1', 'date')}
                         className={`px-4 py-2 font-semibold text-lightText dark:text-darkText m-1 ${date === '1' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
                     >
                         <span className="cursor-pointer">Day</span>
                     </button>
-
                     <button
-                        onClick={() => handleDateChange('7')}
-                        class={`px-4 py-2 font-semibold text-lightText dark:text-darkText m-1 ${date === '7' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
+                        onClick={() => handleChange('7', 'date')}
+                        className={`px-4 py-2 font-semibold text-lightText dark:text-darkText m-1 ${date === '7' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
                     >
-                        <span class="cursor-pointer">Week</span>
+                        <span className="cursor-pointer">Week</span>
                     </button>
-
                     <button
-                        onClick={() => handleDateChange('30')}
-                        class={`px-4 py-2 font-semibold text-lightText dark:text-darkText m-1 ${date === '30' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
+                        onClick={() => handleChange('30', 'date')}
+                        className={`px-4 py-2 font-semibold text-lightText dark:text-darkText m-1 ${date === '30' ? 'border-b-2 border-light10 dark:border-dark10' : ''}`}
                     >
-                        <span class="cursor-pointer">Month</span>
+                        <span className="cursor-pointer">Month</span>
                     </button>
+                    <Select
+                        value={check}
+                        onChange={(e) => handleChange(e.target.value, 'check')}
+                        className="font-normal w-32 text-lightText dark:text-darkText rounded-full"
+                    >
+                        <MenuItem value="all">All</MenuItem>
+                        <MenuItem value="true">Exclusive</MenuItem>
+                        <MenuItem value="false">Free</MenuItem>
+                    </Select>
                 </div>
-
                 <h2 className="text-2xl font-semibold mb-8 dark:text-white m-4">
                     Top Song in {getDateText()}
                 </h2>
@@ -201,10 +234,27 @@ export default function LeaderBoard() {
 
                                 <td className="w-1/12 ">
                                     <div className="flex items-center justify-evenly">
-                                        <FaRegHeart
-                                            className="text-light10 dark:text-dark10 mt-1"
-                                            size={18}
-                                        />
+                                        <div id={song._id}>
+                                            {!song.favouritedByUser ?
+                                                <FaRegHeart
+                                                    className="text-light10 dark:text-dark10 mt-1"
+                                                    size={18}
+                                                    onClick={(e) => {
+                                                        handleFavouriteClick(song._id);
+                                                        e.stopPropagation()
+                                                    }}
+                                                />
+                                                :
+                                                <BsHeartFill
+                                                    className="text-light10 dark:text-dark10 mt-1"
+                                                    size={18}
+                                                    onClick={(e) => {
+                                                        handleFavouriteClick(song._id);
+                                                        e.stopPropagation()
+                                                    }}
+                                                />
+                                            }
+                                        </div>
                                         <IoEllipsisHorizontal onClick={(e) => {
                                             e.stopPropagation();
                                             openMenu(e, song);
@@ -325,7 +375,7 @@ export default function LeaderBoard() {
                             Album
                         </h2>
                     </div>
-                    <div className="mt-5">
+                    <div className="mt-5 ml-12">
                         {albums.length > 0 ? (
                             <div className="w-full flex flex-wrap">
                                 {albums.map((album) => (

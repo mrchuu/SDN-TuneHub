@@ -158,46 +158,52 @@ const addSongUpload = async ({
 
 const hotArtist = async () => {
   try {
-    const result = await Artist.aggregate([
-      {
-        $lookup: {
-          from: "Users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "artist_file",
+    const result = await Artist.aggregate(
+      [
+        {
+          $lookup: {
+            from: "Users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "artist_file",
+          },
         },
-      },
-      {
-        $unwind: {
-          path: "$artist_file",
-          preserveNullAndEmptyArrays: true,
+        {
+          $unwind: {
+            path: "$artist_file",
+            preserveNullAndEmptyArrays: true,
+          },
         },
-      },
-      {
-        $addFields: {
-          followers_count: {
-            $cond: {
-              if: { $isArray: "$followers" },
-              then: { $size: "$followers" },
-              else: 0,
+        {
+          $addFields: {
+            followers_count: {
+              $cond: {
+                if: { $isArray: "$followers" },
+                then: { $size: "$followers" },
+                else: 0,
+              },
             },
           },
         },
-      },
-      {
-        $project: {
-          id: 1,
-          artist_name: 1,
-          artist_file: {
-            profile_picture:
-              "$artist_file.profile_picture",
-            introduction: "$artist_file.introduction",
+        {
+          $project: {
+            id: 1,
+            artist_name: 1,
+            artist_file: {
+              profile_picture:
+                "$artist_file.profile_picture",
+              introduction: "$artist_file.introduction",
+            },
+            followers_count: 1,
           },
-          followers_count: 1,
         },
-      },
-      { $limit: 7 },
-    ]
+        {
+          $sort: {
+            followers_count: -1,
+          },
+        },
+        { $limit: 15 },
+      ]
     ).exec();
     return result;
   } catch (error) {

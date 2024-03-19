@@ -12,6 +12,7 @@ import {
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { BsHeartFill } from "react-icons/bs";
 export default function SongListDetail({ url, onSongChange }) {
     const [SongList, setSongList] = useState([]);
     const { OriginalRequest } = PerformRequest();
@@ -21,6 +22,22 @@ export default function SongListDetail({ url, onSongChange }) {
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const [songInAction, setSongInAction] = useState(null);
     const [loading, setLoading] = useState(false);
+    const handleFavouriteClick = async (songId) => {
+        try {
+            const response = await OriginalRequest(`songs/favourited/${songId}`, "POST");
+            if (response) {
+                const updatedSongList = [...SongList]
+                updatedSongList.map((song, index) => {
+                    if (song._id === response.result._id) {
+                        song.favouritedByUser = response.favourited
+                    }
+                })
+                setSongList(updatedSongList);
+            }
+        } catch (error) {
+            console.error("Error toggling favourite:", error);
+        }
+    };
     const closeMenu = (e, song) => {
         setMenuIsOpen(false);
         setSongMenuAnchor(null);
@@ -131,10 +148,27 @@ export default function SongListDetail({ url, onSongChange }) {
 
                             <td className="w-1/12 ">
                                 <div className="flex items-center justify-evenly">
-                                    <FaRegHeart
-                                        className="text-light10 dark:text-dark10 mt-1"
-                                        size={18}
-                                    />
+                                    <div id={song._id}>
+                                        {!song.favouritedByUser ?
+                                            <FaRegHeart
+                                                className="text-light10 dark:text-dark10 mt-1"
+                                                size={18}
+                                                onClick={(e) => {
+                                                    handleFavouriteClick(song._id);
+                                                    e.stopPropagation()
+                                                }}
+                                            />
+                                            :
+                                            <BsHeartFill
+                                                className="text-light10 dark:text-dark10 mt-1"
+                                                size={18}
+                                                onClick={(e) => {
+                                                    handleFavouriteClick(song._id);
+                                                    e.stopPropagation()
+                                                }}
+                                            />
+                                        }
+                                    </div>
                                     <IoEllipsisHorizontal onClick={(e) => {
                                         e.stopPropagation();
                                         openMenu(e, song);

@@ -10,6 +10,8 @@ import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 import jwt from "jsonwebtoken";
 import formidable from "formidable";
+import mongoose from "mongoose";
+import { log } from "console";
 const getRecentlyPlayedSongs = async (req, res) => {
   try {
     const currentUserId = req.params.id;
@@ -227,11 +229,30 @@ const searchSongByName = async (req, res) => {
 
 const getAllSongsByLastest = async (req, res) => {
   try {
-    const { date } = req.params;
-    const songs = await SongRepository.hotestSongByDay(date);
-    res.status(200).json({ data: songs });
+    const { date, check } = req.params;
+    const songs = await SongRepository.hotestSongByDay(date, check);
+    const token = req.cookies.accessToken;
+    let userId;
+    if (token) {
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const existingUser = await AuthenticateRepository.getUserById(
+        decodedToken.userId
+      );
+      if (!existingUser) {
+        return res.status(400).json({ error: "User was not found" });
+      }
+      userId = new mongoose.Types.ObjectId(existingUser._id);
+      songs.map((s, index) => {
+        s.favouritedByUser = s.favourited.some(id => id.equals(userId));
+      })
+    } else {
+      songs.map((s, index) => {
+        s.favouritedByUser = false;
+      })
+    }
+    return res.status(200).json({ data: songs });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: error.toString(),
     });
   }
@@ -239,11 +260,29 @@ const getAllSongsByLastest = async (req, res) => {
 
 const getSongsByLastest = async (req, res) => {
   try {
-    const { date } = req.params;
     const songs = await SongRepository.hotestSong();
-    res.status(200).json({ data: songs });
+    const token = req.cookies.accessToken;
+    let userId;
+    if (token) {
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const existingUser = await AuthenticateRepository.getUserById(
+        decodedToken.userId
+      );
+      if (!existingUser) {
+        return res.status(400).json({ error: "User was not found" });
+      }
+      userId = new mongoose.Types.ObjectId(existingUser._id);
+      songs.map((s, index) => {
+        s.favouritedByUser = s.favourited.some(id => id.equals(userId));
+      })
+    } else {
+      songs.map((s, index) => {
+        s.favouritedByUser = false;
+      })
+    }
+    return res.status(200).json({ data: songs });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: error.toString(),
     });
   }
@@ -280,7 +319,7 @@ const getSongDetail = async (req, res) => {
     const songId = req.params.songId;
     const result = await SongRepository.getSongsById(songId);
     return res.status(200).json({ data: result });
-  } catch(error) {
+  } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
@@ -301,6 +340,55 @@ const getFeaturedSongs = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+const favouritedSong = async (req, res) => {
+  try {
+    const userId = req.decodedToken.userId;
+    const songId = req.params.songId;
+    const existingSong = await SongRepository.getSongsById(songId);
+    if (!existingSong) {
+      return res.status(400).json({ error: "Song was not found" });
+    }
+    if (existingSong.favourited.includes(userId)) {
+      const favourited = await SongRepository.removeFavouriteSong({
+        songId,
+        userId: new mongoose.Types.ObjectId(userId),
+      });
+      favourited.favouritedByUser = false;
+      console.log(favourited);
+      return res.status(201).json({ result: favourited, favourited: false });
+    }
+    else {
+      const favourited = await SongRepository.addFavouriteSong({
+        songId,
+        userId: new mongoose.Types.ObjectId(userId),
+      });
+      favourited.favouritedByUser = true;
+      console.log(favourited);
+      return res.status(201).json({ result: favourited, favourited: true });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+const getFavouritedSong = async (req, res) => {
+  try {
+    const userId = req.decodedToken.userId;
+    const songId = req.params.songId;
+    const existingSong = await SongRepository.getSongsById(songId);
+    if (!existingSong) {
+      return res.status(400).json({ error: "Song was not found" });
+    }
+    const favourited = await SongRepository.favouriteSong({
+      songId,
+      userId: new mongoose.Types.ObjectId(userId),
+    });
+    return res.status(201).json({ result: "favourited song" });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
 export default {
   getAllSongs,
   streamSong,
@@ -315,4 +403,6 @@ export default {
   getFeaturedSongs,
   getSongsByLastest,
   getSongsByAlbum,
+  favouritedSong,
+  getFavouritedSong
 };
