@@ -53,6 +53,10 @@ const songSchema = new Schema(
       type: Schema.Types.Boolean,
       default: true
     },
+    favourited: {
+      type: [Schema.Types.ObjectId],
+
+    },
     purchased_user: [{ type: Schema.Types.ObjectId }],
   },
   { timestamps: true, collection: "Song" }

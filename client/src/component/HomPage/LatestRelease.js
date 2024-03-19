@@ -1,0 +1,168 @@
+import { useEffect, useRef, useState } from "react";
+import PerformRequest from "../../utilities/PerformRequest";
+import { FaPlayCircle, FaRegHeart } from "react-icons/fa";
+import { IoEllipsisHorizontal } from "react-icons/io5";
+import { useDispatch } from "react-redux";
+import {
+  addSongToQueue,
+  setCurrentSong,
+  toogleIsPlaying,
+} from "../../redux/player";
+import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
+import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
+import { Link } from "react-router-dom";
+
+export default function LatestRelease() {
+  const hasMounted = useRef(false);
+  const { OriginalRequest } = PerformRequest();
+  const [latestTrack, setLatestTRack] = useState([]);
+  const dispatch = useDispatch();
+  const [songMenuAnchor, setSongMenuAnchor] = useState(null);
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [songInAction, setSongInAction] = useState(null);
+  const closeMenu = (e, song) => {
+    setMenuIsOpen(false);
+    setSongMenuAnchor(null);
+  };
+  const openMenu = (e, song) => {
+    setSongInAction(song);
+    setMenuIsOpen(true);
+    setSongMenuAnchor(e.currentTarget);
+  };
+  useEffect(() => {
+    const fetchLatestTrack = async () => {
+      try {
+        const result = await OriginalRequest("songs/getLatest/12/All", "GET");
+        if (result.data) {
+          setLatestTRack(result.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (hasMounted.current) {
+      fetchLatestTrack();
+    } else {
+      hasMounted.current = true;
+    }
+  }, []);
+  return (
+    <div className="w-full">
+      <h4 className="text-2xl font-semibold mb-2 dark:text-white ml-4 pl-12">
+        Latest release
+      </h4>
+      <div className="flex flex-wrap px-16">
+        {latestTrack.map((track) => (
+          <div
+            key={track._id} // Add a unique key to each element in the array
+            className={`card border lg:w-2/12 md:w-4/12 sm:w-6/12 pb-2 rounded  hover:bg-light30 hover:dark:bg-dark30 hover:shadow-md hover:shadow-neutral-400 hover:dark:shadow-blue-600/40 dark:border-none ${
+              menuIsOpen && songInAction._id === track._id
+                ? "bg-light30 dark:bg-dark30 shadow-md shadow-neutral-400 dark:shadow-blue-600/40"
+                : ""
+            }`}
+          >
+            <div className="py-2 px-3">
+              <div className="relative">
+                <div
+                  className={`absolute inset-0 group bg-black bg-opacity-0 hover:bg-opacity-65 ${
+                    menuIsOpen && songInAction._id === track._id
+                      ? "bg-opacity-65"
+                      : ""
+                  } rounded-md flex items-center justify-center backdrop-filter`}
+                >
+                  <div
+                    className={`flex opacity-0 group-hover:opacity-80 ${
+                      menuIsOpen && songInAction._id === track._id
+                        ? "opacity-80"
+                        : ""
+                    } justify-around items-center w-full`}
+                  >
+                    <FaRegHeart
+                      className="text-light10 dark:text-dark10"
+                      size={20}
+                    />
+                    <FaPlayCircle
+                      className="text-light10 dark:text-dark10"
+                      size={40}
+                      onClick={(e) => {
+                        dispatch(setCurrentSong(track));
+                        dispatch(toogleIsPlaying(true));
+                      }}
+                    />
+                    <IoEllipsisHorizontal
+                      className="text-light10 dark:text-dark10"
+                      size={20}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openMenu(e, track);
+                      }}
+                    />
+                  </div>
+                </div>
+                <img
+                  src={track.cover_image}
+                  className="w-44 h-44 rounded-md mx-auto border-2 border-neutral-400/20 object-cover object-center"
+                />
+              </div>
+            </div>
+
+            <div className="lg:px-3 md:px-3 sm:px-8">
+              <p className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis">
+                {track.song_name}
+              </p>
+              <div className="flex">
+                <p className="text-lightTextSecondary w-1/2 text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
+                  {track.artist.artist_name}
+                </p>
+                <p className="text-lightTextSecondary text-right w-1/2 text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
+                  {new Date(track.createdAt).toLocaleString("en-US", {
+                    timeZone: "Asia/Ho_Chi_Minh",
+                  })}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <Menu
+        open={menuIsOpen}
+        anchorEl={songMenuAnchor}
+        onClose={closeMenu}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+        autoFocus={false}
+      >
+        <MenuItem
+          className="flex items-center"
+          onClick={(e) => {
+            dispatch(addSongToQueue(songInAction));
+            closeMenu(e);
+          }}
+        >
+          <ListItemIcon>
+            <MdOutlineQueueMusic
+              size={22}
+              className="text-light10 dark:text-dark10 mr-3"
+            />
+            <ListItemText className="text-right">Queue Song</ListItemText>
+          </ListItemIcon>
+        </MenuItem>
+        <MenuItem className="flex items-center">
+          <ListItemIcon>
+            <MdLibraryMusic
+              size={20}
+              className="text-light10 dark:text-dark10 mr-3"
+            />
+            <ListItemText className="text-right">Add To Playlist</ListItemText>
+          </ListItemIcon>
+        </MenuItem>
+      </Menu>
+      <div className="flex justify-center">
+        <Link to={`songList/${encodeURIComponent("songs-getLatest-50")}/Latest-releases/`} className="text-center underline">
+          See more
+        </Link>
+      </div>
+    </div>
+  );
+}

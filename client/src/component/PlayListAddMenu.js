@@ -1,31 +1,30 @@
 import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import PerformRequest from "../utilities/PerformRequest";
 
-const ListPlaylist = ({ songId }) => {
+const PlayListAddMenu = ({ songId }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const navigate = useNavigate();
-  // const [playlists, setPlaylists] = useState([]);
-  const [deleteMenu, setDeleteMenu] = useState(false);
-  const handlePlaylistClick = (e, playlistId) => {
-    console.log(e.button);
-    if (e.button == 2) {
-      setDeleteMenu(true);
-    } else {
-      navigate(`/playlist/${playlistId}`);
-    }
+  const {OriginalRequest} = PerformRequest();
+  const handlePlaylistClick = async (e, playlistId) => {
+    console.log(songId);
+    const result = await OriginalRequest("playlist/push", "POST", {
+        playlistId: playlistId,
+        songs: songId._id
+    })
+
   };
 
 
   return (
     <div className="px-3 mt-2">
-      <div className="text-textSecondary text-lightText dark:text-darkText text-sm font-medium">
+      <div className="px-3 text-textSecondary text-lightText dark:text-darkText text-sm font-medium">
         {userInfo.playlist_created?.map((playlist) => (
           // !playlist.songs.find(song => song.songId === songId) && // Sử dụng songId từ props để kiểm tra
           <div
             key={playlist._id}
-            // onContextMenu={(e) => handleContextMenu(e, playlist)}
-            onMouseDown={(e) => handlePlaylistClick(e, playlist.playlistId)}
+            onClick={(e) => handlePlaylistClick(e, playlist.playlistId)}
             className="flex items-center mb-3"
           >
             <img
@@ -41,4 +40,4 @@ const ListPlaylist = ({ songId }) => {
   );
 };
 
-export default ListPlaylist;
+export default PlayListAddMenu;

@@ -32,6 +32,7 @@ export default function ActionBar() {
   // useEffect(() => {
   //   console.log("loop changed: " + loop);
   // }, [loop]);
+  const userInfo = useSelector((state) => state.auth.userInfo);
   useEffect(() => {
     if (hasMounted.current) {
       console.log("rerendered");
@@ -63,9 +64,15 @@ export default function ActionBar() {
                   {currentSong.artist.artist_name}
                 </p>
                 {currentSong.is_exclusive ? (
-                  <span className="text-white px-2 bg-amber-500 text-xs rounded ml-2 font-medium">
-                    EXCLUSIVE
-                  </span>
+                  userInfo.songs_purchased.includes(currentSong._id) ? (
+                    <span className="text-white px-2 bg-sky-600/70 text-xs rounded ml-2 font-medium">
+                      OWNED
+                    </span>
+                  ) : (
+                    <span className="text-white px-2 bg-amber-500 text-xs rounded ml-2 font-medium">
+                      EXCLUSIVE
+                    </span>
+                  )
                 ) : (
                   <></>
                 )}
@@ -73,15 +80,16 @@ export default function ActionBar() {
             ) : (
               <></>
             )}
-            <FaRegHeart className="text-light10 dark:text-dark10 mt-1" size={20} />
+            <FaRegHeart
+              className="text-light10 dark:text-dark10 mt-1"
+              size={20}
+            />
           </div>
         ) : (
           <div className="ml-2"></div>
         )}
-
       </div>
       <div className="playerAction h-full px-4 flex-col w-6/12">
-       
         <div className="action flex items-center justify-between w-6/12 mx-auto pt-3 pb-1">
           <div className=" p-1 rounded">
             <PiShuffleLight
@@ -115,10 +123,11 @@ export default function ActionBar() {
             size={30}
           />
           <div
-            className={`p-1 rounded ${loop
+            className={`p-1 rounded ${
+              loop
                 ? "bg-light10 dark:bg-dark10 text-white dark:text-lightText"
                 : " text-lightTextSecondary dark:text-darkTextSecondary"
-              }`}
+            }`}
           >
             <RxLoop
               size={20}
@@ -159,10 +168,11 @@ export default function ActionBar() {
         </div>
         <MdOutlineQueueMusic
           size={25}
-          className={`${showBox
+          className={`${
+            showBox
               ? "text-white bg-light10 dark:bg-dark10"
               : "text-light10 dark:text-dark10"
-            } mr-3 rounded-sm`}
+          } mr-3 rounded-sm`}
           onClick={(e) => {
             dispatch(toogleQueue());
           }}

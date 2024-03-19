@@ -8,24 +8,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { toogleExpand } from "../redux/sideBar.js";
 import ListPlaylist from "./ListPlaylist";
 import PerformRequest from "../utilities/PerformRequest.js";
-import { Modal, Box, Typography, Button } from '@mui/material';
+import { Modal, Box, Typography, Button } from "@mui/material";
+import auth, { setUserInfo } from "../redux/auth.js";
 
 export default function SideBar() {
   // const [expanded, setExpanded] = useState(window.innerWidth > 768);
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const auth = useSelector((state) => state.auth.userInfo);
   const expanded = useSelector((state) => state.sideBar.expanded);
   const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
-  const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false);
-  const [playlistName, setPlaylistName] = useState("");
-  const [imageSrc, setImageSrc] = useState(auth.profile_picture);
-
+  const [playlistName, setPlaylistName] = useState("Playlist default");
   const [showModal, setShowModal] = useState(false);
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
-
-
 
   useEffect(() => {
     const handleResize = () => {
@@ -42,18 +36,16 @@ export default function SideBar() {
     };
   }, []);
 
-  const closeCreatePlaylistForm = () => {
-    setShowCreatePlaylistModal(false);
-  };
-
-  const [baseImage, setBaseImage] = useState("");
+  const [baseImage, setBaseImage] = useState(
+    "https://res.cloudinary.com/djzdhtdpj/image/upload/v1704269768/tempAvatar_juqb4s.jpg"
+  );
 
   const handleImageInputChange = async (e) => {
     const file = e.target.files[0];
     const base64 = await convertBase64(file);
     setBaseImage(base64);
 
-    console.log(base64);
+    document.getElementById("chooseImageText").innerText = file.name;
   };
 
   const convertBase64 = (file) => {
@@ -71,13 +63,9 @@ export default function SideBar() {
     });
   };
 
-  const openCreatePlaylistForm = () => {
-    setShowCreatePlaylistModal(true);
-  };
-
   const { OriginalRequest } = PerformRequest();
 
-  const handleCreatePlaylist = () => {
+  const handleCreatePlaylist = async () => {
     const fetch = async () => {
       const searchArtistValue = await OriginalRequest(
         `playlist/create`,
@@ -85,29 +73,31 @@ export default function SideBar() {
         {
           play_list_name: playlistName,
           play_list_cover: baseImage,
-          creator: userInfo
+          creator: userInfo,
         }
       );
 
       console.log(searchArtistValue);
     };
-    fetch();
-    setPlaylistName('');
-    setImageSrc('');
-    setShowCreatePlaylistModal(false);
+    await fetch();
+    setPlaylistName("Playlist default");
+    const user = await OriginalRequest("auth/user", "GET");
+    dispatch(setUserInfo(user.data));
+    closeModal();
   };
-
 
   return (
     <div
-      className={`h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-60 ${expanded ? "w-60" : "w-20"
-        }`}
+      className={`h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-60 ${
+        expanded ? "w-60" : "w-20"
+      }`}
     >
       <nav className="h-full flex flex-col border-r shadow-lg border-lightTextSecondary dark:border-darkTextSecondary">
         <div className="p-4 flex items-center justify-between">
           <div
-            className={`flex items-center overflow-hidden transition-all ${expanded ? "w-36" : "w-0"
-              }`}
+            className={`flex items-center overflow-hidden transition-all ${
+              expanded ? "w-36" : "w-0"
+            }`}
           >
             <BsSoundwave color="#ff5e3a" size={33} />
             <h3 className="text-lightText dark:text-darkText font-bold text-xl">
@@ -168,8 +158,9 @@ export default function SideBar() {
           />
         </ul>
         <hr
-          className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${expanded ? "w-3/5" : "w-0"
-            }`}
+          className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${
+            expanded ? "w-3/5" : "w-0"
+          }`}
         />
         <div className="flex-1 flex-col relative">
           <div className="px-3 mt-2">
@@ -181,16 +172,18 @@ export default function SideBar() {
                 />
 
                 <span
-                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-24" : "w-0 hidden"
-                    }`}
+                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${
+                    expanded ? "w-24" : "w-0 hidden"
+                  }`}
                 >
                   &nbsp;Your Library
                 </span>
               </div>
               <div className="relative">
                 <button
-                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-5" : "w-0 hidden"
-                    }`}
+                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${
+                    expanded ? "w-5" : "w-0 hidden"
+                  }`}
                   onClick={openModal}
                 >
                   <FaPlus size={22} />
@@ -199,24 +192,31 @@ export default function SideBar() {
             </div>
           </div>
           <div
-            className={`max-h-44 overflow-hidden transition-all ${expanded ? "w-full" : "w-0 hidden"
-              }`}
+            className={`max-h-44 overflow-hidden transition-all ${
+              expanded ? "w-full" : "w-0 hidden"
+            }`}
             style={{ overflowY: "auto" }}
           >
-
-
-
-            {/* listplaylist ở đây */}
             <div className="px-3 mt-2">
               <div>
-                <ListPlaylist/>
+                {userInfo.playlist_created?.length > 0 ? (
+                  <ListPlaylist />
+                ) : (
+                  <div className="bg-light30 py-2 px-3 font-medium rounded-md dark:bg-dark30">
+                    <span className="text-lightText dark:text-darkText">
+                      Create your first playlist
+                    </span>
+                    <p className="text-xs text-lightTextSecondary dark:text-darkTextSecondary">
+                      Personalize your experience at TuneHub
+                    </p>
+                    <button onClick={openModal} className="bg-light10 dark:bg-dark10 px-5 py-2 my-2 rounded-lg text-white hover:text-slate-950">
+                      Create Playlist
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-
-
-
-
 
           <div className="px-3 text-lightText dark:text-darkText">
             <div className="font-medium text-textSecondary py-2 px-3">
@@ -224,8 +224,9 @@ export default function SideBar() {
                 <FaUser size={22} />
                 &nbsp;
                 <span
-                  className={`overflow-hidden transition-all ${expanded ? "w-52" : "w-0 hidden"
-                    }`}
+                  className={`overflow-hidden transition-all ${
+                    expanded ? "w-52" : "w-0 hidden"
+                  }`}
                 >
                   Followed Artists
                 </span>
@@ -233,16 +234,14 @@ export default function SideBar() {
             </div>
           </div>
           <div
-            className={`max-h-40 overflow-hidden transition-all ${expanded ? "w-full" : "w-0 hidden"
-              }`}
+            className={`max-h-40 overflow-hidden transition-all ${
+              expanded ? "w-full" : "w-0 hidden"
+            }`}
             style={{ overflowY: "auto" }}
           >
-
-
-
             <div className="px-3 mt-2">
               {!userInfo.artist_followed ||
-                userInfo?.artist_followed?.length === 0 ? (
+              userInfo?.artist_followed?.length === 0 ? (
                 <div className="bg-light30 py-2 px-3 font-medium rounded-md dark:bg-dark30">
                   <span className="text-lightText dark:text-darkText">
                     Find some artist to follow
@@ -275,12 +274,22 @@ export default function SideBar() {
         </div>
       </nav>
 
-      
-
       <Modal open={showModal} onClose={closeModal}>
-        <Box sx={{ /* Thêm CSS cho Modal */ }}>
-          <div className="fixed top-0 left-0 flex items-center z-10000 justify-center w-full h-full bg-black bg-opacity-50 z-100" onClick={closeModal}>
-            <div className="relative w-80 bg-white rounded-lg shadow-md z-10 p-4" onClick={(e) => e.stopPropagation()}>
+        <Box
+          sx={
+            {
+              /* Thêm CSS cho Modal */
+            }
+          }
+        >
+          <div
+            className="fixed top-0 left-0 flex items-center z-10000 justify-center w-full h-full bg-black bg-opacity-50 z-100"
+            onClick={closeModal}
+          >
+            <div
+              className="relative w-80 bg-white rounded-lg shadow-md z-10 p-4"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
                 onClick={closeModal}
                 className="absolute top-2 right-2 text-gray-500 hover:text-gray-600"
@@ -320,7 +329,9 @@ export default function SideBar() {
                   className="cursor-pointer bg-primary text-black py-2 px-4 rounded-lg hover:bg-primary-dark flex items-center"
                 >
                   <BsFolderPlus size={20} className="mr-2" />
-                  <span>Choose Image</span>
+                  <span className="w-44 overflow-x-hidden" id="chooseImageText">
+                    Choose Image
+                  </span>
                 </label>
                 <input
                   id="imageInput"
@@ -343,8 +354,6 @@ export default function SideBar() {
           </div>
         </Box>
       </Modal>
-
-
 
       <div className="h-20"></div>
     </div>

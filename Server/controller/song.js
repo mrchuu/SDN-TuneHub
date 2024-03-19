@@ -12,14 +12,11 @@ import jwt from "jsonwebtoken";
 import formidable from "formidable";
 const getRecentlyPlayedSongs = async (req, res) => {
   try {
-    const currentUserId = req.params.id;
+    const currentUserId = req.decodedToken.userId;
     const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(
       currentUserId
     );
-    console.log(`songStreams: ${songStreams[0].song}`);
-    console.log(`songStreams: ${songStreams[1].song}`);
-    console.log(`songStreams: ${songStreams[2].song}`);
-    console.log(`songStreams: ${songStreams[3].song}`);
+    
     const songs = await Promise.all(
       songStreams.map(async (stream) => {
         const song = await SongRepository.getSongsByIds(stream.song);
@@ -49,7 +46,7 @@ const getSongsByAlbum = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
 
 const streamSong = async (req, res) => {
   try {
@@ -280,7 +277,7 @@ const getSongDetail = async (req, res) => {
     const songId = req.params.songId;
     const result = await SongRepository.getSongsById(songId);
     return res.status(200).json({ data: result });
-  } catch(error) {
+  } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
@@ -301,6 +298,16 @@ const getFeaturedSongs = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getLatestSongs = async (req, res) => {
+  try {
+    const limit = req.params.limit;
+    const songType = req.params.songType;
+    const result = await SongRepository.getLatestSongs(limit, songType);
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export default {
   getAllSongs,
   streamSong,
@@ -315,4 +322,5 @@ export default {
   getFeaturedSongs,
   getSongsByLastest,
   getSongsByAlbum,
+  getLatestSongs
 };

@@ -15,6 +15,9 @@ import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import "../style/soundWave.css";
+import auth, { setUserInfo } from "../redux/auth.js";
+import PlayListAddMenu from "./PlayListAddMenu.js";
+import { RiVipDiamondFill } from "react-icons/ri";
 export default function SongList({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
@@ -43,6 +46,10 @@ export default function SongList({ url }) {
   const openMenuPlaylist = (e, song) => {
     setSubMenuIsOpen(true);
     setPlaylistMenuAnchor(e.currentTarget);
+  };
+  const closeMenuPlaylist = (e, song) => {
+    setSubMenuIsOpen(false);
+    setPlaylistMenuAnchor(null);
   };
 
   const handleAddToPlaylistClick = (event) => {
@@ -76,12 +83,14 @@ export default function SongList({ url }) {
       songs: songInAction,
       creator: userInfo._id,
     });
-
+    const user = await OriginalRequest("auth/user", "GET");
+    dispatch(setUserInfo(user.data));
+    closeMenuPlaylist();
     closeMenu();
   };
 
   return (
-    <div className="w-full flex items-center mt-5">
+    <div className="w-full mt-5">
       {SongList.length > 0 ? (
         <table className="w-full text-lightText dark:text-darkText">
           <thead className="font-semibold">
@@ -175,12 +184,25 @@ export default function SongList({ url }) {
                       </div>
 
                       <div className="ml-2">
-                        <h4 className="font-semibold text-md">
-                          {song.song_name}
-                        </h4>
+                        <div className="flex items-center">
+                          <Link
+                            to={`/songdetail/${song._id}`}
+                            className="text-xs hover:underline"
+                            style={{ fontSize: "1rem", lineHeight: "1rem" }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            {song.song_name}
+                          </Link>
+                          {song.is_exclusive ? (
+                            <RiVipDiamondFill className="text-yellow-500/50 ml-1" />
+                          ) : null}
+                        </div>
+
                         {song.artist ? (
                           <Link
-                            to={`artist/${song.artist._id}`}
+                            to={`/artist/${song.artist._id}`}
                             className="text-xs hover:underline"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -193,7 +215,18 @@ export default function SongList({ url }) {
                     </div>
                   </td>
                   <td className="hidden md:table-cell md:w-5/12 text-center">
-                    {song.album ? song.album.album_name : ""}
+                    {song.album ? (
+                      <Link
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        to={"/album/" + song.album._id + "/" + song.artist._id}
+                      >
+                        {song.album.album_name}
+                      </Link>
+                    ) : (
+                      ""
+                    )}
                   </td>
                   <td className="w-1/12 text-center">{`${Math.floor(
                     song.duration / 60
@@ -273,23 +306,20 @@ export default function SongList({ url }) {
               </ListItemText>
             </ListItemIcon>
           </MenuItem>
-
-          <Menu
-            anchorEl={playlistMenuAnchor}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
-            open={subMenuIsOpen} // Mở menu con khi subMenuIsOpen === true
-            onClose={() => setSubMenuIsOpen(false)} // Đóng menu con khi nhấn ra ngoài hoặc chọn một tùy chọn
-          >
-            <MenuItem onClick={handleCreatePlaylist}>
-              Create a Playlist
-            </MenuItem>
-            <div style={{ overflowY: "auto", maxHeight: "200px" }}>
-              <ListPlaylist songId={songInAction} />
-            </div>
-          </Menu>
+        </Menu>
+        <Menu
+          anchorEl={playlistMenuAnchor}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={subMenuIsOpen} // Mở menu con khi subMenuIsOpen === true
+          onClose={() => setSubMenuIsOpen(false)} // Đóng menu con khi nhấn ra ngoài hoặc chọn một tùy chọn
+        >
+          <MenuItem onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
+          <div style={{ overflowY: "auto", maxHeight: "200px" }}>
+            <PlayListAddMenu songId={songInAction} />
+          </div>
         </Menu>
       </div>
     </div>

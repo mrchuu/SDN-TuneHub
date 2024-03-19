@@ -7,14 +7,42 @@ import SongListWithStreamCount from "../component/SongListWithStreamCount";
 import AlbumList from "../component/AlbumsList";
 import PerformRequest from "../utilities/PerformRequest";
 import FeaturedIn from "../component/artistProfile/FeaturedIn";
+import { setUserInfo } from "../redux/auth.js";
 
-export default function   ArtistProfile() {
+export default function ArtistProfile() {
   const dispatch = useDispatch();
   const { artistId } = useParams();
   const scrollPos = useSelector((state) => state.window.scrollPos);
   const { OriginalRequest } = PerformRequest();
   const hasMounted = useRef(false);
+  const [followed, setFollowed] = useState(false);
+
+  const checkFollowed = async () => {
+    try {
+      const check = await OriginalRequest(
+        `user/checkFollowed/${artistId}`,
+        "GET"
+      );
+      setFollowed(check);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleFollowArtist = async () => {
+    try {
+      await OriginalRequest(`user/follow/`, "POST", { artistId });
+      setFollowed(!followed);
+
+      const user = await OriginalRequest("auth/user", "GET");
+      dispatch(setUserInfo(user.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    checkFollowed();
     const handleScroll = () => {
       dispatch(setScrollPos(window.scrollY));
     };
@@ -41,7 +69,7 @@ export default function   ArtistProfile() {
     } else {
       hasMounted.current = true;
     }
-  }, [hasMounted]);
+  }, [hasMounted, followed]);
   return (
     <NoSpaceHeaderTemplate>
       <div className="w-full min-h-screen">
@@ -65,9 +93,21 @@ export default function   ArtistProfile() {
                   <p className="pl-12 text-white">
                     {artistInfo.followersCount} followers
                   </p>
-                  <button className="border-2 border-light10 px-5 py-1 text-white rounded-full ml-7">
-                    follow
-                  </button>
+                  {!followed ? (
+                    <button
+                      onClick={handleFollowArtist}
+                      className="z-50 cursor-pointer border-2 border-light10 px-5 py-1 text-white rounded-full ml-7 font-bold"
+                    >
+                      follow
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleFollowArtist}
+                      className="z-50 cursor-pointer bg-orange-500 border-2 border-light10 px-5 py-1 text-white rounded-full ml-7 font-bold"
+                    >
+                      followed
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

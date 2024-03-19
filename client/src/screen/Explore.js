@@ -5,6 +5,7 @@ import SongList from "../component/SongList";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { color } from "framer-motion";
 import { red } from "@mui/material/colors";
+import { Link } from "react-router-dom";
 // import '../style/explore.css'
 
 function Explore() {
@@ -75,7 +76,10 @@ function Explore() {
 
   useEffect(() => {
     const fetchRising = async () => {
-      const risingArtist = await OriginalRequest(`artists/explore/rising`, "GET");
+      const risingArtist = await OriginalRequest(
+        `artists/explore/rising`,
+        "GET"
+      );
       if (risingArtist) {
         setRisingArtist(risingArtist.data);
       }
@@ -133,28 +137,34 @@ function Explore() {
               </div>
               <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
                 {risingArtist.map((artist, index) => (
-                  <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
-                    <img
-                      src={artist.user?.profile_picture}
-                      className="rounded-full w-40 h-40 object-cover object-center"
-                    />
-                    <h3 className="text-lg font-semibold dark:text-white m-2">
-                      {artist.artist_name}
-                    </h3>
-                    {artist.user?.introduction ? (
-                      <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                        {artist.user?.introduction}
-                      </p>
-                    ) : (
-                      <p className="text-md text-light30 dark:text-dark30 ml-2">
-                        Null
-                      </p>
-                    )}
+                  <Link
+                    to={`/artist/${artist._id}`}
+                    className="text-xs hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
+                      <img
+                        src={artist.user?.profile_picture}
+                        className="rounded-full w-40 h-40 object-cover object-center"
+                      />
+                      <h3 className="text-lg font-semibold dark:text-white m-2">
+                        {artist.artist_name}
+                      </h3>
+                      {artist.user?.introduction ? (
+                        <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                          {artist.user?.introduction}
+                        </p>
+                      ) : (
+                        <p className="text-md text-light30 dark:text-dark30 ml-2">
+                          Null
+                        </p>
+                      )}
 
-                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                      Follow: {artist.artist_followed_count}
-                    </p>
-                  </div>
+                      <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                        Follow: {artist.artist_followed_count}
+                      </p>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -196,26 +206,35 @@ function Explore() {
               {artistList.length > 0 ? (
                 <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
                   {artistList.map((artist, index) => (
-                    <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
-                      <img
-                        src={artist.user?.profile_picture}
-                        className="rounded-full w-40 h-40 object-cover object-center"
-                      />
-                      <h3 className="text-lg font-semibold dark:text-white m-2">
-                        {artist.artist_name}
-                      </h3>
-                      <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                        {artist.user?.introduction}
-                      </p>
+                    <Link
+                      to={`/artist/${artist._id}`}
+                      className="text-xs hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
+                        <img
+                          src={artist.user?.profile_picture}
+                          className="rounded-full w-40 h-40 object-cover object-center"
+                        />
+                        <h3 className="text-lg font-semibold dark:text-white m-2">
+                          {artist.artist_name}
+                        </h3>
+                        <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                          {artist.user?.introduction}
+                        </p>
 
-                      <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                        Follow: {artist.artist_followed_count}
-                      </p>
-                    </div>
+                        <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                          Follow: {artist.artist_followed_count}
+                        </p>
+                      </div>
+                    </Link>
                   ))}
                 </div>
               ) : (
-                <img className="m-auto" src='https://static.thenounproject.com/png/2962127-200.png'/>
+                <img
+                  className="m-auto"
+                  src="https://static.thenounproject.com/png/2962127-200.png"
+                />
               )}
             </div>
           </>
