@@ -18,9 +18,9 @@ const ListAlbums = ({ url, idAlbum }) => {
         fetchAlbum();
     }, [url]);
     console.log(albums);
-    // if (idAlbum) {
-    //     albums = albums.filter(a => a._id !== idAlbum);
-    // }
+    if (idAlbum) {
+        albums = albums.filter(a => a._id !== idAlbum);
+    }
     return (
         <div>{albums.length>0?(<div>
             <div className="mx-auto">

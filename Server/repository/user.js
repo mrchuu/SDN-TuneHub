@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import User from "../model/RegisteredUser.js";
 import Artist from "../model/Artist.js";
-
+import Playlist from "../model/Playlist.js";
+import moment from 'moment'
 const findById = async (id) => {
   try {
     const user = await User.findById(id);
@@ -84,6 +85,48 @@ const checkArtistFollowed = async ({ artistId, userId }) => {
     throw new Error(error.message);
   }
 };
+const getListArtistFollowed = async (id) => {
+  try {
+    const listArtistFollowed = User.findOne({ _id: id }).select("artist_followed");
+    return listArtistFollowed;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+
+}
+async function getInforArtistFollowed(artistFollowed) {
+  try {
+    const artists = await Artist.find({ _id: { $in: artistFollowed } }).populate({
+      path: 'userId',
+      select: 'introduction profile_picture'
+    }).select('_id artist_name');
+    const formattedArtists = artists.map(artist => ({
+      _id: artist._id,
+      artist_name: artist.artist_name,
+      userIdOfArtist: artist.userId._id,
+      introduction: artist.userId.introduction,
+      profile_picture: artist.userId.profile_picture
+    }));
+    return formattedArtists;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+const getListPlayList = async (userId) => {
+  try {
+    const playlists = await Playlist.find({ creator: userId }).select("-songs").exec();
+    const formattedPlaylists = playlists.map(playlist => ({
+      ...playlist.toObject(),
+      // createdAt: moment(playlist.createdAt).format('DD/MM/yyyy hh:mm:ss A')
+      createdAt: moment(playlist.createdAt).format('DD/MM/yyyy')
+    }));
+
+    return formattedPlaylists;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 
 export default {
   findById,
@@ -91,4 +134,7 @@ export default {
   addSongPurchased,
   followArtist,
   checkArtistFollowed,
+  getListArtistFollowed,
+  getInforArtistFollowed,
+  getListPlayList,
 };
