@@ -16,7 +16,9 @@ export default function PurchaseSong() {
         language: "en",
       }
     );
-    window.location = vnpayUrl.data;
+    if (vnpayUrl) {
+      window.location = vnpayUrl.data;
+    }
   };
 
   return (
