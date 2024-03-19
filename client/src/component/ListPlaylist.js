@@ -19,7 +19,7 @@ const ListPlaylist = ({ songId }) => {
 
   return (
     <div className="px-3 mt-2">
-      <div className="px-3 text-textSecondary text-lightText dark:text-darkText text-sm font-medium">
+      <div className="text-textSecondary text-lightText dark:text-darkText text-sm font-medium">
         {userInfo.playlist_created?.map((playlist) => (
           // !playlist.songs.find(song => song.songId === songId) && // Sử dụng songId từ props để kiểm tra
           <div
