@@ -91,7 +91,6 @@ export default function SongList({ url }) {
 
   return (
     <div className="w-full mt-5">
-   
       {SongList.length > 0 ? (
         <table className="w-full text-lightText dark:text-darkText">
           <thead className="font-semibold">
@@ -186,9 +185,16 @@ export default function SongList({ url }) {
 
                       <div className="ml-2">
                         <div className="flex items-center">
-                          <h4 className="font-semibold text-md">
+                          <Link
+                            to={`/songdetail/${song._id}`}
+                            className="text-xs hover:underline"
+                            style={{ fontSize: "1rem", lineHeight: "1rem" }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
                             {song.song_name}
-                          </h4>
+                          </Link>
                           {song.is_exclusive ? (
                             <RiVipDiamondFill className="text-yellow-500/50 ml-1" />
                           ) : null}

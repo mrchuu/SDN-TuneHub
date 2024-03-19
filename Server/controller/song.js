@@ -12,14 +12,11 @@ import jwt from "jsonwebtoken";
 import formidable from "formidable";
 const getRecentlyPlayedSongs = async (req, res) => {
   try {
-    const currentUserId = req.params.id;
+    const currentUserId = req.decodedToken.userId;
     const songStreams = await SongStreamRepository.getRecentlyPlayedSongStreams(
       currentUserId
     );
-    console.log(`songStreams: ${songStreams[0].song}`);
-    console.log(`songStreams: ${songStreams[1].song}`);
-    console.log(`songStreams: ${songStreams[2].song}`);
-    console.log(`songStreams: ${songStreams[3].song}`);
+    
     const songs = await Promise.all(
       songStreams.map(async (stream) => {
         const song = await SongRepository.getSongsByIds(stream.song);

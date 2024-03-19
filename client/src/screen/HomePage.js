@@ -12,7 +12,8 @@ export default function HomePage() {
         <TopTrackCarousle />
         <TopArtist />
         <LatestRelease/>
-        <SongList />
+        {/* <SongList /> */}
+        <div className="h-20"></div>
       </div>
     </DefaultTemplate>
   );
