@@ -12,7 +12,7 @@ playlistRouter.post("/push", PlaylistController.addSongToPlaylist);
 playlistRouter.get("/getPlaylistById/:playlistId", PlaylistController.getPlaylistById);
 
 // Route to delete a playlist
-playlistRouter.delete("/deletePlaylist/:playlistId", PlaylistController.deletePlaylist);
+playlistRouter.delete("/deletePlaylist/:playlistId",verifyToken, PlaylistController.deletePlaylist);
 
 // Route to get all playlists by user ID
 playlistRouter.get("/getAllPlaylistsByUserId/:creator", PlaylistController.getAllPlaylistsByUserId);

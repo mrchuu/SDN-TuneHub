@@ -8,13 +8,37 @@ import AlbumList from "../component/AlbumsList";
 import PerformRequest from "../utilities/PerformRequest";
 import FeaturedIn from "../component/artistProfile/FeaturedIn";
 
-export default function   ArtistProfile() {
+export default function ArtistProfile() {
   const dispatch = useDispatch();
   const { artistId } = useParams();
   const scrollPos = useSelector((state) => state.window.scrollPos);
   const { OriginalRequest } = PerformRequest();
   const hasMounted = useRef(false);
+  const [followed, setFollowed] = useState(false);
+
+  const checkFollowed = async () => {
+    try {
+      const check = await OriginalRequest(
+        `user/checkFollowed/${artistId}`,
+        "GET"
+      );
+      setFollowed(check);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleFollowArtist = async () => {
+    try {
+      await OriginalRequest(`user/follow/`, "POST", { artistId });
+      setFollowed(!followed)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    checkFollowed();
     const handleScroll = () => {
       dispatch(setScrollPos(window.scrollY));
     };
@@ -41,7 +65,7 @@ export default function   ArtistProfile() {
     } else {
       hasMounted.current = true;
     }
-  }, [hasMounted]);
+  }, [hasMounted, followed]);
   return (
     <NoSpaceHeaderTemplate>
       <div className="w-full min-h-screen">
@@ -54,10 +78,10 @@ export default function   ArtistProfile() {
               }}
             >
               <div className={`w-full h-full pt-56 relative`}>
-                <div
+                {/* <div
                   className="absolute inset-0 bg-light30 dark:bg-dark30"
                   style={{ opacity: `${(scrollPos * 0.7) / 180}` }}
-                ></div>
+                ></div> */}
                 <h1 className="pl-12 text-6xl font-bold text-white">
                   {artistInfo.artist_name}
                 </h1>
@@ -65,9 +89,21 @@ export default function   ArtistProfile() {
                   <p className="pl-12 text-white">
                     {artistInfo.followersCount} followers
                   </p>
-                  <button className="border-2 border-light10 px-5 py-1 text-white rounded-full ml-7">
-                    follow
-                  </button>
+                  {!followed ? (
+                    <button
+                      onClick={handleFollowArtist}
+                      className="cursor-pointer border-2 border-light10 px-5 py-1 text-white rounded-full ml-7 font-bold"
+                    >
+                      follow
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleFollowArtist}
+                      className="cursor-pointer bg-orange-500 border-2 border-light10 px-5 py-1 text-white rounded-full ml-7 font-bold"
+                    >
+                      followed
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

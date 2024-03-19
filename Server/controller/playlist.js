@@ -22,8 +22,14 @@ const getPlaylistById = async (req, res) => {
 const deletePlaylist = async (req, res) => {
   try {
     const playlistId = req.params.playlistId;
-    const deletedPlaylist = await PlaylistRepository.deletePlaylist(playlistId);
-    res.status(200).json(deletedPlaylist);
+    const decodedToken = req.decodedToken;
+    const deletedPlaylist = await PlaylistRepository.deletePlaylist(
+      playlistId,
+      decodedToken.userId
+    );
+    res
+      .status(200)
+      .json({ data: deletedPlaylist, message: "Deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -62,13 +68,18 @@ const createPlaylist = async (req, res) => {
 const addSongToPlaylist = async (req, res) => {
   try {
     const { playlistId, songs } = req.body;
-    const result = await PlaylistRepository.addSongToPlaylist({
-      playlistId,
-      songs,
-    });
-    return res
-      .status(200)
-      .json({ message: "Song added to playlist", data: result });
+    const check = await PlaylistRepository.findSongInPlaylist({ playlistId, songs })
+    if (!check) {
+      return res.status(500).json({ error: "The song already exists" });
+    } else {
+      const result = await PlaylistRepository.addSongToPlaylist({
+        playlistId,
+        songs,
+      });
+      return res
+        .status(200)
+        .json({ message: "Song added to playlist", data: result });
+    }
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
