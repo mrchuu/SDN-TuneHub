@@ -9,6 +9,7 @@ const ListAlbums = ({ url, idAlbum }) => {
     // console.table(url);
     const fetchAlbum = async () => {
         const data = await OriginalRequest(url ? url : "album/getAllAlbums", "GET");
+        // const data = await OriginalRequest("album/getAllAlbums", "GET");
         if (data) {
             setAlbums(data.data);
         }
@@ -16,14 +17,15 @@ const ListAlbums = ({ url, idAlbum }) => {
     useEffect(() => {
         fetchAlbum();
     }, [url]);
-    if (idAlbum) {
-        albums = albums.filter(a => a._id !== idAlbum);
-    }
+    console.log(albums);
+    // if (idAlbum) {
+    //     albums = albums.filter(a => a._id !== idAlbum);
+    // }
     return (
         <div>{albums.length>0?(<div>
             <div className="mx-auto">
                 <h2 className="text-2xl font-semibold mb-8 dark:text-white ml-4">
-                    More From {albums.artist.artist_name}
+                    More From {albums[0].artist.artist_name}
                 </h2>
             </div>
             <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">

@@ -330,6 +330,28 @@ export default function UserProfile() {
                             <h1 className="text-lg font-semibold">Recent song</h1>
                             <SongList url={`songs/recentSong/${auth._id}`} />
                         </div>
+                        <div>
+            <div className="mx-auto">
+                <h2 className="text-2xl font-semibold mb-8 dark:text-white ml-4">
+                    More From {albums[0].artist.artist_name}
+                </h2>
+            </div>
+            <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+
+                {/* {albums.map((alb, index) => (
+                    <Link key={index} to={`/album/${alb._id}/${alb.artist}`}>
+                        <div className="card p-4 ml-4 mr-5 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30  dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8">
+                            <img
+                                src={alb.album_cover}
+                                className="ml-1 rounded-md w-40 h-40 object-cover object-center"
+                            />
+                            <h3 id="h3-card" className="text-lg text-lightText font-semibold dark:text-white m-2 w-40 overflow-hidden line-clamp-1">
+                                {alb.album_name}
+                            </h3>
+                            {alb.description ? (
+                                <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2 w-40 h-12 overflow-hidden line-clamp-2">
+                                    {alb.description}
+                                </p>
                         <div className="px-4 mt-1 mt-5">
                             <h2 className="text-lg font-semibold mb-4 text-lightText dark:text-darkText">Public Playlists</h2>
                             <div className="flex flex-wrap justify-between px-4 space-x-4">
@@ -341,7 +363,7 @@ export default function UserProfile() {
                                             <p className="playlist-description text-sm mt-2 text-lightTextSecondary dark:text-darkTextSecondary">{playlist.description}</p>
                                         </div>
                                     </div>
-                                ))}
+                                ))} */}
                             </div>
 
                         </div>
