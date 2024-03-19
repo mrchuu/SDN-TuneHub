@@ -64,7 +64,7 @@ export default function ActionBar() {
                   {currentSong.artist.artist_name}
                 </p>
                 {currentSong.is_exclusive ? (
-                  userInfo.songs_purchased.includes(currentSong._id) ? (
+                  userInfo && userInfo?.songs_purchased?.includes(currentSong._id) ? (
                     <span className="text-white px-2 bg-sky-600/70 text-xs rounded ml-2 font-medium">
                       OWNED
                     </span>

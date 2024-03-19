@@ -79,13 +79,15 @@ export default function SongList({ url }) {
   }, [hasMounted, url]);
 
   const handleCreatePlaylist = async () => {
-    await OriginalRequest(`playlist/create`, "POST", {
+    const response = await OriginalRequest(`playlist/create`, "POST", {
       songs: songInAction,
-      creator: userInfo._id,
     });
-    const user = await OriginalRequest("auth/user", "GET");
-    dispatch(setUserInfo(user.data));
-    closeMenuPlaylist();
+    if (response) {
+      const user = await OriginalRequest("auth/user", "GET");
+      dispatch(setUserInfo(user.data));
+      closeMenuPlaylist();
+    }
+
     closeMenu();
   };
 
