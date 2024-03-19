@@ -10,6 +10,7 @@ import ListPlaylist from "./ListPlaylist";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { Modal, Box, Typography, Button } from "@mui/material";
 import auth, { setUserInfo } from "../redux/auth.js";
+import { useNavigate } from "react-router-dom";
 
 export default function SideBar() {
   // const [expanded, setExpanded] = useState(window.innerWidth > 768);
@@ -20,6 +21,7 @@ export default function SideBar() {
   const [showModal, setShowModal] = useState(false);
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -256,9 +258,9 @@ export default function SideBar() {
               ) : (
                 <div className="px-3 text-textSecondary text-sm font-medium">
                   {userInfo.artist_followed.map((artist) => (
-                    <div className="flex items-center mb-3" key={artist._id}>
+                    <div onClick={() => navigate(`/artist/${artist._id}`)} className="flex items-center mb-3" key={artist._id}>
                       <img
-                        className="w-10 h-10 rounded-full border-slate-600  border-2"
+                        className="w-10 h-10 rounded-full object-fill object-cover border-slate-600  border-2"
                         src={artist.userId.profile_picture}
                       />
                       &nbsp;
