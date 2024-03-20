@@ -16,8 +16,9 @@ const createPaymentUrl = async (req, res) => {
   var returnUrl = process.env.vnp_ReturnUrl;
 
   var date = new Date();
-
-  var createDate = dateFormat(date, "yyyymmddHHmmss");
+  console.log(date);
+  var createDate = dateFormat(date, "yyyyMMddHHmmss");
+  console.log(createDate);
   var orderId = dateFormat(date, "HHmmss");
   var amount = req.body.amount;
   var bankCode = req.body.bankCode;

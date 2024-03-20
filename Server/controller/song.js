@@ -78,7 +78,8 @@ const streamSong = async (req, res) => {
       const { is_exclusive, preview_start_time, preview_end_time } =
         existingSong;
       if (is_exclusive) {
-        if (userId && existingSong.purchased_user.includes(userId)) {
+        // console.log();
+        if (userId && existingSong.purchased_user.some(item => item.user && item.user.toString() === userId.toString())) {
           const fileStream = fs.createReadStream(filePath);
           res.setHeader("Content-Type", "audio/mpeg");
           fileStream.pipe(res);

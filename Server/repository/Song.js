@@ -882,10 +882,15 @@ const addPurchaser = async (userId, songId) => {
     const result = await Song.findByIdAndUpdate(
       songId,
       {
-        $push: { purchased_user: new mongoose.Types.ObjectId(userId) },
+        $push: {
+          purchased_user: {
+            user: userId,
+          },
+        },
       },
       { new: true }
     ).populate("artist", "artist_name");
+    console.log(result);
     return result;
   } catch (error) {
     throw new Error(error.message);
@@ -1134,7 +1139,9 @@ const checkFavouriteSong = async ({ songId, userId }) => {
   try {
     const song = await Song.findById(songId);
     if (song) {
-      const isLove = song.favourited.includes(new mongoose.Types.ObjectId(userId));
+      const isLove = song.favourited.includes(
+        new mongoose.Types.ObjectId(userId)
+      );
       console.log(isLove);
       return isLove;
     } else {
