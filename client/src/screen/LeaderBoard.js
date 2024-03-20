@@ -16,7 +16,7 @@ import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { BsHeartFill } from "react-icons/bs";
 import Select from '@mui/material/Select';
-
+import { RiVipDiamondFill } from "react-icons/ri";
 export default function LeaderBoard() {
     const { OriginalRequest } = PerformRequest();
     const [SongList, setSong] = useState([]);
@@ -180,15 +180,21 @@ export default function LeaderBoard() {
                                         </div>
 
                                         <div className="ml-2">
-                                            <h4 className="font-semibold text-md">
+                                            <h4 className="font-semibold text-md flex flex-row">
                                                 {song.song_name ? (
                                                     <Link
                                                         to={`/songdetail/${song._id}`}
-                                                        className="text-xs hover:underline"
+                                                        className="text-xs hover:underline flex items-center"
                                                         style={{ fontSize: "1rem", lineHeight: "1rem" }}
-                                                        onClick={(e) => { e.stopPropagation() }}
+                                                        onClick={(e) => {
+                                                            dispatch(setCurrentSong(song));
+                                                            dispatch(toogleIsPlaying(true));
+                                                        }}
                                                     >
                                                         {song.song_name}
+                                                        {song.is_exclusive ? (
+                                                            <RiVipDiamondFill className="text-yellow-500/50 ml-1" />
+                                                        ) : null}
                                                     </Link>
                                                 ) : (
                                                     <></>
@@ -206,7 +212,7 @@ export default function LeaderBoard() {
                                                 ) : (
                                                     <></>
                                                 )}
-                                                {song.participated_artists && song.participated_artists.length > 1 && (
+                                                {song.participated_artists && song.participated_artists.length > 0 && (
                                                     <>
                                                         {song.participated_artists.map((artist, index) => (
                                                             <span key={index}>
