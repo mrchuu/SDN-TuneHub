@@ -147,18 +147,17 @@ export default function UserProfile() {
     const [artistFollowed, setArtistFollowed] = useState([]);
     const [playList, setPlayList] = useState([]);
     const fetchArtistFollowed = async () => {
-        const data = await OriginalRequest(`user/artistFollowed/${auth._id}`, "GET");
+        const data = await OriginalRequest(`user/artistFollowed`, "GET");
         if (data) {
             setArtistFollowed(data.data);
         }
     }
     const fetchPlayList = async () => {
-        const data = await OriginalRequest(`user/listPlayList/${auth._id}`, "GET");
+        const data = await OriginalRequest(`user/listPlayList`, "GET");
         if (data) {
             setPlayList(data.data);
         }
     }
-    console.log(playList);
     useEffect(() => {
         fetchArtistFollowed();
         fetchPlayList();
@@ -178,7 +177,7 @@ export default function UserProfile() {
                                 {/* <h1>David Robin</h1> */}
                                 <h1>{auth.first_name} {auth.last_name}</h1>
                                 <p id="introduce" className="text-lightTextSecondary dark:text-darkTextSecondary">Introduce: {auth.introduction}</p>
-                                <p id="number-playlist">1 Public Playlist</p>
+                                <p id="number-playlist">{playList.length} Public Playlist</p>
                             </div>
                         </div>
                     </div>
@@ -335,7 +334,7 @@ export default function UserProfile() {
                                     {artistFollowed.map((art, index) => (
                                         
                     
-                                            <div className="card p-4 ml-4 mr-5 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30  dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8">
+                                            <div className="card p-4 pr-0 ml-4 mr-5 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30  dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8">
                                                 <img
                                                     src={art.profile_picture}
                                                     className="rounded-full w-40 h-40 object-cover object-center"
@@ -362,7 +361,7 @@ export default function UserProfile() {
                             </div>
                         ) : (<></>)}
                         {playList.length != 0 ? (
-                            <div className="mt-5 ml-6">
+                            <div className="mt-5 ml-5">
                                 <div className="mx-auto ">
                                     <h2 className="text-2xl font-semibold mb-5 dark:text-white ml-0">
                                         Playlist
@@ -372,7 +371,7 @@ export default function UserProfile() {
 
                                     {playList.map((ply, index) => (
                                         
-                                            <div className="card p-4 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30  dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8">
+                                            <div className="card p-4 pr-2 ml-0 mr-8 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30  dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8">
                                                 <img
                                                     src={ply.play_list_cover}
                                                     className="rounded-md w-40 h-40 object-cover object-center"

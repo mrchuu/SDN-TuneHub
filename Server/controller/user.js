@@ -75,7 +75,7 @@ const checkArtistFollowed = async (req, res) => {
 };
 const getListArtistFollowed = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.decodedToken.userId;
     const idArtistFollowed = await UserRepository.getListArtistFollowed(userId);
     const listArtistFollowed = await UserRepository.getInforArtistFollowed(idArtistFollowed.artist_followed);
     res.status(200).json({ data: listArtistFollowed });
@@ -83,11 +83,11 @@ const getListArtistFollowed = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 }
-const getListPlayList = async (req,res)=>{
+const getListPlayList = async (req, res) => {
   try {
-    const userId = req.params.userId;
-  const listPlayList = await UserRepository.getListPlayList(userId);
-  res.status(200).json({data: listPlayList});
+    const userId = req.decodedToken.userId;
+    const listPlayList = await UserRepository.getListPlayList(userId);
+    res.status(200).json({ data: listPlayList });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
