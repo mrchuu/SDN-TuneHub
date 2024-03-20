@@ -93,5 +93,13 @@ const getListPlayList = async (req, res) => {
   }
 
 }
-
-export default { changePassword, editProfile, followArtist, checkArtistFollowed, getListArtistFollowed, getListPlayList };
+const getListFavouritedSong = async (req, res) => {
+  try {
+    const userId = req.decodedToken.userId;
+    const listFavouritedSong = await UserRepository.getListFavouritedSong(userId);
+    res.status(200).json({ data: listFavouritedSong });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+export default { changePassword, editProfile, followArtist, checkArtistFollowed, getListArtistFollowed, getListPlayList, getListFavouritedSong,};
