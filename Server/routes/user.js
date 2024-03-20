@@ -7,4 +7,6 @@ userRouter.put('/change-password',verifyToken, UserController.changePassword);
 userRouter.put('/edit-profile', UserController.editProfile);
 userRouter.post('/follow',verifyToken, UserController.followArtist);
 userRouter.get('/checkFollowed/:artistId',verifyToken, UserController.checkArtistFollowed);
+userRouter.get('/artistFollowed',verifyToken, UserController.getListArtistFollowed);
+userRouter.get('/listPlayList',verifyToken, UserController.getListPlayList);
 export default userRouter;

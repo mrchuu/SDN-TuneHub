@@ -18,6 +18,7 @@ import "../style/soundWave.css";
 import auth, { setUserInfo } from "../redux/auth.js";
 import PlayListAddMenu from "./PlayListAddMenu.js";
 import { RiVipDiamondFill } from "react-icons/ri";
+import { BsHeartFill } from "react-icons/bs";
 export default function SongList({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
@@ -31,16 +32,35 @@ export default function SongList({ url }) {
   const [playlistMenuAnchor, setPlaylistMenuAnchor] = useState(null);
 
   const userInfo = useSelector((state) => state.auth.userInfo);
+  const [Favorite, setFavorite] = useState(false);
 
   const currentSong = useSelector((state) => state.player.currentSong);
   const closeMenu = (e, song) => {
     setMenuIsOpen(false);
     setSongMenuAnchor(null);
+    setFavorite(false);
   };
-  const openMenu = (e, song) => {
+  const openMenu = async (e, song) => {
     setSongInAction(song);
-    setMenuIsOpen(true);
+    checkFavorite(song);
     setSongMenuAnchor(e.currentTarget);
+    setMenuIsOpen(true);
+
+    // console.log(log);
+  };
+
+  const checkFavorite = async (song) => {
+    try {
+      const check = await OriginalRequest(
+        `songs/checkFavorite/${song._id}`,
+        "GET"
+      );
+      if (check) {
+        setFavorite(check);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const openMenuPlaylist = (e, song) => {
@@ -50,11 +70,6 @@ export default function SongList({ url }) {
   const closeMenuPlaylist = (e, song) => {
     setSubMenuIsOpen(false);
     setPlaylistMenuAnchor(null);
-  };
-
-  const handleAddToPlaylistClick = (event) => {
-    // Mở menu con
-    setSubMenuIsOpen(true);
   };
 
   useEffect(() => {
@@ -77,7 +92,17 @@ export default function SongList({ url }) {
     };
     fetch();
   }, [hasMounted, url]);
-
+  const handleFavouriteClick = async (songId) => {
+    try {
+      const response = await OriginalRequest(
+        `songs/favourited/${songId}`,
+        "POST"
+      );
+      closeMenu();
+    } catch (error) {
+      console.error("Error toggling favourite:", error);
+    }
+  };
   const handleCreatePlaylist = async () => {
     const response = await OriginalRequest(`playlist/create`, "POST", {
       songs: songInAction,
@@ -266,13 +291,24 @@ export default function SongList({ url }) {
             horizontal: "left",
           }}
         >
-          <MenuItem>
+          <MenuItem onClick={(e)=>{
+            handleFavouriteClick(songInAction._id)
+          }}>
             <ListItemIcon>
-              <FaRegHeart
-                className="text-light10 dark:text-dark10 mt-1"
-                size={18}
-              />
-              <ListItemText>&nbsp;Add To Favorite</ListItemText>
+              {!Favorite ? (
+                <FaRegHeart
+                  className="text-light10 dark:text-dark10 mt-1"
+                  size={18}
+                />
+              ) : (
+                <BsHeartFill
+                  className="text-light10 dark:text-dark10 mt-1"
+                  size={18}
+                />
+              )}
+              <ListItemText>
+                &nbsp; {Favorite ? "Remove From Favourite" : "Add To Favorite"}
+              </ListItemText>
             </ListItemIcon>
           </MenuItem>
           <MenuItem
@@ -295,7 +331,6 @@ export default function SongList({ url }) {
             className="flex items-center"
             onClick={(e) => {
               openMenuPlaylist(e);
-              // console.log(e);
             }}
           >
             <ListItemIcon>
@@ -318,7 +353,7 @@ export default function SongList({ url }) {
           open={subMenuIsOpen} // Mở menu con khi subMenuIsOpen === true
           onClose={() => setSubMenuIsOpen(false)} // Đóng menu con khi nhấn ra ngoài hoặc chọn một tùy chọn
         >
-          <MenuItem onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
+          <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
           <div style={{ overflowY: "auto", maxHeight: "200px" }}>
             <PlayListAddMenu songId={songInAction} />
           </div>

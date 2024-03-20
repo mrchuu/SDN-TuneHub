@@ -79,35 +79,9 @@ export default function UserProfile() {
             console.log(error);
         }
     };
-    const playlists = [
-        {
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT03G8Fx0iQ7RQPJchmg-vNXjMKQRvjCDNgAg&usqp=CAU',
-            name_song: 'Song 1',
-            description: 'Description of song 1'
-        },
-        {
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQye5YwUHpIbEfCwALijl1Ly4H5UpYYf_h7Uw&usqp=CAU',
-            name_song: 'Song 2',
-            description: 'Description of song 2'
-        },
-        {
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-Apu1JPEhQk5HgxHA4jqlmFMVPVfl6ji1RQ&usqp=CAU',
-            name_song: 'Song 3',
-            description: 'Description of song 3'
-        },
-        {
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT03G8Fx0iQ7RQPJchmg-vNXjMKQRvjCDNgAg&usqp=CAU',
-            name_song: 'Song 4',
-            description: 'Description of song 4'
-        },
-        {
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-Apu1JPEhQk5HgxHA4jqlmFMVPVfl6ji1RQ&usqp=CAU',
-            name_song: 'Song 5',
-            description: 'Description of song 5'
-        }
-    ];
+
     const [isOpen, setIsOpen] = useState(false);
-    const [isOpen0, setIsOpen0] = useState(false); // Thay đổi tên thành isOpen0
+    const [isOpen0, setIsOpen0] = useState(false);
 
 
 
@@ -170,12 +144,30 @@ export default function UserProfile() {
         boxShadow: 24,
         p: 4,
     };
+    const [artistFollowed, setArtistFollowed] = useState([]);
+    const [playList, setPlayList] = useState([]);
+    const fetchArtistFollowed = async () => {
+        const data = await OriginalRequest(`user/artistFollowed`, "GET");
+        if (data) {
+            setArtistFollowed(data.data);
+        }
+    }
+    const fetchPlayList = async () => {
+        const data = await OriginalRequest(`user/listPlayList`, "GET");
+        if (data) {
+            setPlayList(data.data);
+        }
+    }
+    useEffect(() => {
+        fetchArtistFollowed();
+        fetchPlayList();
+    }, []);
     return (
         <DefaultTemplate>
             <div className="w-full min-h-screen">
                 <div className="profile-contain pb-5">
                     <div className="profile-header bg-light30 dark:bg-dark30">
-                        
+
                         <div className="profile-info">
                             <div className="picture">
                                 <img className="object-cover object-center" src={auth.profile_picture} alt="Girl in a jacket" />
@@ -185,7 +177,7 @@ export default function UserProfile() {
                                 {/* <h1>David Robin</h1> */}
                                 <h1>{auth.first_name} {auth.last_name}</h1>
                                 <p id="introduce" className="text-lightTextSecondary dark:text-darkTextSecondary">Introduce: {auth.introduction}</p>
-                                <p id="number-playlist">1 Public Playlist</p>
+                                <p id="number-playlist">{playList.length} Public Playlist</p>
                             </div>
                         </div>
                     </div>
@@ -327,24 +319,84 @@ export default function UserProfile() {
                             </div>
                         </div>
                         <div className="px-5">
-                            <h1 className="text-lg font-semibold">Recent song</h1>
+                            <h1 className="text-2xl font-semibold dark:text-darkText">Recent song</h1>
                             <SongList url={`songs/recentSong/`} />
                         </div>
-                        <div className="px-4 mt-1 mt-5">
-                            <h2 className="text-lg font-semibold mb-4 text-lightText dark:text-darkText">Public Playlists</h2>
-                            <div className="flex flex-wrap justify-between px-4 space-x-4">
-                                {playlists.map((playlist, index) => (
-                                    <div className="playlist-item w-1/6 p-4 bg-light30 dark:bg-dark30 rounded-lg" key={index}>
-                                        <img src={playlist.image} alt={playlist.name_song} className="playlist-image w-full h-auto rounded-lg" />
-                                        <div className="playlist-details mt-4">
-                                            <h3 className="playlist-name text-lg font-semibold text-lightText dark:text-darkText">{playlist.name_song}</h3>
-                                            <p className="playlist-description text-sm mt-2 text-lightTextSecondary dark:text-darkTextSecondary">{playlist.description}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                        {artistFollowed.length != 0 ? (
+                            <div className="mt-8">
+                                <div className="mx-auto">
+                                    <h2 className="text-2xl font-semibold mb-5 dark:text-white ml-4">
+                                        Artist Followed
+                                    </h2>
+                                </div>
+                                <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
 
-                        </div>
+                                    {artistFollowed.map((art, index) => (
+                                        
+                    
+                                            <div className="card p-4 pr-0 ml-4 mr-5 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30  dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8">
+                                                <img
+                                                    src={art.profile_picture}
+                                                    className="rounded-full w-40 h-40 object-cover object-center"
+                                                />
+                                                <Link key={index} to={`/artist/${art._id}`} className="text-xs hover:underline">
+                                                <h3 id="h3-card" className="text-lg text-lightText font-semibold dark:text-white m-2 w-40 overflow-hidden line-clamp-1">
+                                                    {art.artist_name}
+                                                </h3>
+                                                </Link>
+                                                {art.introduction ? (
+                                                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2 w-40 h-12 overflow-hidden line-clamp-2">
+                                                        {art.introduction}
+                                                    </p>
+                                                ) : (
+                                                    <p className="text-md text-light30 dark:text-dark30 ml-2">
+                                                        Null
+                                                    </p>
+                                                )}
+
+                                            </div>
+                                        
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (<></>)}
+                        {playList.length != 0 ? (
+                            <div className="mt-5 ml-5">
+                                <div className="mx-auto ">
+                                    <h2 className="text-2xl font-semibold mb-5 dark:text-white ml-0">
+                                        Playlist
+                                    </h2>
+                                </div>
+                                <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+
+                                    {playList.map((ply, index) => (
+                                        
+                                            <div className="card p-4 pr-2 ml-0 mr-8 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30  dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8">
+                                                <img
+                                                    src={ply.play_list_cover}
+                                                    className="rounded-md w-40 h-40 object-cover object-center"
+                                                />
+                                                <Link key={index} to={`/playlist/${ply._id}`} className="text-xs hover:underline">
+                                                <h3 id="h3-card" className="text-lg text-lightText font-semibold dark:text-white m-2 w-40 overflow-hidden line-clamp-1">
+                                                    {ply.play_list_name}
+                                                </h3>
+                                                </Link>
+                                                {ply.createdAt ? (
+                                                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2 w-40 h-12 overflow-hidden line-clamp-2">
+                                                        Date created: <br />{ply.createdAt}
+                                                    </p>
+                                                ) : (
+                                                    <p className="text-md text-light30 dark:text-dark30 ml-2">
+                                                        Null
+                                                    </p>
+                                                )}
+
+                                            </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (<></>)}
+
 
                     </div>
                 </div>

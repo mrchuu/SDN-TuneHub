@@ -6,14 +6,8 @@ const ListPlaylist = ({ songId }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const navigate = useNavigate();
   // const [playlists, setPlaylists] = useState([]);
-  const [deleteMenu, setDeleteMenu] = useState(false);
   const handlePlaylistClick = (e, playlistId) => {
-    console.log(e.button);
-    if (e.button == 2) {
-      setDeleteMenu(true);
-    } else {
       navigate(`/playlist/${playlistId}`);
-    }
   };
 
 

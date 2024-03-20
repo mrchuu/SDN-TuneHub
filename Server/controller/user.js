@@ -52,10 +52,10 @@ const followArtist = async (req, res) => {
   try {
     const { artistId } = req.body;
     const userId = req.decodedToken.userId;
-    const registeredUser = await UserRepository.followArtist({artistId, userId});
+    const registeredUser = await UserRepository.followArtist({ artistId, userId });
     return res
       .status(200)
-      .json({data: registeredUser });
+      .json({ data: registeredUser });
   } catch (error) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -65,7 +65,7 @@ const checkArtistFollowed = async (req, res) => {
   try {
     const artistId = req.params.artistId;
     const userId = req.decodedToken.userId;
-    const registeredUser = await UserRepository.checkArtistFollowed({artistId, userId});
+    const registeredUser = await UserRepository.checkArtistFollowed({ artistId, userId });
     return res
       .status(200)
       .json(registeredUser);
@@ -73,5 +73,25 @@ const checkArtistFollowed = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+const getListArtistFollowed = async (req, res) => {
+  try {
+    const userId = req.decodedToken.userId;
+    const idArtistFollowed = await UserRepository.getListArtistFollowed(userId);
+    const listArtistFollowed = await UserRepository.getInforArtistFollowed(idArtistFollowed.artist_followed);
+    res.status(200).json({ data: listArtistFollowed });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+const getListPlayList = async (req, res) => {
+  try {
+    const userId = req.decodedToken.userId;
+    const listPlayList = await UserRepository.getListPlayList(userId);
+    res.status(200).json({ data: listPlayList });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 
-export default { changePassword, editProfile, followArtist, checkArtistFollowed };
+}
+
+export default { changePassword, editProfile, followArtist, checkArtistFollowed, getListArtistFollowed, getListPlayList };

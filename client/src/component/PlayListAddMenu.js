@@ -25,7 +25,7 @@ const PlayListAddMenu = ({ songId }) => {
           <div
             key={playlist._id}
             onClick={(e) => handlePlaylistClick(e, playlist.playlistId)}
-            className="flex items-center mb-3"
+            className="flex items-center mb-3 cursor-pointer"
           >
             <img
               className="w-10 h-10 rounded-full border-slate-600 border-2 text-lightText dark:text-darkText"

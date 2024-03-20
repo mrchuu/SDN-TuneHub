@@ -1,6 +1,7 @@
 import SongList from "../component/SongList";
 import ArtistTemplate from "../template/ArtistTemplate";
-import {Line} from "react-chartjs-2"
+import { Chart as ChartJS } from "chart.js/auto";
+import { Line } from "react-chartjs-2";
 export default function ArtistDashBoard() {
   return (
     <ArtistTemplate>
@@ -67,61 +68,23 @@ export default function ArtistDashBoard() {
                 </div>
               </div>
             </div>
-            {/* <div className="mt-5 rounded-md bg-light30 dark:bg-dark30 w-full h-[550px]">
-            <canvas height="363" width="726" class="chartjs-render-monitor" style="display: block; width: 726px; height: 363px;"></canvas>
-
+            <div className="mt-5 rounded-md bg-light30 dark:bg-dark30 w-full h-[450px] pt-5 px-4">
               <Line
                 data={{
-                  labels: [
-                    1500, 1600, 1700, 1750, 1800, 1850, 1900, 1950, 1999, 2050,
-                  ],
+                  labels: ["A", "B", "C"],
                   datasets: [
                     {
-                      data: [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478],
-                      label: "Africa",
-                      borderColor: "#3e95cd",
-                      fill: false,
-                    },
-                    {
-                      data: [
-                        282, 350, 411, 502, 635, 809, 947, 1402, 3700, 5267,
-                      ],
-                      label: "Asia",
-                      borderColor: "#8e5ea2",
-                      fill: false,
-                    },
-                    {
-                      data: [168, 170, 178, 190, 203, 276, 408, 547, 675, 734],
-                      label: "Europe",
-                      borderColor: "#3cba9f",
-                      fill: false,
-                    },
-                    {
-                      data: [40, 20, 10, 16, 24, 38, 74, 167, 508, 784],
-                      label: "Latin America",
-                      borderColor: "#e8c3b9",
-                      fill: false,
-                    },
-                    {
-                      data: [6, 3, 2, 2, 7, 26, 82, 172, 312, 433],
-                      label: "North America",
-                      borderColor: "#c45850",
-                      fill: false,
+                      label: "Revenue",
+                      data: [10, 50, 30],
+                      tension: 0.5,
+                      fill: true,
+                      borderColor: "rgb(242, 120, 92)",
+                      backgroundColor: "rgb(242, 120, 92, 0.5)",
                     },
                   ],
                 }}
-                options={{
-                  title: {
-                    display: true,
-                    text: "World population per region (in millions)",
-                  },
-                  legend: {
-                    display: true,
-                    position: "bottom",
-                  },
-                }}
               />
-            </div> */}
+            </div>
           </div>
           <div className="rightSide  w-4/12"></div>
         </div>

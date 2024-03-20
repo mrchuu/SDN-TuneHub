@@ -108,24 +108,30 @@ function Explore() {
               </div>
               <div className="container mx-auto flex flex-wrap items-center">
                 {genres.map((genre, index) => (
-                  <div
-                    style={{
-                      backgroundColor: genre.bgColor ? genre.bgColor : "red",
-                    }}
-                    className="card w-48 h-72 ml-4 mr-5 mb-10 border rounded-lg relative shadow-2xl shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm overflow-hidden"
+                  <Link
+                    to={`/songList/${encodeURIComponent(
+                      `songs-getSongByGenre-50-${genre._id}`
+                    )}/${genre.name}/`}
                   >
-                    <h3 className="text-lg text-white font-bold p-2">
-                      {genre.name}
-                    </h3>
-                    <img
-                      src={
-                        genre.image
-                          ? genre.image
-                          : "https://i.pinimg.com/736x/90/57/0a/90570addee2645866a597530721f37fd.jpg"
-                      }
-                      className="absolute bottom-0 right-0 w-32 h-32 object-cover object-center transform rotate-12 translate-x-3 translate-y-1"
-                    />
-                  </div>
+                    <div
+                      style={{
+                        backgroundColor: genre.bgColor ? genre.bgColor : "red",
+                      }}
+                      className="card w-48 h-72 ml-4 mr-5 mb-10 border rounded-lg relative shadow-2xl shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm overflow-hidden"
+                    >
+                      <h3 className="text-lg text-white font-bold p-2">
+                        {genre.name}
+                      </h3>
+                      <img
+                        src={
+                          genre.image
+                            ? genre.image
+                            : "https://i.pinimg.com/736x/90/57/0a/90570addee2645866a597530721f37fd.jpg"
+                        }
+                        className="absolute bottom-0 right-0 w-32 h-32 object-cover object-center transform rotate-12 translate-x-3 translate-y-1"
+                      />
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>
