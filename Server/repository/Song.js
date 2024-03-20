@@ -935,6 +935,7 @@ const getSongByGenre = async ({ limit, songType, genreId }) => {
         {
           $match: {
             genre: new mongoose.Types.ObjectId(genreId),
+            is_public: true
           },
         },
         {

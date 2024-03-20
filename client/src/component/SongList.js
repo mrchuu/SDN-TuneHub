@@ -72,11 +72,6 @@ export default function SongList({ url }) {
     setPlaylistMenuAnchor(null);
   };
 
-  const handleAddToPlaylistClick = (event) => {
-    // Mở menu con
-    setSubMenuIsOpen(true);
-  };
-
   useEffect(() => {
     const fetch = async () => {
       if (hasMounted.current) {
@@ -358,7 +353,7 @@ export default function SongList({ url }) {
           open={subMenuIsOpen} // Mở menu con khi subMenuIsOpen === true
           onClose={() => setSubMenuIsOpen(false)} // Đóng menu con khi nhấn ra ngoài hoặc chọn một tùy chọn
         >
-          <MenuItem onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
+          <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
           <div style={{ overflowY: "auto", maxHeight: "200px" }}>
             <PlayListAddMenu songId={songInAction} />
           </div>
