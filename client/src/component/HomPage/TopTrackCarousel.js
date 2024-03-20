@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import PerformRequest from "../../utilities/PerformRequest";
 import "../../style/carousel.css";
+import { Link } from "react-router-dom";
 export default function TopTrackCarousle() {
   const hasMounted = useRef(false);
   const [topTrack, setTopTrack] = useState([]);
@@ -105,11 +106,15 @@ export default function TopTrackCarousle() {
                 <div class="viewCount">
                   {track.streamCount} streams this week
                 </div>
-                <div class="buttons">
-                  <button className="border border-white bg-transparent rounded-md">
-                    SEE DETAIL
-                  </button>
-                </div>
+                <Link
+                  to={`/songdetail/${track._id}`}
+                >
+                  <div class="buttons">
+                    <button className="border border-white bg-transparent rounded-md">
+                      SEE DETAIL
+                    </button>
+                  </div>
+                </Link>
               </div>
             </div>
           ))}
