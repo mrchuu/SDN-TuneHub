@@ -80,74 +80,79 @@ export default function FeaturedIn({ url }) {
   return (
     <div className="mt-5">
       {featuredSongs.length > 0 ? (
-        <div className="w-full flex flex-wrap">
-          {featuredSongs.map((featuredSong) => (
-            <div
-              key={featuredSong._id} // Add a unique key to each element in the array
-              className={`card border lg:w-2/12 md:w-4/12 sm:w-6/12 pb-2 rounded  hover:bg-light30 hover:dark:bg-dark30 hover:shadow-md hover:shadow-neutral-400 hover:dark:shadow-blue-600/40 dark:border-none ${
-                menuIsOpen && songInAction._id === featuredSong._id
-                  ? "bg-light30 dark:bg-dark30 shadow-md shadow-neutral-400 dark:shadow-blue-600/40"
-                  : ""
-              }`}
-            >
-              <div className="py-2 px-3">
-                <div className="relative">
-                  <div
-                    className={`absolute inset-0 group bg-black bg-opacity-0 hover:bg-opacity-65 ${
-                      menuIsOpen && songInAction._id === featuredSong._id
-                        ? "bg-opacity-65"
-                        : ""
-                    } rounded-md flex items-center justify-center backdrop-filter`}
-                  >
+        <div>
+          <h4 className="text-lightText dark:text-darkText font-semibold text-xl mt-2">
+            Featured In
+          </h4>
+          <div className="w-full flex flex-wrap">
+            {featuredSongs.map((featuredSong) => (
+              <div
+                key={featuredSong._id} // Add a unique key to each element in the array
+                className={`card border lg:w-2/12 md:w-4/12 sm:w-6/12 pb-2 rounded  hover:bg-light30 hover:dark:bg-dark30 hover:shadow-md hover:shadow-neutral-400 hover:dark:shadow-blue-600/40 dark:border-none ${
+                  menuIsOpen && songInAction._id === featuredSong._id
+                    ? "bg-light30 dark:bg-dark30 shadow-md shadow-neutral-400 dark:shadow-blue-600/40"
+                    : ""
+                }`}
+              >
+                <div className="py-2 px-3">
+                  <div className="relative">
                     <div
-                      className={`flex opacity-0 group-hover:opacity-80 ${
+                      className={`absolute inset-0 group bg-black bg-opacity-0 hover:bg-opacity-65 ${
                         menuIsOpen && songInAction._id === featuredSong._id
-                          ? "opacity-80"
+                          ? "bg-opacity-65"
                           : ""
-                      } justify-around items-center w-full`}
+                      } rounded-md flex items-center justify-center backdrop-filter`}
                     >
-                      <FaRegHeart
-                        className="text-light10 dark:text-dark10"
-                        size={20}
-                      />
-                      <FaPlayCircle
-                        className="text-light10 dark:text-dark10"
-                        size={40}
-                        onClick={(e) => {
-                          dispatch(setCurrentSong(featuredSong));
-                          dispatch(toogleIsPlaying(true));
-                        }}
-                      />
-                      <IoEllipsisHorizontal
-                        className="text-light10 dark:text-dark10"
-                        size={20}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openMenu(e, featuredSong);
-                        }}
-                      />
+                      <div
+                        className={`flex opacity-0 group-hover:opacity-80 ${
+                          menuIsOpen && songInAction._id === featuredSong._id
+                            ? "opacity-80"
+                            : ""
+                        } justify-around items-center w-full`}
+                      >
+                        <FaRegHeart
+                          className="text-light10 dark:text-dark10"
+                          size={20}
+                        />
+                        <FaPlayCircle
+                          className="text-light10 dark:text-dark10"
+                          size={40}
+                          onClick={(e) => {
+                            dispatch(setCurrentSong(featuredSong));
+                            dispatch(toogleIsPlaying(true));
+                          }}
+                        />
+                        <IoEllipsisHorizontal
+                          className="text-light10 dark:text-dark10"
+                          size={20}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openMenu(e, featuredSong);
+                          }}
+                        />
+                      </div>
                     </div>
+                    <img
+                      src={featuredSong.cover_image}
+                      className="w-44 h-44 rounded-md mx-auto border-2 border-neutral-400/20 object-cover object-center"
+                    />
                   </div>
-                  <img
-                    src={featuredSong.cover_image}
-                    className="w-44 h-44 rounded-md mx-auto border-2 border-neutral-400/20 object-cover object-center"
-                  />
+                </div>
+
+                <div className="lg:px-3 md:px-3 sm:px-8">
+                  <p className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis">
+                    {featuredSong.song_name}
+                  </p>
+                  <p className="text-lightTextSecondary text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
+                    {featuredSong.artist.artist_name}
+                    {featuredSong.participated_artist.map(
+                      (artist) => ", " + artist.artist_name
+                    )}
+                  </p>
                 </div>
               </div>
-
-              <div className="lg:px-3 md:px-3 sm:px-8">
-                <p className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis">
-                  {featuredSong.song_name}
-                </p>
-                <p className="text-lightTextSecondary text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
-                  {featuredSong.artist.artist_name}
-                  {featuredSong.participated_artist.map(
-                    (artist) => ", " + artist.artist_name
-                  )}
-                </p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       ) : (
         <></>
@@ -176,10 +181,11 @@ export default function FeaturedIn({ url }) {
             <ListItemText className="text-right">Queue Song</ListItemText>
           </ListItemIcon>
         </MenuItem>
-        <MenuItem className="flex items-center"
-        onClick={(e) => {
-          openMenuPlaylist(e);
-        }}
+        <MenuItem
+          className="flex items-center"
+          onClick={(e) => {
+            openMenuPlaylist(e);
+          }}
         >
           <ListItemIcon>
             <MdLibraryMusic
