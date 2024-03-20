@@ -11,6 +11,8 @@ import {
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { Link } from "react-router-dom";
+import auth, { setUserInfo } from "../../redux/auth.js";
+import PlayListAddMenu from "../PlayListAddMenu.js";
 
 export default function LatestRelease() {
   const hasMounted = useRef(false);
@@ -20,6 +22,10 @@ export default function LatestRelease() {
   const [songMenuAnchor, setSongMenuAnchor] = useState(null);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [songInAction, setSongInAction] = useState(null);
+
+  const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
+  const [playlistMenuAnchor, setPlaylistMenuAnchor] = useState(null);
+
   const closeMenu = (e, song) => {
     setMenuIsOpen(false);
     setSongMenuAnchor(null);
@@ -46,6 +52,29 @@ export default function LatestRelease() {
       hasMounted.current = true;
     }
   }, []);
+
+  const openMenuPlaylist = (e, song) => {
+    setSubMenuIsOpen(true);
+    setPlaylistMenuAnchor(e.currentTarget);
+  };
+  const closeMenuPlaylist = (e, song) => {
+    setSubMenuIsOpen(false);
+    setPlaylistMenuAnchor(null);
+  };
+
+  const handleCreatePlaylist = async () => {
+    const response = await OriginalRequest(`playlist/create`, "POST", {
+      songs: songInAction,
+    });
+    if (response) {
+      const user = await OriginalRequest("auth/user", "GET");
+      dispatch(setUserInfo(user.data));
+      closeMenuPlaylist();
+    }
+
+    closeMenu();
+  };
+
   return (
     <div className="w-full">
       <h4 className="text-2xl font-semibold mb-2 dark:text-white ml-4 pl-12">
@@ -148,7 +177,11 @@ export default function LatestRelease() {
             <ListItemText className="text-right">Queue Song</ListItemText>
           </ListItemIcon>
         </MenuItem>
-        <MenuItem className="flex items-center">
+        <MenuItem className="flex items-center"
+        onClick={(e) => {
+          openMenuPlaylist(e);
+        }}
+        >
           <ListItemIcon>
             <MdLibraryMusic
               size={20}
@@ -157,9 +190,30 @@ export default function LatestRelease() {
             <ListItemText className="text-right">Add To Playlist</ListItemText>
           </ListItemIcon>
         </MenuItem>
+
+        <Menu
+          anchorEl={playlistMenuAnchor}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={subMenuIsOpen} // Mở menu con khi subMenuIsOpen === true
+          onClose={() => setSubMenuIsOpen(false)} // Đóng menu con khi nhấn ra ngoài hoặc chọn một tùy chọn
+        >
+          <MenuItem onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
+          <div style={{ overflowY: "auto", maxHeight: "200px" }}>
+            <PlayListAddMenu songId={songInAction} />
+          </div>
+        </Menu>
+
       </Menu>
       <div className="flex justify-center">
-        <Link to={`songList/${encodeURIComponent("songs-getLatest-50")}/Latest-releases/`} className="text-center underline">
+        <Link
+          to={`songList/${encodeURIComponent(
+            "songs-getLatest-50"
+          )}/Latest-releases/`}
+          className="text-center underline"
+        >
           See more
         </Link>
       </div>
