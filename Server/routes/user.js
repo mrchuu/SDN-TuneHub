@@ -9,5 +9,5 @@ userRouter.post('/follow',verifyToken, UserController.followArtist);
 userRouter.get('/checkFollowed/:artistId',verifyToken, UserController.checkArtistFollowed);
 userRouter.get('/artistFollowed',verifyToken, UserController.getListArtistFollowed);
 userRouter.get('/listPlayList',verifyToken, UserController.getListPlayList);
-userRouter.get('/favouritedSong', verifyToken, UserController.getListFavouritedSong);
+// userRouter.get('/favouritedSong', verifyToken, UserController.getListFavouritedSong);
 export default userRouter;
