@@ -30,6 +30,7 @@ export default function SongDetail() {
       setArtist(data.data);
     }
   };
+  
   useEffect(() => {
     fetchSong();
     fetchArtist();

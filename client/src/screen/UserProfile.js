@@ -321,7 +321,7 @@ export default function UserProfile() {
                         </div>
                         <div className="px-5">
                             <h1 className="text-2xl font-semibold dark:text-darkText">Recent song</h1>
-                            <SongList url={`songs/recentSong/${auth._id}`} />
+                            <SongList url={`songs/recentSong/`} />
                         </div>
                         {artistFollowed.length != 0 ? (
                             <div className="mt-8">

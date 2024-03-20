@@ -48,8 +48,8 @@ const getAllPlaylistsByUserId = async (req, res) => {
 
 const createPlaylist = async (req, res) => {
   try {
-    const { play_list_name, creator, songs, play_list_cover, stream_time } =
-      req.body;
+    const { play_list_name, songs, play_list_cover, stream_time } = req.body;
+    const creator = req.decodedToken.userId;
     const result = await PlaylistRepository.createPlaylist({
       play_list_name,
       creator,
@@ -68,7 +68,10 @@ const createPlaylist = async (req, res) => {
 const addSongToPlaylist = async (req, res) => {
   try {
     const { playlistId, songs } = req.body;
-    const check = await PlaylistRepository.findSongInPlaylist({ playlistId, songs })
+    const check = await PlaylistRepository.findSongInPlaylist({
+      playlistId,
+      songs,
+    });
     if (!check) {
       return res.status(500).json({ error: "The song already exists" });
     } else {

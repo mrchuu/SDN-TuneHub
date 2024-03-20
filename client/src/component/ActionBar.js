@@ -3,7 +3,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoPlaySkipForwardSharp, IoPlaySkipBackSharp } from "react-icons/io5";
 import { FaPlayCircle, FaPauseCircle } from "react-icons/fa";
 import { IoMdVolumeHigh } from "react-icons/io";
-import { Slider } from "@mui/material";
+import { Slider, duration } from "@mui/material";
 import { MdOutlineQueueMusic } from "react-icons/md";
 import {
   changeVolume,
@@ -64,7 +64,8 @@ export default function ActionBar() {
                   {currentSong.artist.artist_name}
                 </p>
                 {currentSong.is_exclusive ? (
-                  userInfo.songs_purchased.includes(currentSong._id) ? (
+                  userInfo &&
+                  userInfo?.songs_purchased?.includes(currentSong._id) ? (
                     <span className="text-white px-2 bg-sky-600/70 text-xs rounded ml-2 font-medium">
                       OWNED
                     </span>
@@ -137,7 +138,15 @@ export default function ActionBar() {
             />
           </div>
         </div>
-        <div className="progress w-9/12 mx-auto">
+        <div className="progress flex items-center w-9/12 mx-auto">
+          {currentSong._id ? (
+            <span className="mr-2 text-lightTextSecondary dark:text-darkTextSecondary">
+              {Math.floor(progress / 60)}:{Math.floor(progress % 60)}
+            </span>
+          ) : (
+            <></>
+          )}
+
           <Slider
             aria-label="progress"
             value={progress}
@@ -149,6 +158,16 @@ export default function ActionBar() {
             max={currentSong?.duration}
             className="text-light10"
           />
+          <div>
+            {currentSong.duration ? (
+              <span className="ml-2 text-lightTextSecondary dark:text-darkTextSecondary">
+                {Math.floor(currentSong.duration / 60)}:
+                {Math.floor(currentSong.duration % 60)}
+              </span>
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
       </div>
       <div className="userAction h-full px-4 flex items-center w-3/12 justify-end">
