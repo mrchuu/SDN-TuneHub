@@ -3,6 +3,8 @@ import PerformRequest from "../../utilities/PerformRequest";
 import { FaPlayCircle, FaRegHeart } from "react-icons/fa";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { useDispatch } from "react-redux";
+import auth, { setUserInfo } from "../../redux/auth.js";
+import PlayListAddMenu from "../PlayListAddMenu.js";
 import {
   addSongToQueue,
   setCurrentSong,
@@ -20,6 +22,8 @@ export default function FeaturedIn({ url }) {
   const [songMenuAnchor, setSongMenuAnchor] = useState(null);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [songInAction, setSongInAction] = useState(null);
+  const [playlistMenuAnchor, setPlaylistMenuAnchor] = useState(null);
+  const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
   const closeMenu = (e, song) => {
     setMenuIsOpen(false);
     setSongMenuAnchor(null);
@@ -50,6 +54,29 @@ export default function FeaturedIn({ url }) {
     };
     fetch();
   }, [hasMounted, url]);
+
+  const openMenuPlaylist = (e, song) => {
+    setSubMenuIsOpen(true);
+    setPlaylistMenuAnchor(e.currentTarget);
+  };
+  const closeMenuPlaylist = (e, song) => {
+    setSubMenuIsOpen(false);
+    setPlaylistMenuAnchor(null);
+  };
+
+  const handleCreatePlaylist = async () => {
+    const response = await OriginalRequest(`playlist/create`, "POST", {
+      songs: songInAction,
+    });
+    if (response) {
+      const user = await OriginalRequest("auth/user", "GET");
+      dispatch(setUserInfo(user.data));
+      closeMenuPlaylist();
+    }
+
+    closeMenu();
+  };
+
   return (
     <div className="mt-5">
       {featuredSongs.length > 0 ? (
@@ -149,7 +176,11 @@ export default function FeaturedIn({ url }) {
             <ListItemText className="text-right">Queue Song</ListItemText>
           </ListItemIcon>
         </MenuItem>
-        <MenuItem className="flex items-center">
+        <MenuItem className="flex items-center"
+        onClick={(e) => {
+          openMenuPlaylist(e);
+        }}
+        >
           <ListItemIcon>
             <MdLibraryMusic
               size={20}
@@ -158,6 +189,21 @@ export default function FeaturedIn({ url }) {
             <ListItemText className="text-right">Add To Playlist</ListItemText>
           </ListItemIcon>
         </MenuItem>
+
+        <Menu
+          anchorEl={playlistMenuAnchor}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={subMenuIsOpen} // Mở menu con khi subMenuIsOpen === true
+          onClose={() => setSubMenuIsOpen(false)} // Đóng menu con khi nhấn ra ngoài hoặc chọn một tùy chọn
+        >
+          <MenuItem onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
+          <div style={{ overflowY: "auto", maxHeight: "200px" }}>
+            <PlayListAddMenu songId={songInAction} />
+          </div>
+        </Menu>
       </Menu>
     </div>
   );
