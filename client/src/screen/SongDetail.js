@@ -1,4 +1,4 @@
-import DefaultTemplate from "../template/DefaultTemplate";
+import NoSpaceHeaderTemplate from "../template/NoSpaceHeaderTemplat";
 import SongListDetail from "../component/ListSongDetail.js";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
@@ -6,34 +6,54 @@ import PerformRequest from "../utilities/PerformRequest.js";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import SoundWaveCanvas from "../component/SoundWaveCanvas.js";
+import { setScrollPos } from "../redux/window";
 export default function SongDetail() {
   const { songId } = useParams();
-  const [song, setSong] = useState(null);
+  const [song, setSong] = useState({});
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
-  const [ArtistList, setArtist] = useState([]);
   const isPlaying = useSelector((state) => state.player.isPlaying);
+  const scrollPos = useSelector((state) => state.window.scrollPos);
+  const currentSong = useSelector((state) => state.player.currentSong);
+  const userInfo = useSelector((state) => state.auth.userInfo);
 
+  const handlePayment = async () => {
+    const vnpayUrl = await OriginalRequest(
+      "payment/create_payment_url",
+      "POST",
+      {
+        amount: song.price,
+        bankCode: "NCB",
+        songId: song._id,
+        language: "en",
+      }
+    );
+    if (vnpayUrl) {
+      window.location = vnpayUrl.data;
+    }
+  };
   const fetchSong = async () => {
     try {
       const data = await OriginalRequest(`songs/detailSong/${songId}`, "GET");
-      if (data) {
-        setSong(data.data);
+      if (data && data.data) {
+        setSong(data.data[0]);
       }
     } catch (error) {
       console.error("Error fetching song:", error);
     }
   };
-  const fetchArtist = async () => {
-    const data = await OriginalRequest("artists/leaderboard/topArtist", "GET");
-    if (data) {
-      setArtist(data.data);
-    }
-  };
-  
+  useEffect(() => {
+    const handleScroll = () => {
+      dispatch(setScrollPos(window.scrollY));
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   useEffect(() => {
     fetchSong();
-    fetchArtist();
   }, [songId, onchange]);
 
   const formatCreatedAt = (createdAt) => {
@@ -58,96 +78,81 @@ export default function SongDetail() {
   };
 
   return (
-    <DefaultTemplate>
-      <div className="w-full min-h-screen items-center justify-center relative overflow-x-auto">
+    <NoSpaceHeaderTemplate>
+      <div className="overflow-hidden">
         {song && (
-          <div className="flex flex-row bg-light60 dark:bg-dark60 ml-20">
-            <img
-              src="https://res.cloudinary.com/djzdhtdpj/image/upload/v1709269357/png-transparent-phonograph-record-lp-record-music-others-miscellaneous-album-disc-jockey-thumbnail_1_dd0lc3.png"
-              className={`w-64 h-full left-40 relative ${
-                isPlaying ? "animate-spin" : ""
-              }`}
-              style={{ animationDuration: "10000ms" }}
-            />
-            <img
-              className="w-64 h-64 rounded-md object-cover object-center"
-              style={{ position: "absolute", ...song.over }}
-              src={song.cover_image}
-            />
-            <div className="ml-40">
-              <div className="ml-20">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2">
-                    <h1 className="text-lightText dark:text-darkText font-semibold text-3xl mb-5">
-                      {song.song_name}
-                    </h1>
-                  </div>
+          <div
+            className={`profileHeader w-full h-96 bg-center bg-cover `}
+            style={{
+              backgroundImage: `url('${song.cover_image}')`,
+            }}
+          >
+            <div className={`w-full h-full pt-56 relative`}>
 
-                  <div className="grid grid-cols-2">
-                    <div className="text-lightTextSecondary dark:text-darkTextSecondary text-xl">
-                      Genre:
-                    </div>
-                    <div className="text-center text-lightText dark:text-darkText text-xl ml-2 border border-light10  dark:border-dark10  rounded-md">
-                      {song.genre.name}
-                    </div>
-                    <div className="text-gray-500 text-xl">Release by:</div>
-                    <div className="text-lightTextSecondary dark:text-darkTextSecondary text-xl ml-2">
-                      {song.artist.artist_name}
-                    </div>
-                    <div className="text-lightTextSecondary text-xl">Date:</div>
-                    <div className="text-lightText dark:text-darkText font-normal-semibold text-xl ml-2">
-                      {formatCreatedAt(song.createdAt)}
-                    </div>
-                  </div>
-                </div>
-                {/* <SoundWaveCanvas /> */}
+              <div
+                className="absolute inset-0 bg-light30 dark:bg-dark30"
+                style={{ opacity: `${(scrollPos * 0.7) / 180}` }}
+              >
               </div>
+              <h1 className="pl-12 text-6xl font-bold text-white">
+                {song.song_name}
+              </h1>
+              <p className="pl-12 text-2xl text-white m-2">
+                {song.genre}
+              </p>
+              <p className="pl-12 text-2xl text-white m-2">
+                {formatCreatedAt(song.createdAt)}
+              </p>
+              {currentSong.is_exclusive ? (
+                userInfo && userInfo?.songs_purchased?.includes(currentSong._id) ? (
+                  <span className="text-white px-2 bg-sky-600/70 text-lg rounded ml-14 font-medium">
+                    OWNED
+                  </span>
+                ) : (
+                  <>
+                    <span className="text-white px-2 bg-amber-500 text-lg rounded ml-14 font-medium">
+                      EXCLUSIVE
+                    </span>
+                    <span className="text-white px-2 bg-amber-500 text-lg rounded ml-5 font-medium" onClick={handlePayment}>
+                      ${song.price}
+                    </span>
+                  </>
+                )
+              ) : (
+                <></>
+              )}
+              
             </div>
           </div>
         )}
         <div className="bg-light60 dark:bg-dark60 px-5">
           <h4 className="text-lightText dark:text-darkText font-semibold text-xl m-10">
-            Top Artist
+            Participated Artist
           </h4>
           <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary ml-8 w-full">
-            {ArtistList.slice(0, 5).map((artist, index) => (
+            {song.participated_artists_users && song.participated_artists_users.map((user, index) => (
               <div
-                key={artist._id}
+                key={index}
                 className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8"
               >
                 <img
-                  src={artist.artist_file.profile_picture}
+                  src={user.profile_picture}
                   className="rounded-full w-40 h-40 object-cover object-center"
                 />
                 <h3 className="text-lg font-semibold dark:text-white m-2">
-                  {artist && (
-                    <>
-                      <Link
-                        to={`/artist/${artist._id}`}
-                        className="text-xs hover:underline"
-                        style={{ fontSize: "1.125rem", lineHeight: "1.25rem" }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        {artist.artist_name}
-                      </Link>
-                    </>
-                  )}
+                  <Link
+                    to={`/artist/${song.participated_artists_details[index]._id}`}
+                    className="text-xs hover:underline"
+                    style={{ fontSize: "1.125rem", lineHeight: "1.25rem" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    {song.participated_artists_details[index].artist_name}
+                  </Link>
                 </h3>
-
-                {artist.artist_file.introduction ? (
-                  <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                    {artist.artist_file.introduction}
-                  </p>
-                ) : (
-                  <p className="text-md text-light30 dark:text-dark30 ml-2">
-                    Null
-                  </p>
-                )}
-
+                <h3 className="m-2">{user.introduction}</h3>
                 <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                  Follow: {artist.followers_count}
                 </p>
               </div>
             ))}
@@ -161,6 +166,6 @@ export default function SongDetail() {
           <div className="h-5"></div>
         </div>
       </div>
-    </DefaultTemplate>
+    </NoSpaceHeaderTemplate>
   );
 }

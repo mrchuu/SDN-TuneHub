@@ -93,6 +93,104 @@ const getSongsByAlbum = async (album) => {
     throw new Error(error.message);
   }
 };
+const getSongsByIdAgg = async (songId) => {
+  try {
+    const existingSong = await Song.aggregate(
+      [
+        {
+          $match: { _id: new mongoose.Types.ObjectId(songId) }
+        },
+        {
+          $lookup: {
+            from: "Artist",
+            localField: "artist",
+            foreignField: "_id",
+            as: "artist",
+          },
+        },
+        {
+          $unwind: {
+            path: "$artist",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "Genre",
+            localField: "genre",
+            foreignField: "_id",
+            as: "genre",
+          },
+        },
+        {
+          $unwind: {
+            path: "$genre",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            participated_artist: {
+              $ifNull: ["$participated_artist", []],
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "Artist",
+            let: {
+              participatedArtists:
+                "$participated_artist",
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: [
+                      "$_id",
+                      "$$participatedArtists",
+                    ],
+                  },
+                },
+              },
+            ],
+            as: "participated_artists_details",
+          },
+        },
+        {
+          $lookup: {
+            from: "Users",
+            localField:
+              "participated_artists_details.userId",
+            foreignField: "_id",
+            as: "participated_artists_users",
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            song_name: 1,
+            genre: "$genre.name",
+            price: 1,
+            is_exclusive: 1,
+            cover_image: 1,
+            artist: "$artist.artist_name",
+            favourited: 1,
+            "participated_artists_details._id": 1,
+            "participated_artists_details.artist_name": 1,
+            "participated_artists_users.profile_picture": 1,
+            "participated_artists_users.introduction": 1,
+            createdAt: 1,
+          },
+        },
+      ]
+    ).exec();
+    return existingSong;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const getSongsById = async (songId) => {
   try {
     const existingSong = await Song.findById(songId)
@@ -105,6 +203,7 @@ const getSongsById = async (songId) => {
     throw new Error(error.message);
   }
 };
+
 const streamSong = async (songId, userId) => {
   try {
     const songStream = await SongStreamRepository.addSongStreamm({
@@ -935,6 +1034,7 @@ const getSongByGenre = async ({ limit, songType, genreId }) => {
         {
           $match: {
             genre: new mongoose.Types.ObjectId(genreId),
+            is_public: true
           },
         },
         {
@@ -1169,6 +1269,7 @@ export default {
   addFavouriteSong,
   removeFavouriteSong,
   getLatestSongs,
+  getSongsByIdAgg,
   getSongByGenre,
   checkFavouriteSong,
   hotestSongByDay1,

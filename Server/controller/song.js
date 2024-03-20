@@ -57,7 +57,7 @@ const streamSong = async (req, res) => {
     if (!existingSong) {
       return res.status(400).json({ error: "Song not found!" });
     }
-
+    console.log(existingSong);
     const fileName = existingSong.file_name;
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
@@ -344,7 +344,7 @@ const getPopularSongOfArtist = async (req, res) => {
 const getSongDetail = async (req, res) => {
   try {
     const songId = req.params.songId;
-    const result = await SongRepository.getSongsById(songId);
+    const result = await SongRepository.getSongsByIdAgg(songId);
     return res.status(200).json({ data: result });
   } catch (error) {
     return res.status(500).json({ error: error.message });

@@ -13,6 +13,7 @@ import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { BsHeartFill } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 export default function SongListDetail({ url, onSongChange }) {
     const [SongList, setSongList] = useState([]);
     const { OriginalRequest } = PerformRequest();
@@ -22,6 +23,7 @@ export default function SongListDetail({ url, onSongChange }) {
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const [songInAction, setSongInAction] = useState(null);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     const handleFavouriteClick = async (songId) => {
         try {
             const response = await OriginalRequest(`songs/favourited/${songId}`, "POST");
@@ -89,7 +91,7 @@ export default function SongListDetail({ url, onSongChange }) {
                             onClick={(e) => {
                                 dispatch(setCurrentSong(song));
                                 dispatch(toogleIsPlaying(true));
-                                onSongChange(song._id);
+                                navigate(`/songdetail/${song._id}`);
                             }}
                         >
                             <td className="w-1/12 text-center">{index + 1}</td>
