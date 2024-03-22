@@ -19,7 +19,7 @@ songRouter.get(
 );
 songRouter.get("/getArtistPopularSongs/:artistId", SongController.getPopularSongOfArtist)
 songRouter.get("/getFeaturedSongs/:artistId", SongController.getFeaturedSongs)
-songRouter.get("/getHotestSong", verifyToken, SongController.getSongsByLastest)
+songRouter.get("/getHotestSong", SongController.getSongsByLastest)
 songRouter.post("/favourited/:songId", verifyToken, SongController.favouritedSong);
 songRouter.get("/getHotestSong", SongController.getSongsByLastest)
 songRouter.get("/getLatest/:limit/:songType", SongController.getLatestSongs)
