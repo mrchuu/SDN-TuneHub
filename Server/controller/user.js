@@ -1,6 +1,7 @@
-import { UserRepository } from "../repository/index.js";
+import { AuthenticateRepository, UserRepository } from "../repository/index.js";
 import bcrypt from "bcrypt";
-
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 const changePassword = async (req, res) => {
   try {
     const { id, currentPassword, newPassword } = req.body;
@@ -52,10 +53,11 @@ const followArtist = async (req, res) => {
   try {
     const { artistId } = req.body;
     const userId = req.decodedToken.userId;
-    const registeredUser = await UserRepository.followArtist({ artistId, userId });
-    return res
-      .status(200)
-      .json({ data: registeredUser });
+    const registeredUser = await UserRepository.followArtist({
+      artistId,
+      userId,
+    });
+    return res.status(200).json({ data: registeredUser });
   } catch (error) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -64,25 +66,41 @@ const followArtist = async (req, res) => {
 const checkArtistFollowed = async (req, res) => {
   try {
     const artistId = req.params.artistId;
-    const userId = req.decodedToken.userId;
-    const registeredUser = await UserRepository.checkArtistFollowed({ artistId, userId });
-    return res
-      .status(200)
-      .json(registeredUser);
+    const token = req.cookies.accessToken;
+    let userId;
+    if (token) {
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const existingUser = await AuthenticateRepository.getUserById(
+        decodedToken.userId
+      );
+      userId = decodedToken.userId;
+      if (!existingUser) {
+        return res.status(400).json({ error: "User was not found" });
+      }
+    }
+    
+    const registeredUser = await UserRepository.checkArtistFollowed({
+      artistId,
+      userId,
+    });
+    console.log(registeredUser);
+    return res.status(200).json(registeredUser);
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: error.message });
   }
 };
 const getListArtistFollowed = async (req, res) => {
   try {
     const userId = req.decodedToken.userId;
     const idArtistFollowed = await UserRepository.getListArtistFollowed(userId);
-    const listArtistFollowed = await UserRepository.getInforArtistFollowed(idArtistFollowed.artist_followed);
+    const listArtistFollowed = await UserRepository.getInforArtistFollowed(
+      idArtistFollowed.artist_followed
+    );
     res.status(200).json({ data: listArtistFollowed });
   } catch (error) {
     return res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 const getListPlayList = async (req, res) => {
   try {
     const userId = req.decodedToken.userId;
@@ -91,7 +109,24 @@ const getListPlayList = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-
-}
-
-export default { changePassword, editProfile, followArtist, checkArtistFollowed, getListArtistFollowed, getListPlayList };
+};
+const getListFavouritedSong = async (req, res) => {
+  try {
+    const userId = req.decodedToken.userId;
+    const listFavouritedSong = await UserRepository.getListFavouritedSong(
+      userId
+    );
+    res.status(200).json({ data: listFavouritedSong });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+export default {
+  changePassword,
+  editProfile,
+  followArtist,
+  checkArtistFollowed,
+  getListArtistFollowed,
+  getListPlayList,
+  getListFavouritedSong,
+};

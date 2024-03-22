@@ -125,9 +125,7 @@ export default function ArtistProfile() {
                 Albums
               </h4>
               <AlbumList url={`album/getAlbumsOfArtist/${artistId}`} />
-              <h4 className="text-lightText dark:text-darkText font-semibold text-xl mt-2">
-                Featured In
-              </h4>
+             
               <FeaturedIn url={`songs/getFeaturedSongs/${artistId}`} />
             </div>
           </div>

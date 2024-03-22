@@ -266,7 +266,7 @@ export default function SideBar() {
                   {userInfo.artist_followed.map((artist) => (
                     <div onClick={() => navigate(`/artist/${artist._id}`)} className="flex items-center mb-3" key={artist._id}>
                       <img
-                        className="w-10 h-10 rounded-full object-fill object-cover border-slate-600  border-2"
+                        className="w-10 h-10 rounded-full object-center object-cover border-slate-600  border-2"
                         src={artist.userId.profile_picture}
                       />
                       &nbsp;
@@ -337,7 +337,7 @@ export default function SideBar() {
                   className="cursor-pointer bg-primary text-black py-2 px-4 rounded-lg hover:bg-primary-dark flex items-center"
                 >
                   <BsFolderPlus size={20} className="mr-2" />
-                  <span className="w-44 overflow-x-hidden" id="chooseImageText">
+                  <span className="w-44 overflow-x-hidden text-center" id="chooseImageText">
                     Choose Image
                   </span>
                 </label>

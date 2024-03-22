@@ -23,7 +23,13 @@ const AudioDropZone = () => {
   const dispatch = useDispatch();
   const onDrop = useCallback((acceptedFiles) => {
     console.log(acceptedFiles[0]);
-
+    if (
+      acceptedFiles[0].type !== "audio/mp3" &&
+      acceptedFiles[0].type !== "audio/mpeg"
+    ) {
+      toast.error("Invalid Audio File");
+      return;
+    }
     const audio = new Audio();
     audio.src = URL.createObjectURL(acceptedFiles[0]);
     audio.onloadedmetadata = () => {
@@ -55,6 +61,11 @@ const CoverImageDropZone = () => {
   const dispatch = useDispatch();
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
+    if (!file.type.startsWith("image/")) {
+      // Dispatch action to show an error toast
+      toast.error("Invalid file. Please drop an image file.");
+      return;
+    }
     dispatch(setSongInfo({ name: "coverImage", value: acceptedFiles[0] }));
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
