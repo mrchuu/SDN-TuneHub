@@ -3,6 +3,7 @@ import {
   AuthenticateRepository,
   SongRepository,
   SongStreamRepository,
+  NotificationRespository,
 } from "../repository/index.js";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -11,7 +12,8 @@ import ffmpeg from "fluent-ffmpeg";
 import jwt from "jsonwebtoken";
 import formidable from "formidable";
 import mongoose from "mongoose";
-import { log } from "console";
+import { io } from "../index.js";
+
 const getRecentlyPlayedSongs = async (req, res) => {
   try {
     const currentUserId = req.decodedToken.userId;
@@ -79,7 +81,12 @@ const streamSong = async (req, res) => {
         existingSong;
       if (is_exclusive) {
         // console.log();
-        if (userId && existingSong.purchased_user.some(item => item.user && item.user.toString() === userId.toString())) {
+        if (
+          userId &&
+          existingSong.purchased_user.some(
+            (item) => item.user && item.user.toString() === userId.toString()
+          )
+        ) {
           const fileStream = fs.createReadStream(filePath);
           res.setHeader("Content-Type", "audio/mpeg");
           fileStream.pipe(res);
@@ -209,6 +216,24 @@ const uploadSong = async (req, res) => {
         songCover: result.cover_image,
         isExclusive: result.is_exclusive,
       });
+      const followers = artist.followers.map((f)=>f.toString());
+      const followersSet = new Set(followers);
+      artist.followers.forEach(async (follower) => {
+        await NotificationRespository.addNotification({
+          userId: follower,
+          content: `${artist.artist_name} just upload a new song`,
+          linkTo: `songDetail/${result.song_name}`,
+        });
+      });
+      io.sockets.sockets.forEach((socket) => {
+        console.log("-----");
+        console.log(socket.userId);
+        if (followersSet.has(socket.userId)) {
+          socket.emit("newNotification", {
+            message: "You have a new notification",
+          });
+        }
+      });
       return res.status(201).json({ message: "song uploaded successfully!!" });
     });
   } catch (error) {
@@ -241,12 +266,12 @@ const getAllSongsByLastest1 = async (req, res) => {
       }
       userId = new mongoose.Types.ObjectId(existingUser._id);
       songs.map((s, index) => {
-        s.favouritedByUser = s.favourited.some(id => id.equals(userId));
-      })
+        s.favouritedByUser = s.favourited.some((id) => id.equals(userId));
+      });
     } else {
       songs.map((s, index) => {
         s.favouritedByUser = false;
-      })
+      });
     }
     return res.status(200).json({ data: songs });
   } catch (error) {
@@ -376,7 +401,7 @@ const favouritedSong = async (req, res) => {
     if (!existingSong) {
       return res.status(400).json({ error: "Song was not found" });
     }
-    let opperation = "remove from favourite"
+    let opperation = "remove from favourite";
     if (existingSong.favourited.includes(userId)) {
       const favourited = await SongRepository.removeFavouriteSong({
         songId,
@@ -384,16 +409,24 @@ const favouritedSong = async (req, res) => {
       });
       favourited.favouritedByUser = false;
       console.log(favourited);
-      return res.status(201).json({ result: favourited, favourited: false, message: "Successfully " + opperation });
+      return res.status(201).json({
+        result: favourited,
+        favourited: false,
+        message: "Successfully " + opperation,
+      });
     } else {
-      opperation = "added to favourite"
+      opperation = "added to favourite";
       const favourited = await SongRepository.addFavouriteSong({
         songId,
         userId: new mongoose.Types.ObjectId(userId),
       });
       favourited.favouritedByUser = true;
       console.log(favourited);
-      return res.status(201).json({ result: favourited, favourited: true, message: "Successfully " + opperation });
+      return res.status(201).json({
+        result: favourited,
+        favourited: true,
+        message: "Successfully " + opperation,
+      });
     }
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -487,5 +520,6 @@ export default {
   favouritedSong,
   getFavouritedSong,
   getLatestSongs,
-  getSongByGenre,checkFavouriteSong
+  getSongByGenre,
+  checkFavouriteSong,
 };

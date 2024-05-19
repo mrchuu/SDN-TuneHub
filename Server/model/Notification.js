@@ -1,19 +1,24 @@
 import mongoose, { Schema } from "mongoose";
 import User from "./RegisteredUser.js";
 
-
 const NotificationSchema = new Schema(
   {
     content: {
-        type: String,
-        require: true
+      type: String,
+      required: true,
     },
-    user: { type: Schema.Types.ObjectId }
+    linkTo: {
+      type: String,
+      required: true,
+    },
+    read: {
+      type: Boolean,
+      default: false,
+    },
+    user: { type: Schema.Types.ObjectId },
   },
-  { timestamps: true,collection: "Notification" }
+  { timestamps: true, collection: "Notification" }
 );
-
-//   { collection: "products", timestamps: true }
 
 const Notification = mongoose.model("Notification", NotificationSchema);
 export default Notification;

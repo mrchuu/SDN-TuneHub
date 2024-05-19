@@ -1004,6 +1004,7 @@ const getLatestSongs = async (limit, songType) => {
   } else if (songType === "Free") {
     filter.is_exclusive = false;
   }
+  filter.is_public = true
   try {
     const result = await Song.find(filter)
       .populate("artist", "_id artist_name")

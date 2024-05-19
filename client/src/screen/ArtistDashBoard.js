@@ -76,8 +76,8 @@ export default function ArtistDashBoard() {
                     {
                       label: "Revenue",
                       data: [10, 50, 30],
-                      tension: 0.5,
-                      fill: true,
+                      tension: 0.7,
+                      fill: false,
                       borderColor: "rgb(242, 120, 92)",
                       backgroundColor: "rgb(242, 120, 92, 0.5)",
                     },

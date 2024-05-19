@@ -15,7 +15,7 @@ export default function TopArtist() {
     fetchArtist();
   }, []);
   return (
-    <div className="w-full ">
+    <div className="w-full mb-5">
       <div className="mx-auto">
         <h4 className="text-2xl font-semibold mb-8 dark:text-white ml-4 pl-12">
           Top Artist
@@ -25,7 +25,7 @@ export default function TopArtist() {
         {ArtistList.slice(0,5 ).map((artist, index) => (
           <div
             key={artist._id}
-            className="card mx-2 px-3 pt-2 pb-4 border rounded-md hover:bg-light30 hover:dark:bg-dark30 relative hover:shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none"
+            className="card mx-2 px-3 pt-2 pb-4 border rounded-md hover:bg-light30 hover:dark:bg-dark30 relative hover:shadow-md shadow-neutral-400 dark:shadow-blue-700/50 dark:shadow-md dark:border-none"
           >
             <img
               src={artist.artist_file.profile_picture}

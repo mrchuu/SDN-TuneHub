@@ -6,7 +6,7 @@ import { sendConfirmEmail } from "../utils/mailTransport.js";
 import jwksClient from "jwks-rsa";
 import User from "../model/RegisteredUser.js";
 import emailTemplate from "../utils/emailTemplate.js";
-
+import { io } from "../index.js";
 const client = jwksClient({
   jwksUri: "https://www.googleapis.com/oauth2/v3/certs",
   requestHeaders: {
@@ -129,6 +129,16 @@ const login = async (req, res) => {
     if (!existingUser.verify) {
       return res.status(400).json({ error: "The account is not verified!" });
     }
+    const socket = io.sockets.sockets.get(req.body.socketId);
+    if (socket) {
+      socket.userId = existingUser._id.toString();
+      console.log("user socket has been asigned with userId");
+    } else {
+      console.log("something went wrong");
+    }
+    io.sockets.sockets.forEach((sk) => {
+      console.log(`socket ${sk.id} userId ${sk?.userId}`);
+    });
     const accessToken = jwt.sign(
       { userId: existingUser._id },
       process.env.JWT_SECRET_KEY,
@@ -166,13 +176,61 @@ const login = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const mobileLogin = async (req, res) => {
+  try {
+    // const { email, password } = req.body;
+    console.log(req.body);
+    const existingUser = await AuthenticateRepository.getUserByEmail(
+      req.body.email
+    );
+    if (!existingUser) {
+      return res.status(400).json({ error: "Email not found" });
+    }
+    const passwordMatch = bcrypt.compareSync(
+      req.body.password,
+      existingUser.password
+    );
+    if (!passwordMatch) {
+      return res.status(400).json({ error: "Bad Credential" });
+    }
+    if (!existingUser.verify) {
+      return res.status(400).json({ error: "The account is not verified!" });
+    }
+    const accessToken = jwt.sign(
+      { userId: existingUser._id },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1hr",
+      }
+    );
+    const refreshToken = jwt.sign(
+      { userId: existingUser._id },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1w",
+      }
+    );
+    const { createdAt, updatedAt, password, ...filteredUser } =
+      existingUser._doc;
+    // Instead of setting cookies or including tokens in the response body,
+    // send tokens in the response headers
+    res.setHeader("accessToken", accessToken);
+    res.setHeader("refreshToken", refreshToken);
+    return res.status(200).json({
+      message: "Login successfully! Welcome back",
+      data: filteredUser,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 const getUserInfo = async (req, res) => {
   try {
     const decodedToken = req.decodedToken;
     // console.log(decodedToken);
     const user = await AuthenticateRepository.getUserById(decodedToken.userId);
     const { password, createdAt, updatedAt, ...filterdUser } = user._doc;
-    return res.status(200).json({data: filterdUser});
+    return res.status(200).json({ data: filterdUser });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -390,4 +448,5 @@ export default {
   oauth2GoogleAuthentication,
   googleLogin,
   sendResetLink,
+  mobileLogin,
 };

@@ -10,17 +10,24 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Snackbar,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaCircleUser } from "react-icons/fa6";
 import { IoLogOut } from "react-icons/io5";
 import { IoIosNotifications } from "react-icons/io";
 import Logout from "../utilities/LogOut.js";
+import NotificationBox from "./NotificationBox.js";
+import socket from "../utilities/Socket.js";
 export default function Header() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const userInfo = useSelector((state) => state.auth.userInfo);
+  const darkMode = useSelector((state) => state.theme.theme);
   const [anchorProfile, setAnchorProfile] = useState(null);
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
+  const [notificationAnchor, setNotificationAnchor] = useState(null);
+  const [openNotification, setOpenNotification] = useState(false);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
   const openMenu = (e) => {
     setOpenProfileMenu(true);
     setAnchorProfile(e.currentTarget);
@@ -29,6 +36,30 @@ export default function Header() {
     setOpenProfileMenu(false);
     setAnchorProfile(null);
   };
+  const openNotificationF = (e) => {
+    setOpenNotification(true);
+    setNotificationAnchor(e.currentTarget);
+  };
+  const closeNotification = () => {
+    setOpenNotification(false);
+    setNotificationAnchor(null);
+  };
+  const toogleSnackBar = (value) => {
+    setOpenSnackBar(value);
+  };
+  useEffect(() => {
+    const handleNewNotification = () => {
+      setOpenSnackBar(true);
+      console.log("troi oi sao ko duoc v");
+    };
+
+    socket.on("newNotification", handleNewNotification);
+
+    return () => {
+      socket.off("newNotification", handleNewNotification);
+    };
+  }, []);
+
   const { performLogOut } = Logout();
 
   const location = useLocation();
@@ -39,10 +70,36 @@ export default function Header() {
       {/* <FaCogs size={35} className="mr-8" color="#f2785c" /> */}
       {currentPath === "/explore" ? <Search /> : null}
       <ThemeSwitcher />
-      <IoIosNotifications
-        className="text-light10 dark:text-dark10 ml-5"
-        size={28}
-      />
+      <div>
+        <div
+          onClick={(e) => {
+            openNotificationF(e);
+            // setOpenSnackBar(true);
+          }}
+        >
+          <IoIosNotifications
+            className="text-light10 dark:text-dark10 ml-5"
+            size={28}
+          />
+        </div>
+
+        <Menu
+          open={openNotification}
+          anchorEl={notificationAnchor}
+          onClose={closeNotification}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+          autoFocus={false}
+          sx={{
+            "& .MuiPaper-root": {
+              backgroundColor: "#172a46",
+            },
+          }}
+        >
+          <NotificationBox />
+        </Menu>
+      </div>
       <div className="">
         {isLoggedIn ? (
           <div className="mr-10 ml-5">
@@ -92,6 +149,15 @@ export default function Header() {
           </Link>
         )}
       </div>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={10000}
+        onClose={(e) => {
+          setOpenSnackBar(false);
+        }}
+        sx={{ backgroundColor: "#FBFBFB" }}
+        message="You have a new unread notification"
+      />
     </div>
   );
 }
