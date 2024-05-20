@@ -9,48 +9,48 @@ import { Link } from "react-router-dom";
 // import '../style/explore.css'
 
 function Explore() {
-  const playlist = [
-    {
-      name: "Rock 'n' roll",
-      image:
-        "https://vapa.vn/wp-content/uploads/2022/12/hinh-nen-hoa-tulip-001.jpg",
-    },
-    {
-      name: "Hiphop",
-      image:
-        "https://tamanh.net/wp-content/uploads/2023/01/tao-dang-chup-anh-ao-dai-voi-hoa.jpg",
-    },
-    {
-      name: "Blues",
-      image:
-        "https://vapa.vn/wp-content/uploads/2022/12/hinh-nen-hoa-tulip-001.jpg",
-    },
-    {
-      name: "RnB",
-      image:
-        "https://tamanh.net/wp-content/uploads/2023/01/tao-dang-chup-anh-ao-dai-voi-hoa.jpg",
-    },
-    {
-      name: "Pop",
-      image:
-        "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/8/18/1082524/1660404545-Fadkeqhve.jpg",
-    },
-    {
-      name: "Classical",
-      image:
-        "https://cattour.vn/images/upload/images/quang-binh/deo-ngang-quang-binh/deo-ngang-quang-binh-14.jpg",
-    },
-    {
-      name: "Electronic",
-      image:
-        "https://i.pinimg.com/736x/6f/a9/c3/6fa9c33211ce7c08f2cc4fcef6144b7d.jpg",
-    },
-    {
-      name: "Country",
-      image:
-        "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/8/18/1082524/1660404545-Fadkeqhve.jpg",
-    },
-  ];
+  // const playlist = [
+  //   {
+  //     name: "Rock 'n' roll",
+  //     image:
+  //       "https://vapa.vn/wp-content/uploads/2022/12/hinh-nen-hoa-tulip-001.jpg",
+  //   },
+  //   {
+  //     name: "Hiphop",
+  //     image:
+  //       "https://tamanh.net/wp-content/uploads/2023/01/tao-dang-chup-anh-ao-dai-voi-hoa.jpg",
+  //   },
+  //   {
+  //     name: "Blues",
+  //     image:
+  //       "https://vapa.vn/wp-content/uploads/2022/12/hinh-nen-hoa-tulip-001.jpg",
+  //   },
+  //   {
+  //     name: "RnB",
+  //     image:
+  //       "https://tamanh.net/wp-content/uploads/2023/01/tao-dang-chup-anh-ao-dai-voi-hoa.jpg",
+  //   },
+  //   {
+  //     name: "Pop",
+  //     image:
+  //       "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/8/18/1082524/1660404545-Fadkeqhve.jpg",
+  //   },
+  //   {
+  //     name: "Classical",
+  //     image:
+  //       "https://cattour.vn/images/upload/images/quang-binh/deo-ngang-quang-binh/deo-ngang-quang-binh-14.jpg",
+  //   },
+  //   {
+  //     name: "Electronic",
+  //     image:
+  //       "https://i.pinimg.com/736x/6f/a9/c3/6fa9c33211ce7c08f2cc4fcef6144b7d.jpg",
+  //   },
+  //   {
+  //     name: "Country",
+  //     image:
+  //       "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/8/18/1082524/1660404545-Fadkeqhve.jpg",
+  //   },
+  // ];
 
   const { OriginalRequest } = PerformRequest();
 
@@ -182,7 +182,7 @@ function Explore() {
                 </h2>
               </div>
               <div className="container mx-auto flex flex-wrap items-center">
-                {playlist.map((artist, index) => (
+                {genres.map((artist, index) => (
                   <div className="w-80 h-44 card m-3 mb-4 border rounded-sm bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-200 dark:shadow-blue-300 dark:shadow-md dark:border-none">
                     <img
                       src={artist.image}
