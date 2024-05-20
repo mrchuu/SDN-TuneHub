@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut, setUserInfo } from "../redux/auth.js";
 import { useNavigate } from "react-router-dom";
-
+import socket from "../utilities/Socket.js"
 export default function PerformRequest() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,12 +19,15 @@ export default function PerformRequest() {
       requestOption.body = body;
     } else if (body) {
       requestOption.headers["Content-Type"] = "application/json";
-      requestOption.body = JSON.stringify(body);
+      const requestBody = { ...body, socketId: socket.id };
+      console.log(requestBody);
+      requestOption.body = JSON.stringify(requestBody);
     }
+    
     const response = await fetch(`${SERVER_URL}${url}`, requestOption);
     const data = await response.json();
     if (response.ok) {
-      console.log(response.status);
+      console.log("deo hieu kieu j");
       //if the response have a message, then toast it
       //the attribute must be named message
       if (data.message) {

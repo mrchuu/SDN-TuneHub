@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import PerformRequest from "../utilities/PerformRequest.js";
+import toast from "react-hot-toast";
 export default function SignUp() {
   const [signUpData, setSignUpData] = useState({
     firstName: "",
@@ -23,6 +24,11 @@ export default function SignUp() {
   const [imageFile, setImageFile] = useState(null);
   const onDrop = useCallback((acceptedFile) => {
     const file = acceptedFile[0];
+    if (!file.type.startsWith("image/")) {
+      // Dispatch action to show an error toast
+      toast.error("Invalid file. Please drop an image file.");
+      return;
+    }
     setImageFile(file);
     const reader = new FileReader();
     reader.onload = () => {
