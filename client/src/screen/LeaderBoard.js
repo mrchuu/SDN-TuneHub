@@ -17,6 +17,9 @@ import { Link } from "react-router-dom";
 import { BsHeartFill } from "react-icons/bs";
 import Select from '@mui/material/Select';
 import { RiVipDiamondFill } from "react-icons/ri";
+import PlayListAddMenu from "./PlayListAddMenu.js";
+import auth, { setUserInfo } from "../redux/auth.js";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 export default function LeaderBoard() {
     const { OriginalRequest } = PerformRequest();
     const [SongList, setSong] = useState([]);
@@ -30,6 +33,10 @@ export default function LeaderBoard() {
     const [showAllArtists, setShowAllArtists] = useState(false);
     const [date, setDate] = useState('1');
     const [check, setCheck] = useState('all');
+    const [playlistMenuAnchor, setPlaylistMenuAnchor] = useState(null);
+    const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+
     let intervalId;
     const handleFavouriteClick = async (songId) => {
         try {
@@ -73,6 +80,7 @@ export default function LeaderBoard() {
         console.log(date);
         if (data) {
             setSong(data.data);
+            setLoading(false);
         }
     };
     const fetchArtist = async () => {
@@ -99,6 +107,27 @@ export default function LeaderBoard() {
             default:
                 return 'Time';
         }
+    };
+    const openMenuPlaylist = (e, song) => {
+        setSubMenuIsOpen(true);
+        setPlaylistMenuAnchor(e.currentTarget);
+    };
+    const closeMenuPlaylist = (e, song) => {
+        setSubMenuIsOpen(false);
+        setPlaylistMenuAnchor(null);
+    };
+
+    const handleCreatePlaylist = async () => {
+        const response = await OriginalRequest(`playlist/create`, "POST", {
+            songs: songInAction,
+        });
+        if (response) {
+            const user = await OriginalRequest("auth/user", "GET");
+            dispatch(setUserInfo(user.data));
+            closeMenuPlaylist();
+        }
+
+        closeMenu();
     };
 
     useEffect(() => {
@@ -158,117 +187,127 @@ export default function LeaderBoard() {
                         </tr>
                     </thead>
                     <tbody className="text-lightTextSecondary dark:text-darkTextSecondary hover:po">
-                        {SongList.map((song, index) => (
-                            <tr
-                                className="border-b border-neutral-300  hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group"
-                                key={song._id}
-                                onClick={(e) => {
-                                    dispatch(setCurrentSong(song));
-                                    dispatch(toogleIsPlaying(true));
-                                }}
-                            >
-                                <td className="w-1/12 text-center">{index + 1}</td>
-                                <td className="w-4/12 py-2">
-                                    <div className="flex items-center">
-                                        <div
-                                            style={{ backgroundImage: `url('${song.cover_image}')` }}
-                                            className={`relative w-14 h-14 bg-cover bg-center flex items-center justify-center rounded-md shadow-lg shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm`}
-                                        >
-                                            <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-50 transition-opacity duration-300 rounded-md"></div>
-
-                                            <FaPlay className="text-light10 dark:text-dark10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-                                        </div>
-
-                                        <div className="ml-2">
-                                            <h4 className="font-semibold text-md flex flex-row">
-                                                {song.song_name ? (
-                                                    <Link
-                                                        to={`/songdetail/${song._id}`}
-                                                        className="text-xs hover:underline flex items-center"
-                                                        style={{ fontSize: "1rem", lineHeight: "1rem" }}
-                                                        onClick={(e) => {
-                                                            dispatch(setCurrentSong(song));
-                                                            dispatch(toogleIsPlaying(true));
-                                                        }}
-                                                    >
-                                                        {song.song_name}
-                                                        {song.is_exclusive ? (
-                                                            <RiVipDiamondFill className="text-yellow-500/50 ml-1" />
-                                                        ) : null}
-                                                    </Link>
-                                                ) : (
-                                                    <></>
-                                                )}
-                                            </h4>
-                                            <h6 className="text-xs">
-                                                {song.artist ? (
-                                                    <Link
-                                                        to={`/artist/${song.artist._id}`}
-                                                        className="text-xs hover:underline"
-                                                        onClick={(e) => { e.stopPropagation() }}
-                                                    >
-                                                        {song.artist.artist_name}
-                                                    </Link>
-                                                ) : (
-                                                    <></>
-                                                )}
-                                                {song.participated_artists && song.participated_artists.length > 0 && (
-                                                    <>
-                                                        {song.participated_artists.map((artist, index) => (
-                                                            <span key={index}>
-                                                                {index >= 0 && ', '}
-                                                                <Link
-                                                                    to={`/artist/${artist._id}`}
-                                                                    className="text-xs hover:underline"
-                                                                    onClick={(e) => { e.stopPropagation() }}
-                                                                >
-                                                                    {artist.artist_name}
-                                                                </Link>
-                                                            </span>
-                                                        ))}
-                                                    </>
-                                                )}
-                                            </h6>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="w-4/12">
-                                    {song.album.album_name ? song.album.album_name : ""}
-                                </td>
-                                <td className="w-1/12">{song.streamCount}</td>
-                                <td className="w-1/12">{Math.floor(song.duration / 60)}:{song.duration % 60}</td>
-
-                                <td className="w-1/12 ">
-                                    <div className="flex items-center justify-evenly">
-                                        <div id={song._id}>
-                                            {!song.favouritedByUser ?
-                                                <FaRegHeart
-                                                    className="text-light10 dark:text-dark10 mt-1"
-                                                    size={18}
-                                                    onClick={(e) => {
-                                                        handleFavouriteClick(song._id);
-                                                        e.stopPropagation()
-                                                    }}
-                                                />
-                                                :
-                                                <BsHeartFill
-                                                    className="text-light10 dark:text-dark10 mt-1"
-                                                    size={18}
-                                                    onClick={(e) => {
-                                                        handleFavouriteClick(song._id);
-                                                        e.stopPropagation()
-                                                    }}
-                                                />
-                                            }
-                                        </div>
-                                        <IoEllipsisHorizontal onClick={(e) => {
-                                            e.stopPropagation();
-                                            openMenu(e, song);
-                                        }} />
-                                    </div>
+                        {loading ? (
+                            <tr className="w-full">
+                                <td colSpan="5" className="w-full">
+                                    <AiOutlineLoading3Quarters
+                                        className={`mx-auto mt-10 text-light10 animate-spin duration-${10000}`}
+                                        size={35}
+                                    />
                                 </td>
                             </tr>
-                        )).slice(0, showAllSongs ? SongList.length : 5)}
+                        ) : (
+                            SongList.map((song, index) => (
+                                <tr
+                                    className="border-b border-neutral-300  hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group"
+                                    key={song._id}
+                                    onClick={(e) => {
+                                        dispatch(setCurrentSong(song));
+                                        dispatch(toogleIsPlaying(true));
+                                    }}
+                                >
+                                    <td className="w-1/12 text-center">{index + 1}</td>
+                                    <td className="w-4/12 py-2">
+                                        <div className="flex items-center">
+                                            <div
+                                                style={{ backgroundImage: `url('${song.cover_image}')` }}
+                                                className={`relative w-14 h-14 bg-cover bg-center flex items-center justify-center rounded-md shadow-lg shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm`}
+                                            >
+                                                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-50 transition-opacity duration-300 rounded-md"></div>
+
+                                                <FaPlay className="text-light10 dark:text-dark10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                                            </div>
+
+                                            <div className="ml-2">
+                                                <h4 className="font-semibold text-md flex flex-row">
+                                                    {song.song_name ? (
+                                                        <Link
+                                                            to={`/songdetail/${song._id}`}
+                                                            className="text-xs hover:underline flex items-center"
+                                                            style={{ fontSize: "1rem", lineHeight: "1rem" }}
+                                                            onClick={(e) => {
+                                                                dispatch(setCurrentSong(song));
+                                                                dispatch(toogleIsPlaying(true));
+                                                            }}
+                                                        >
+                                                            {song.song_name}
+                                                            {song.is_exclusive ? (
+                                                                <RiVipDiamondFill className="text-yellow-500/50 ml-1" />
+                                                            ) : null}
+                                                        </Link>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                </h4>
+                                                <h6 className="text-xs">
+                                                    {song.artist ? (
+                                                        <Link
+                                                            to={`/artist/${song.artist._id}`}
+                                                            className="text-xs hover:underline"
+                                                            onClick={(e) => { e.stopPropagation() }}
+                                                        >
+                                                            {song.artist.artist_name}
+                                                        </Link>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                    {song.participated_artists && song.participated_artists.length > 0 && (
+                                                        <>
+                                                            {song.participated_artists.map((artist, index) => (
+                                                                <span key={index}>
+                                                                    {index >= 0 && ', '}
+                                                                    <Link
+                                                                        to={`/artist/${artist._id}`}
+                                                                        className="text-xs hover:underline"
+                                                                        onClick={(e) => { e.stopPropagation() }}
+                                                                    >
+                                                                        {artist.artist_name}
+                                                                    </Link>
+                                                                </span>
+                                                            ))}
+                                                        </>
+                                                    )}
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="w-4/12">
+                                        {song.album.album_name ? song.album.album_name : ""}
+                                    </td>
+                                    <td className="w-1/12">{song.streamCount}</td>
+                                    <td className="w-1/12">{Math.floor(song.duration / 60)}:{song.duration % 60}</td>
+
+                                    <td className="w-1/12 ">
+                                        <div className="flex items-center justify-evenly">
+                                            <div id={song._id}>
+                                                {!song.favouritedByUser ?
+                                                    <FaRegHeart
+                                                        className="text-light10 dark:text-dark10 mt-1"
+                                                        size={18}
+                                                        onClick={(e) => {
+                                                            handleFavouriteClick(song._id);
+                                                            e.stopPropagation()
+                                                        }}
+                                                    />
+                                                    :
+                                                    <BsHeartFill
+                                                        className="text-light10 dark:text-dark10 mt-1"
+                                                        size={18}
+                                                        onClick={(e) => {
+                                                            handleFavouriteClick(song._id);
+                                                            e.stopPropagation()
+                                                        }}
+                                                    />
+                                                }
+                                            </div>
+                                            <IoEllipsisHorizontal onClick={(e) => {
+                                                e.stopPropagation();
+                                                openMenu(e, song);
+                                            }} />
+                                        </div>
+                                    </td>
+                                </tr>
+                            )).slice(0, showAllSongs ? SongList.length : 5))}
                     </tbody>
                 </table>
                 <div className="text-center mt-4">
@@ -308,7 +347,10 @@ export default function LeaderBoard() {
                             <ListItemText className="text-right">Queue Song</ListItemText>
                         </ListItemIcon>
                     </MenuItem>
-                    <MenuItem className="flex items-center">
+                    <MenuItem className="flex items-center"
+                        onClick={(e) => {
+                            openMenuPlaylist(e);
+                        }}>
                         <ListItemIcon>
                             <MdLibraryMusic
                                 size={20}
@@ -317,6 +359,20 @@ export default function LeaderBoard() {
                             <ListItemText className="text-right">Add To Playlist</ListItemText>
                         </ListItemIcon>
                     </MenuItem>
+                </Menu>
+                <Menu
+                    anchorEl={playlistMenuAnchor}
+                    anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                    }}
+                    open={subMenuIsOpen}
+                    onClose={() => setSubMenuIsOpen(false)}
+                >
+                    <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
+                    <div style={{ overflowY: "auto", maxHeight: "200px" }}>
+                        <PlayListAddMenu songId={songInAction} />
+                    </div>
                 </Menu>
                 <div className="w-full pt-8 ">
                     <div className="mx-auto">

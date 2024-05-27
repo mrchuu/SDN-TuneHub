@@ -2,6 +2,7 @@ import { AuthenticateRepository, UserRepository } from "../repository/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import User from "../model/RegisteredUser.js"
 const changePassword = async (req, res) => {
   try {
     const { id, currentPassword, newPassword } = req.body;
@@ -29,25 +30,40 @@ const changePassword = async (req, res) => {
 const editProfile = async (req, res) => {
   try {
     const { id, firstName, lastName, introduction, profilePicture } = req.body;
+
+    // Update the user profile
     const updatedUser = await UserRepository.updateProfile(id, {
       firstName,
       lastName,
       introduction,
       profilePicture,
     });
+
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-    console.log("UpdateUser: " + updatedUser);
-    const { password, createdAt, updatedAt, ...updateUsr } = updatedUser._doc;
-    return res
-      .status(200)
-      .json({ message: "Edit profile successfully", data: updateUsr });
+
+    // Populate the artist_followed field with specific fields only
+    const populatedUser = await User.findById(updatedUser._id)
+      .populate({
+        path: "artist_followed",
+        select: "_id artist_name",
+        populate: { path: "userId", select: "profile_picture" },
+      })
+      .execPopulate();
+
+    console.log("UpdatedUser: ", populatedUser);
+
+    // Exclude sensitive fields
+    const { password, createdAt, updatedAt, ...userWithoutSensitiveData } = populatedUser._doc;
+
+    return res.status(200).json({ message: "Edit profile successfully", data: userWithoutSensitiveData });
   } catch (error) {
     console.error("Edit profile error:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: error.message });
   }
 };
+
 
 const followArtist = async (req, res) => {
   try {
@@ -78,7 +94,7 @@ const checkArtistFollowed = async (req, res) => {
         return res.status(400).json({ error: "User was not found" });
       }
     }
-    
+
     const registeredUser = await UserRepository.checkArtistFollowed({
       artistId,
       userId,

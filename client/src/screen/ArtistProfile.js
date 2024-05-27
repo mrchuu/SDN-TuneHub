@@ -3,7 +3,7 @@ import NoSpaceHeaderTemplate from "../template/NoSpaceHeaderTemplat";
 import { useDispatch, useSelector } from "react-redux";
 import { setScrollPos } from "../redux/window";
 import { useEffect, useRef, useState } from "react";
-import SongListWithStreamCount from "../component/SongListWithStreamCount";
+import SongList from "../component/SongList";
 import AlbumList from "../component/AlbumsList";
 import PerformRequest from "../utilities/PerformRequest";
 import FeaturedIn from "../component/artistProfile/FeaturedIn";
@@ -117,7 +117,7 @@ export default function ArtistProfile() {
                 Popular Tracks
               </h4>
               <div className="px-3">
-                <SongListWithStreamCount
+                <SongList
                   url={`songs/getArtistPopularSongs/${artistId}`}
                 />
               </div>
