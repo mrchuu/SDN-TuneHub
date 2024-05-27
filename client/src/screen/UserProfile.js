@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { useDispatch, useSelector } from "react-redux";
-import { login, logOut, setUserInfo } from "../redux/auth.js";
+import {  setUserInfo } from "../redux/auth.js";
 import "../style/userprofile.css";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
@@ -79,10 +79,12 @@ export default function UserProfile() {
                 "PUT",
                 updateEditProfile
             );
+            console.log(data);
             if (data.data) {
                 dispatch(setUserInfo(data.data));
             }
             setIsOpen0(false);
+            
         } catch (error) {
             console.log(error);
         }
