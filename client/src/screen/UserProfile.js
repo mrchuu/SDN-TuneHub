@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import DefaultTemplate from "../template/DefaultTemplate";
+import NoSpaceHeaderTemplate from "../template/NoSpaceHeaderTemplat.js";
 import SERVER_URL from "../config.js";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
@@ -177,20 +177,19 @@ export default function UserProfile() {
         fetchPlayList();
     }, []);
     return (
-        <DefaultTemplate>
-            <div className="w-full min-h-screen">
+        <NoSpaceHeaderTemplate>
+            <div className="w-full min-h-screen p-5">
                 <div className="profile-contain pb-5">
                     <div className="profile-header bg-light30 dark:bg-dark30 rounded-3xl shadow-lg">
                         <div className="profile-info">
                             <div className="picture">
-                                <img className="object-cover object-center"
+                                <img className="object-cover object-center w-40 h-40 rounded-lg ml-4"
                                     src={auth.profile_picture}
                                     alt="Girl in a jacket"
                                 />
                             </div>
                             <div className="info-user text-lightText dark:text-darkText">
-                                <p>Profile</p>
-                                <h1>{auth.first_name} {auth.last_name}</h1>
+                                <h1 >{auth.first_name} {auth.last_name}</h1>
                                 <p id="introduce" className="text-lightTextSecondary dark:text-darkTextSecondary">Introduce: {auth.introduction}</p>
                                 <p id="number-playlist">{playList.length} Public Playlist</p>
                             </div>
@@ -430,7 +429,7 @@ export default function UserProfile() {
                     </div>
                 ) : (<></>)}
             </div>
-        </DefaultTemplate >
+        </NoSpaceHeaderTemplate >
     );
 }
 

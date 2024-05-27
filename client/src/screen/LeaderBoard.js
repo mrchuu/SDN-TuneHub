@@ -380,7 +380,7 @@ export default function LeaderBoard() {
                             Artist
                         </h2>
                     </div>
-                    <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary ml-8 w-full">
+                    <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary ml-8 w-full ">
                         {ArtistList.slice(0, showAllArtists ? ArtistList.length : 5).map((artist, index) => (
                             <div key={artist._id} className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8">
                                 <img
@@ -403,7 +403,7 @@ export default function LeaderBoard() {
                                 </h3>
 
                                 {artist.artist_file.introduction ? (
-                                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary line-clamp-2">
                                         {artist.artist_file.introduction}
                                     </p>
                                 ) : (
