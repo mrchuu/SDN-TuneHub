@@ -122,7 +122,7 @@ export default function SongListDetail({ url, onSongChange }) {
                                             ) : (
                                                 <></>
                                             )}
-                                            {song.participated_artists && song.participated_artists.length > 1 && (
+                                            {song.participated_artists && song.participated_artists.length >= 0 && (
                                                 <>
                                                     {song.participated_artists.map((artist, index) => (
                                                         <span key={index}>

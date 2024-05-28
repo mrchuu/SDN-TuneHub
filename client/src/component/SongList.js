@@ -19,8 +19,8 @@ import auth, { setUserInfo } from "../redux/auth.js";
 import PlayListAddMenu from "./PlayListAddMenu.js";
 import { RiVipDiamondFill } from "react-icons/ri";
 import { BsHeartFill } from "react-icons/bs";
-import { CiCirclePlus } from "react-icons/ci";
-export default function SongList({ url, moodId, playlistId }) {
+
+export default function SongList({ url }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
@@ -31,36 +31,33 @@ export default function SongList({ url, moodId, playlistId }) {
   const [loading, setLoading] = useState(false);
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
   const [playlistMenuAnchor, setPlaylistMenuAnchor] = useState(null);
-
   const userInfo = useSelector((state) => state.auth.userInfo);
   const [Favorite, setFavorite] = useState(false);
 
   const currentSong = useSelector((state) => state.player.currentSong);
+
   const closeMenu = (e, song) => {
     setMenuIsOpen(false);
     setSongMenuAnchor(null);
     setFavorite(false);
   };
+
   const openMenu = async (e, song) => {
     setSongInAction(song);
-    checkFavorite(song);
     setSongMenuAnchor(e.currentTarget);
     setMenuIsOpen(true);
-
-    // console.log(log);
   };
 
-  const checkFavorite = async (song) => {
+  const checkFavorite = async (songId) => {
     try {
       const check = await OriginalRequest(
-        `songs/checkFavorite/${song._id}`,
+        `songs/checkFavorite/${songId}`,
         "GET"
       );
-      if (check) {
-        setFavorite(check);
-      }
+      return check;
     } catch (error) {
       console.log(error);
+      return false;
     }
   };
 
@@ -68,6 +65,7 @@ export default function SongList({ url, moodId, playlistId }) {
     setSubMenuIsOpen(true);
     setPlaylistMenuAnchor(e.currentTarget);
   };
+
   const closeMenuPlaylist = (e, song) => {
     setSubMenuIsOpen(false);
     setPlaylistMenuAnchor(null);
@@ -80,7 +78,13 @@ export default function SongList({ url, moodId, playlistId }) {
           setLoading(true);
           const data = await OriginalRequest(url ? url : "songs/getAll", "GET");
           if (data) {
-            setSongList(data.data);
+            const songListWithFavorites = await Promise.all(
+              data.data.map(async (song) => {
+                const isFavorite = await checkFavorite(song._id);
+                return { ...song, favourite: isFavorite };
+              })
+            );
+            setSongList(songListWithFavorites);
           }
         } catch (error) {
           console.log(error);
@@ -93,17 +97,20 @@ export default function SongList({ url, moodId, playlistId }) {
     };
     fetch();
   }, [hasMounted, url]);
+
   const handleFavouriteClick = async (songId) => {
     try {
-      const response = await OriginalRequest(
-        `songs/favourited/${songId}`,
-        "POST"
+      await OriginalRequest(`songs/favourited/${songId}`, "POST");
+      setSongList((prevSongList) =>
+        prevSongList.map((song) =>
+          song._id === songId ? { ...song, favourite: !song.favourite } : song
+        )
       );
-      closeMenu();
     } catch (error) {
       console.error("Error toggling favourite:", error);
     }
   };
+
   const handleCreatePlaylist = async () => {
     const response = await OriginalRequest(`playlist/create`, "POST", {
       songs: songInAction,
@@ -113,7 +120,6 @@ export default function SongList({ url, moodId, playlistId }) {
       dispatch(setUserInfo(user.data));
       closeMenuPlaylist();
     }
-
     closeMenu();
   };
 
@@ -140,7 +146,7 @@ export default function SongList({ url, moodId, playlistId }) {
                 Album
               </td>
               <td className="w-1/12 text-center">Time</td>
-              <td className="w-1/12"></td>
+              <td className="w-2/12 text-center">Action</td>
             </tr>
           </thead>
           <tbody className="text-lightTextSecondary dark:text-darkTextSecondary">
@@ -156,11 +162,10 @@ export default function SongList({ url, moodId, playlistId }) {
             ) : (
               SongList.map((song, index) => (
                 <tr
-                  className={`border-b border-neutral-300 ${
-                    song._id === currentSong._id
-                      ? "dark:bg-dark30 bg-light30"
-                      : ""
-                  } hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group`}
+                  className={`border-b border-neutral-300 ${song._id === currentSong._id
+                    ? "dark:bg-dark30 bg-light30"
+                    : ""
+                    } hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group`}
                   key={song._id}
                   onClick={(e) => {
                     dispatch(setCurrentSong(song));
@@ -270,21 +275,36 @@ export default function SongList({ url, moodId, playlistId }) {
                   <td className="w-1/12 text-center">{`${Math.floor(
                     song.duration / 60
                   )}:${song.duration % 60}`}</td>
-                  <td className="w-1/12">
-                    {/* {playlistId ? ( */}
+                  <td className="w-1/12 ">
+                    <div className="flex items-center justify-evenly">
+                      <div id={song._id}>
+                        {song.favourite ? (
+                          <BsHeartFill
+                            className="text-light10 dark:text-dark10 mt-1"
+                            size={18}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFavouriteClick(song._id);
+                            }}
+                          />
+                        ) : (
+                          <FaRegHeart
+                            className="text-light10 dark:text-dark10 mt-1"
+                            size={18}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFavouriteClick(song._id);
+                            }}
+                          />
+                        )}
+                      </div>
                       <IoEllipsisHorizontal
                         onClick={(e) => {
                           e.stopPropagation();
                           openMenu(e, song);
                         }}
                       />
-                    {/* ) : (
-                      <CiCirclePlus
-                        onClick={(e) => {
-                          handlePlaylistClick(e, song._id, playlistId);
-                        }}
-                      />
-                    )} */}
+                    </div>
                   </td>
                 </tr>
               ))
@@ -292,113 +312,47 @@ export default function SongList({ url, moodId, playlistId }) {
           </tbody>
         </table>
       ) : (
-        <img
-          className="m-auto"
-          src="https://static.thenounproject.com/png/2962127-200.png"
-        />
+        <div className="text-center text-lg mt-20">No songs found</div>
       )}
-      <div>
-        <Menu
-          open={menuIsOpen}
-          anchorEl={songMenuAnchor}
-          onClose={closeMenu}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
-          }}
-          autoFocus={false}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
+
+      <Menu
+        anchorEl={songMenuAnchor}
+        open={menuIsOpen}
+        onClose={closeMenu}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        <MenuItem
+          onClick={(e) => {
+            dispatch(addSongToQueue(songInAction));
+            closeMenu();
           }}
         >
-          <MenuItem
-            onClick={(e) => {
-              handleFavouriteClick(songInAction._id);
-            }}
-          >
-            <ListItemIcon>
-              {!Favorite ? (
-                <FaRegHeart
-                  className="text-light10 dark:text-dark10 mt-1"
-                  size={18}
-                />
-              ) : (
-                <BsHeartFill
-                  className="text-light10 dark:text-dark10 mt-1"
-                  size={18}
-                />
-              )}
-              <ListItemText>
-                &nbsp; {Favorite ? "Remove From Favourite" : "Add To Favorite"}
-              </ListItemText>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem
-            className="flex items-center"
-            onClick={(e) => {
-              console.log(songInAction);
-              dispatch(addSongToQueue(songInAction));
-              closeMenu(e);
-            }}
-          >
-            <ListItemIcon>
-              <MdOutlineQueueMusic
-                size={22}
-                className="text-light10 dark:text-dark10 mr-3"
-              />
-              <ListItemText className="text-right">Queue Song</ListItemText>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem
-            className="flex items-center"
-            onClick={(e) => {
-              openMenuPlaylist(e);
-            }}
-          >
-            <ListItemIcon>
-              <MdLibraryMusic
-                size={20}
-                className="text-light10 dark:text-dark10 mr-3"
-              />
-              <ListItemText className="text-right">
-                Add To Playlist
-              </ListItemText>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem
-            className="flex items-center"
-            onClick={(e) => {
-              removeSongFromPlaylist(e , playlistId);
-            }}
-          >
-            <ListItemIcon>
-              <MdDelete
-                size={20}
-                className="text-light10 dark:text-dark10 mr-3"
-              />
-              <ListItemText className="text-right">
-                Remove From Playlist
-              </ListItemText>
-            </ListItemIcon>
-          </MenuItem>
-        </Menu>
-        <Menu
-          anchorEl={playlistMenuAnchor}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
+          <ListItemIcon>
+            <MdOutlineQueueMusic className="text-light10" size={25} />
+          </ListItemIcon>
+          <ListItemText>Add to Queue</ListItemText>
+        </MenuItem>
+
+        <MenuItem
+          onClick={(e) => {
+            handleCreatePlaylist();
+            e.stopPropagation();
           }}
-          open={subMenuIsOpen} // Mở menu con khi subMenuIsOpen === true
-          onClose={() => setSubMenuIsOpen(false)} // Đóng menu con khi nhấn ra ngoài hoặc chọn một tùy chọn
         >
-          <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>
-            Create a Playlist
-          </MenuItem>
-          <div style={{ overflowY: "auto", maxHeight: "200px" }}>
-            <PlayListAddMenu songId={songInAction} />
-          </div>
-        </Menu>
-      </div>
+          <ListItemIcon>
+            <MdLibraryMusic className="text-light10" size={25} />
+          </ListItemIcon>
+          <ListItemText>Add to New Playlist</ListItemText>
+        </MenuItem>
+
+        <PlayListAddMenu
+          userInfo={userInfo}
+          songInAction={songInAction}
+          closeMenu={closeMenu}
+        />
+      </Menu>
     </div>
   );
 }

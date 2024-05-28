@@ -6,7 +6,7 @@ const ListPlaylist = ({ songId }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const navigate = useNavigate();
   // const [playlists, setPlaylists] = useState([]);
-  const handlePlaylistClick = (e, playlistId) => {
+  const handlePlaylistClick = (e, playlistId) => {  
       navigate(`/playlist/${playlistId}`);
   };
 

@@ -27,7 +27,6 @@ export default function PerformRequest() {
     const response = await fetch(`${SERVER_URL}${url}`, requestOption);
     const data = await response.json();
     if (response.ok) {
-      console.log("deo hieu kieu j");
       //if the response have a message, then toast it
       //the attribute must be named message
       if (data.message) {

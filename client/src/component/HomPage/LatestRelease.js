@@ -84,27 +84,24 @@ export default function LatestRelease() {
         {latestTrack.map((track) => (
           <div
             key={track._id} // Add a unique key to each element in the array
-            className={`card border lg:w-2/12 md:w-4/12 sm:w-6/12 pb-2 rounded  hover:bg-light30 hover:dark:bg-dark30 hover:shadow-md hover:shadow-neutral-400 hover:dark:shadow-blue-600/40 dark:border-none ${
-              menuIsOpen && songInAction._id === track._id
+            className={`card border lg:w-2/12 md:w-4/12 sm:w-6/12 pb-2 rounded  hover:bg-light30 hover:dark:bg-dark30 hover:shadow-md hover:shadow-neutral-400 hover:dark:shadow-blue-600/40 dark:border-none ${menuIsOpen && songInAction._id === track._id
                 ? "bg-light30 dark:bg-dark30 shadow-md shadow-neutral-400 dark:shadow-blue-600/40"
                 : ""
-            }`}
+              }`}
           >
             <div className="py-2 px-3">
               <div className="relative">
                 <div
-                  className={`absolute inset-0 group bg-black bg-opacity-0 hover:bg-opacity-65 ${
-                    menuIsOpen && songInAction._id === track._id
+                  className={`absolute inset-0 group bg-black bg-opacity-0 hover:bg-opacity-65 ${menuIsOpen && songInAction._id === track._id
                       ? "bg-opacity-65"
                       : ""
-                  } rounded-md flex items-center justify-center backdrop-filter`}
+                    } rounded-md flex items-center justify-center backdrop-filter`}
                 >
                   <div
-                    className={`flex opacity-0 group-hover:opacity-80 ${
-                      menuIsOpen && songInAction._id === track._id
+                    className={`flex opacity-0 group-hover:opacity-80 ${menuIsOpen && songInAction._id === track._id
                         ? "opacity-80"
                         : ""
-                    } justify-around items-center w-full`}
+                      } justify-around items-center w-full`}
                   >
                     <FaRegHeart
                       className="text-light10 dark:text-dark10"
@@ -136,13 +133,17 @@ export default function LatestRelease() {
             </div>
 
             <div className="lg:px-3 md:px-3 sm:px-8">
-              <p className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis">
+              <Link
+                to={`/songdetail/${track._id}`}
+                className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis">
                 {track.song_name}
-              </p>
+              </Link>
               <div className="flex">
-                <p className="text-lightTextSecondary w-1/2 text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
+                <Link 
+                to={`/artist/${track.artist._id}`}
+                className="text-lightTextSecondary w-1/2 text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
                   {track.artist.artist_name}
-                </p>
+                </Link>
                 <p className="text-lightTextSecondary text-right w-1/2 text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
                   {new Date(track.createdAt).toLocaleString("en-US", {
                     timeZone: "Asia/Ho_Chi_Minh",
@@ -217,7 +218,7 @@ export default function LatestRelease() {
           See more
         </Link>
       </div>
-      
+
     </div>
   );
 }
