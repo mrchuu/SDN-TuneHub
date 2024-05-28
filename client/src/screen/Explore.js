@@ -157,7 +157,7 @@ function Explore() {
                         {artist.artist_name}
                       </h3>
                       {artist.user?.introduction ? (
-                        <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
+                        <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary w-20 ml-2 line-clamp-2">
                           {artist.user?.introduction}
                         </p>
                       ) : (

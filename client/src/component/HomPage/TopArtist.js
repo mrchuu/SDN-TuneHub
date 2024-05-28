@@ -49,7 +49,7 @@ export default function TopArtist() {
             </h3>
 
             {artist.artist_file.introduction ? (
-              <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-5">
+              <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-5 line-clamp-2 w-20">
                 {artist.artist_file.introduction}
               </p>
             ) : (

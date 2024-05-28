@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { useDispatch, useSelector } from "react-redux";
-import {  setUserInfo } from "../redux/auth.js";
+import { setUserInfo } from "../redux/auth.js";
 import "../style/userprofile.css";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
@@ -84,7 +84,7 @@ export default function UserProfile() {
                 dispatch(setUserInfo(data.data));
             }
             setIsOpen0(false);
-            
+
         } catch (error) {
             console.log(error);
         }
@@ -191,14 +191,12 @@ export default function UserProfile() {
                                 />
                             </div>
                             <div className="info-user text-lightText dark:text-darkText">
-                                <h1 >{auth.first_name} {auth.last_name}</h1>
-                                <p id="introduce" className="text-lightTextSecondary dark:text-darkTextSecondary">Introduce: {auth.introduction}</p>
+                                <h1>{auth.first_name.toUpperCase()} {auth.last_name.toUpperCase()}</h1>
+                                <p id="introduce" className=" h-13 line-clamp-2 overflow-y">{auth.introduction}</p>
                                 <p id="number-playlist">{playList.length} Public Playlist</p>
                             </div>
                             <div className="">
-                                <Button onClick={openMenu}>
-                                    <IoEllipsisHorizontal />
-                                </Button>
+                                <IoEllipsisHorizontal onClick={openMenu} />
                             </div>
                         </div>
                     </div>

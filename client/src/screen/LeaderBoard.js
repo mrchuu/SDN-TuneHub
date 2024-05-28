@@ -403,7 +403,7 @@ export default function LeaderBoard() {
                                 </h3>
 
                                 {artist.artist_file.introduction ? (
-                                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary line-clamp-2">
+                                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary w-40 h-12 overflow-hidden ml-2">
                                         {artist.artist_file.introduction}
                                     </p>
                                 ) : (

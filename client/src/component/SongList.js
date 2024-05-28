@@ -152,8 +152,8 @@ export default function SongList({ url }) {
               SongList.map((song, index) => (
                 <tr
                   className={`border-b border-neutral-300 ${song._id === currentSong._id
-                      ? "dark:bg-dark30 bg-light30"
-                      : ""
+                    ? "dark:bg-dark30 bg-light30"
+                    : ""
                     } hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group`}
                   key={song._id}
                   onClick={(e) => {
@@ -319,7 +319,7 @@ export default function SongList({ url }) {
           }}
         >
           <ListItemIcon>
-            <MdOutlineQueueMusic fontSize="small" />
+            <MdOutlineQueueMusic className="text-light10" size={25} />
           </ListItemIcon>
           <ListItemText>Add to Queue</ListItemText>
         </MenuItem>
@@ -331,7 +331,7 @@ export default function SongList({ url }) {
           }}
         >
           <ListItemIcon>
-            <MdLibraryMusic fontSize="small" />
+            <MdLibraryMusic className="text-light10" size={25} />
           </ListItemIcon>
           <ListItemText>Add to New Playlist</ListItemText>
         </MenuItem>

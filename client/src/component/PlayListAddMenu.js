@@ -32,6 +32,7 @@ const PlayListAddMenu = ({ songId }) => {
               src={playlist.play_list_cover}
               alt={playlist.play_list_name}
             />
+            &nbsp;
             &nbsp;<span>{playlist.play_list_name}</span>
           </div>
         ))}
