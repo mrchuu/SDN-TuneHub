@@ -177,10 +177,11 @@ export default function LatestRelease() {
             <ListItemText className="text-right">Queue Song</ListItemText>
           </ListItemIcon>
         </MenuItem>
-        <MenuItem className="flex items-center"
-        onClick={(e) => {
-          openMenuPlaylist(e);
-        }}
+        <MenuItem
+          className="flex items-center"
+          onClick={(e) => {
+            openMenuPlaylist(e);
+          }}
         >
           <ListItemIcon>
             <MdLibraryMusic
@@ -205,7 +206,6 @@ export default function LatestRelease() {
             <PlayListAddMenu songId={songInAction} />
           </div>
         </Menu>
-
       </Menu>
       <div className="flex justify-center">
         <Link
@@ -217,6 +217,7 @@ export default function LatestRelease() {
           See more
         </Link>
       </div>
+      
     </div>
   );
 }

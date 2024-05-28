@@ -4,15 +4,13 @@ import verifyToken from "../middleware/verifyToken.js";
 import passport from "passport";
 const authenticationRouter = express.Router();
 authenticationRouter.post("/login", AuthenticationController.login);
+authenticationRouter.post("/mobilelogin", AuthenticationController.mobileLogin);
 authenticationRouter.get(
   "/user",
   verifyToken,
   AuthenticationController.getUserInfo
 );
-authenticationRouter.post(
-  "/signup",
-  AuthenticationController.signUp
-);
+authenticationRouter.post("/signup", AuthenticationController.signUp);
 authenticationRouter.patch(
   "/verify/:token",
   AuthenticationController.verifyUser
@@ -33,5 +31,8 @@ authenticationRouter.get(
   AuthenticationController.oauth2GoogleAuthentication
 );
 authenticationRouter.post("/googleLogin", AuthenticationController.googleLogin);
-authenticationRouter.post('/forgot-password', AuthenticationController.sendResetLink);
+authenticationRouter.post(
+  "/forgot-password",
+  AuthenticationController.sendResetLink
+);
 export default authenticationRouter;

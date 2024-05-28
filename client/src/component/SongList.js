@@ -11,7 +11,7 @@ import {
   addSongToQueue,
 } from "../redux/player.js";
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
-import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
+import { MdLibraryMusic, MdOutlineQueueMusic, MdDelete  } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import "../style/soundWave.css";
@@ -19,7 +19,8 @@ import auth, { setUserInfo } from "../redux/auth.js";
 import PlayListAddMenu from "./PlayListAddMenu.js";
 import { RiVipDiamondFill } from "react-icons/ri";
 import { BsHeartFill } from "react-icons/bs";
-export default function SongList({ url }) {
+import { CiCirclePlus } from "react-icons/ci";
+export default function SongList({ url, moodId, playlistId }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
@@ -115,6 +116,17 @@ export default function SongList({ url }) {
 
     closeMenu();
   };
+
+  const handlePlaylistClick = async (e, id, playlistId) => {
+    await OriginalRequest("playlist/push", "POST", {
+      playlistId: playlistId,
+      songs: id,
+    });
+  };
+
+  const removeSongFromPlaylist = async (e, playlistId) => {
+    await OriginalRequest(`playlist/deleteSongInPlaylist/${playlistId}/${songInAction._id}`, "DELETE");
+  }
 
   return (
     <div className="w-full mt-5">
@@ -259,12 +271,20 @@ export default function SongList({ url }) {
                     song.duration / 60
                   )}:${song.duration % 60}`}</td>
                   <td className="w-1/12">
-                    <IoEllipsisHorizontal
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openMenu(e, song);
-                      }}
-                    />
+                    {/* {playlistId ? ( */}
+                      <IoEllipsisHorizontal
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openMenu(e, song);
+                        }}
+                      />
+                    {/* ) : (
+                      <CiCirclePlus
+                        onClick={(e) => {
+                          handlePlaylistClick(e, song._id, playlistId);
+                        }}
+                      />
+                    )} */}
                   </td>
                 </tr>
               ))
@@ -291,9 +311,11 @@ export default function SongList({ url }) {
             horizontal: "left",
           }}
         >
-          <MenuItem onClick={(e)=>{
-            handleFavouriteClick(songInAction._id)
-          }}>
+          <MenuItem
+            onClick={(e) => {
+              handleFavouriteClick(songInAction._id);
+            }}
+          >
             <ListItemIcon>
               {!Favorite ? (
                 <FaRegHeart
@@ -343,6 +365,22 @@ export default function SongList({ url }) {
               </ListItemText>
             </ListItemIcon>
           </MenuItem>
+          <MenuItem
+            className="flex items-center"
+            onClick={(e) => {
+              removeSongFromPlaylist(e , playlistId);
+            }}
+          >
+            <ListItemIcon>
+              <MdDelete
+                size={20}
+                className="text-light10 dark:text-dark10 mr-3"
+              />
+              <ListItemText className="text-right">
+                Remove From Playlist
+              </ListItemText>
+            </ListItemIcon>
+          </MenuItem>
         </Menu>
         <Menu
           anchorEl={playlistMenuAnchor}
@@ -353,7 +391,9 @@ export default function SongList({ url }) {
           open={subMenuIsOpen} // Mở menu con khi subMenuIsOpen === true
           onClose={() => setSubMenuIsOpen(false)} // Đóng menu con khi nhấn ra ngoài hoặc chọn một tùy chọn
         >
-          <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
+          <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>
+            Create a Playlist
+          </MenuItem>
           <div style={{ overflowY: "auto", maxHeight: "200px" }}>
             <PlayListAddMenu songId={songInAction} />
           </div>

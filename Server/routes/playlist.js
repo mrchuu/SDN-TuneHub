@@ -17,6 +17,9 @@ playlistRouter.delete("/deletePlaylist/:playlistId",verifyToken, PlaylistControl
 // Route to get all playlists by user ID
 playlistRouter.get("/getAllPlaylistsByUserId/:creator", PlaylistController.getAllPlaylistsByUserId);
 
+// Route to get all moods by user ID
+playlistRouter.get("/getAllMoodsByUserId", PlaylistController.getAllMoodsByUserId);
+
 //gett all bai hat playlist
 playlistRouter.get("/getAllSongsByPlaylistId/:playlistId", PlaylistController.getAllSongsByPlaylistId);
 
