@@ -11,7 +11,7 @@ export default function PurchaseSong() {
       "POST",
       {
         amount: purchaseSong.price,
-        bankCode: "NCB",
+        bankCode: "BIDV",
         songId: purchaseSong._id,
         language: "en",
       }

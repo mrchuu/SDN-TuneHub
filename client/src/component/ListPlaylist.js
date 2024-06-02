@@ -6,8 +6,8 @@ const ListPlaylist = ({ songId }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const navigate = useNavigate();
   // const [playlists, setPlaylists] = useState([]);
-  const handlePlaylistClick = (e, playlistId) => {  
-      navigate(`/playlist/${playlistId}`);
+  const handlePlaylistClick = (e, playlistId) => {
+    navigate(`/playlist/${playlistId}`);
   };
 
 
@@ -20,10 +20,10 @@ const ListPlaylist = ({ songId }) => {
             key={playlist._id}
             // onContextMenu={(e) => handleContextMenu(e, playlist)}
             onMouseDown={(e) => handlePlaylistClick(e, playlist.playlistId)}
-            className="flex items-center mb-3"
+            className="flex items-center mb-3 hover:underline"
           >
             <img
-              className="w-10 h-10 rounded-full border-slate-600 border-2 text-lightText dark:text-darkText"
+              className="w-10 h-10 rounded-full border-slate-600 border-2 text-lightText dark:text-darkText object-cover object-center"
               src={playlist.play_list_cover}
               alt={playlist.play_list_name}
             />

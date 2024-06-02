@@ -190,15 +190,6 @@ export default function SongListDetail({ url, onSongChange }) {
                 }}
                 autoFocus={false}
             >
-                <MenuItem>
-                    <ListItemIcon>
-                        <FaRegHeart
-                            className="text-light10 dark:text-dark10 mt-1"
-                            size={18}
-                        />
-                        <ListItemText>&nbsp;Add To Favorite</ListItemText>
-                    </ListItemIcon>
-                </MenuItem>
                 <MenuItem
                     className="flex items-center"
                     onClick={(e) => {

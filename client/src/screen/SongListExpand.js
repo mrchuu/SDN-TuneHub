@@ -17,9 +17,9 @@ export default function SongListExpand({}) {
         <h4 className="text-2xl font-semibold mb-8 dark:text-white pl-12">
           {titleSplited}
         </h4>
-        <div className="flex items-center pl-12">
+        <div className="flex items-center pl-12 text-lightText dark:text-darkText">
           <button
-            className={`px-5 rounded-md py-1 border border-light10 dark:border-dark10 mr-5 ${
+            className={`px-5 rounded-md py-1 border border-light10 dark:border-dark10 mr-5  ${
               songType === "All" ? "bg-light10 dark:bg-dark10" : ""
             }`}
             onClick={(e) => {

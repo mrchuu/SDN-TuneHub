@@ -10,7 +10,7 @@ import ListPlaylist from "./ListPlaylist";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { Modal, Box, Typography, Button } from "@mui/material";
 import auth, { setUserInfo } from "../redux/auth.js";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SideBar() {
   // const [expanded, setExpanded] = useState(window.innerWidth > 768);
@@ -93,16 +93,14 @@ export default function SideBar() {
 
   return (
     <div
-      className={`h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-60 ${
-        expanded ? "w-60" : "w-20"
-      }`}
+      className={`h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-60 ${expanded ? "w-60" : "w-20"
+        }`}
     >
       <nav className="h-full flex flex-col border-r shadow-lg border-lightTextSecondary dark:border-darkTextSecondary">
         <div className="p-4 flex items-center justify-between">
           <div
-            className={`flex items-center overflow-hidden transition-all ${
-              expanded ? "w-36" : "w-0"
-            }`}
+            className={`flex items-center overflow-hidden transition-all ${expanded ? "w-36" : "w-0"
+              }`}
           >
             <BsSoundwave color="#ff5e3a" size={33} />
             <h3 className="text-lightText dark:text-darkText font-bold text-xl">
@@ -163,9 +161,8 @@ export default function SideBar() {
           />
         </ul>
         <hr
-          className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${
-            expanded ? "w-3/5" : "w-0"
-          }`}
+          className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${expanded ? "w-3/5" : "w-0"
+            }`}
         />
         <div className="flex-1 flex-col relative">
           <div className="px-3 mt-2">
@@ -177,18 +174,16 @@ export default function SideBar() {
                 />
 
                 <span
-                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${
-                    expanded ? "w-24" : "w-0 hidden"
-                  }`}
+                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-24" : "w-0 hidden"
+                    }`}
                 >
                   &nbsp;Your Library
                 </span>
               </div>
               <div className="relative">
                 <button
-                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${
-                    expanded ? "w-5" : "w-0 hidden"
-                  }`}
+                  className={`overflow-hidden transition-all text-lightText dark:text-darkText ${expanded ? "w-5" : "w-0 hidden"
+                    }`}
                   onClick={openModal}
                 >
                   <FaPlus size={22} />
@@ -197,9 +192,8 @@ export default function SideBar() {
             </div>
           </div>
           <div
-            className={`max-h-44 overflow-hidden transition-all ${
-              expanded ? "w-full" : "w-0 hidden"
-            }`}
+            className={`max-h-44 overflow-hidden transition-all ${expanded ? "w-full" : "w-0 hidden"
+              }`}
             style={{ overflowY: "auto" }}
           >
             <div className="px-3 mt-2">
@@ -232,9 +226,8 @@ export default function SideBar() {
                 <FaUser size={22} />
                 &nbsp;
                 <span
-                  className={`overflow-hidden transition-all ${
-                    expanded ? "w-52" : "w-0 hidden"
-                  }`}
+                  className={`overflow-hidden transition-all ${expanded ? "w-52" : "w-0 hidden"
+                    }`}
                 >
                   Followed Artists
                 </span>
@@ -242,14 +235,13 @@ export default function SideBar() {
             </div>
           </div>
           <div
-            className={`max-h-40 overflow-hidden transition-all ${
-              expanded ? "w-full" : "w-0 hidden"
-            }`}
+            className={`max-h-40 overflow-hidden transition-all ${expanded ? "w-full" : "w-0 hidden"
+              }`}
             style={{ overflowY: "auto" }}
           >
             <div className="px-3 mt-2">
               {!userInfo.artist_followed ||
-              userInfo?.artist_followed?.length === 0 ? (
+                userInfo?.artist_followed?.length === 0 ? (
                 <div className="bg-light30 py-2 px-3 font-medium rounded-md dark:bg-dark30">
                   <span className="text-lightText dark:text-darkText">
                     Find some artist to follow
@@ -262,9 +254,11 @@ export default function SideBar() {
                   </button>
                 </div>
               ) : (
-                <div className="px-3 text-textSecondary text-sm font-medium">
+                <div className="px-3 text-textSecondary text-sm font-medium ">
                   {userInfo.artist_followed.map((artist) => (
-                    <div onClick={() => navigate(`/artist/${artist._id}`)} className="flex items-center mb-3" key={artist._id}>
+                    <Link
+                      to={(`/artist/${artist._id}`)}
+                      className="flex items-center mb-3 hover:underline" key={artist._id}>
                       <img
                         className="w-10 h-10 rounded-full object-center object-cover border-slate-600  border-2"
                         src={artist.userId.profile_picture}
@@ -273,7 +267,7 @@ export default function SideBar() {
                       <span className="text-lightText dark:text-darkTextSecondary">
                         {artist.artist_name}
                       </span>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

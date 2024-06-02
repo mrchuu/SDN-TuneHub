@@ -140,12 +140,12 @@ export default function FeaturedIn({ url }) {
                 <div className="lg:px-3 md:px-3 sm:px-8">
                   <Link
                     to={`/songdetail/${featuredSong._id}`}
-                    className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis">
+                    className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis hover:underline">
                     {featuredSong.song_name}
                   </Link>
                   <Link
                     to={`/artist/${featuredSong.artist._id}`}
-                    className="text-lightTextSecondary text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
+                    className="text-lightTextSecondary text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis hover:underline">
                     {featuredSong.artist.artist_name}
                     {featuredSong.participated_artist.map(
                       (artist) => ", " + artist.artist_name

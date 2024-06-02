@@ -19,7 +19,7 @@ const PlayListAddMenu = ({ songId }) => {
 
   return (
     <div className="px-3 mt-2">
-      <div className="px-3 text-textSecondary text-lightText dark:text-darkText text-sm font-medium">
+      <div className="px-3 text-textSecondary text-lightText text-sm font-medium">
         {userInfo.playlist_created?.map((playlist) => (
           // !playlist.songs.find(song => song.songId === songId) && // Sử dụng songId từ props để kiểm tra
           <div
@@ -28,7 +28,7 @@ const PlayListAddMenu = ({ songId }) => {
             className="flex items-center mb-3 cursor-pointer"
           >
             <img
-              className="w-10 h-10 rounded-full border-slate-600 border-2 text-lightText dark:text-darkText"
+              className="w-10 h-10 rounded-full border-slate-600 border-2 text-lightText dark:text-darkText object-cover object-center"
               src={playlist.play_list_cover}
               alt={playlist.play_list_name}
             />

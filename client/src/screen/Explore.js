@@ -145,7 +145,7 @@ function Explore() {
                 {risingArtist.map((artist, index) => (
                   <Link
                     to={`/artist/${artist._id}`}
-                    className="text-xs hover:underline"
+                    className="text-xs"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
@@ -153,7 +153,7 @@ function Explore() {
                         src={artist.user?.profile_picture}
                         className="rounded-full w-40 h-40 object-cover object-center"
                       />
-                      <h3 className="text-lg font-semibold dark:text-white m-2">
+                      <h3 className="text-lg font-semibold dark:text-white m-2 hover:underline">
                         {artist.artist_name}
                       </h3>
                       {artist.user?.introduction ? (
@@ -214,7 +214,7 @@ function Explore() {
                   {artistList.map((artist, index) => (
                     <Link
                       to={`/artist/${artist._id}`}
-                      className="text-xs hover:underline"
+                      className="text-xs"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div className="card p-4 ml-4 mr-5 mb-10 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none">
@@ -222,7 +222,7 @@ function Explore() {
                           src={artist.user?.profile_picture}
                           className="rounded-full w-40 h-40 object-cover object-center"
                         />
-                        <h3 className="text-lg font-semibold dark:text-white m-2">
+                        <h3 className="text-lg font-semibold dark:text-white m-2 hover:underline">
                           {artist.artist_name}
                         </h3>
                         <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">

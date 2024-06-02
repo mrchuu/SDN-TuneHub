@@ -69,7 +69,7 @@ export default function ArtistProfile() {
     } else {
       hasMounted.current = true;
     }
-  }, [hasMounted, followed]);
+  }, [hasMounted, followed, artistId]);
   return (
     <NoSpaceHeaderTemplate>
       <div className="w-full min-h-screen">
@@ -125,7 +125,7 @@ export default function ArtistProfile() {
                 Albums
               </h4>
               <AlbumList url={`album/getAlbumsOfArtist/${artistId}`} />
-             
+
               <FeaturedIn url={`songs/getFeaturedSongs/${artistId}`} />
             </div>
           </div>

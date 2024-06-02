@@ -271,8 +271,19 @@ export default function LeaderBoard() {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="w-4/12">
-                                        {song.album.album_name ? song.album.album_name : ""}
+                                    <td className="w-4/12 hover:underline">
+                                        {song.album ? (
+                                            <Link
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}
+                                                to={"/album/" + song.album._id + "/" + song.artist._id}
+                                            >
+                                                {song.album.album_name}
+                                            </Link>
+                                        ) : (
+                                            ""
+                                        )}
                                     </td>
                                     <td className="w-1/12">{song.streamCount}</td>
                                     <td className="w-1/12">{Math.floor(song.duration / 60)}:{song.duration % 60}</td>
@@ -319,7 +330,7 @@ export default function LeaderBoard() {
                         }}
                         className="  rounded-full px-4 py-2 text-lightText dark:text-darkText hover:underline"
                     >
-                        {showAllSongs ? "Ẩn đi" : "Xem thêm"}
+                        {showAllSongs ? "Hide" : "See more"}
                     </a>
                 </div>
                 <Menu
@@ -428,7 +439,7 @@ export default function LeaderBoard() {
                         }}
                         className=" rounded-full px-4 py-2 text-lightText dark:text-darkText hover:underline"
                     >
-                        {showAllArtists ? "Ẩn đi" : "Xem thêm"}
+                        {showAllArtists ? "Hide" : "See more"}
                     </a>
                 </div>
                 <div className="w-full pt-8">
@@ -452,8 +463,21 @@ export default function LeaderBoard() {
                                             />
                                         </div>
                                         <div className="lg:px-3 md:px-3 sm:px-8">
-                                            <p className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis">
-                                                {album.album_name}
+                                            <p className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis hover:underline">
+                                                {album.album_name
+                                                    ? (
+                                                        <Link
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                            }}
+                                                            to={"/album/" + album._id + "/" + album.artist}
+                                                        >
+                                                            {album.album_name}
+                                                        </Link>
+                                                    ) : (
+                                                        ""
+                                                    )
+                                                }
                                             </p>
                                             <p className="text-lightTextSecondary text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
                                                 {album.description}
