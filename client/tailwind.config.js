@@ -16,11 +16,15 @@ module.exports = {
         darkTextSecondary: "#ADADAD",
         lightTextSecondary: "#717171",
       },
+      animation: {
+        spinSlow: 'spin 22s linear infinite', 
+      },
     },
   },
   variants: {
     extend: {
       width: ["responsive"], // Enable responsive variants for width utility
+      animation: ['motion-safe'],
     },
   },
   plugins: [],

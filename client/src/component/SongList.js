@@ -235,6 +235,8 @@ export default function SongList({ url }) {
                             style={{ fontSize: "1rem", lineHeight: "1rem" }}
                             onClick={(e) => {
                               e.stopPropagation();
+                              dispatch(setCurrentSong(song));
+                              dispatch(toogleIsPlaying(true));
                             }}
                           >
                             {song.song_name}
@@ -258,7 +260,7 @@ export default function SongList({ url }) {
                       </div>
                     </div>
                   </td>
-                  <td className="hidden md:table-cell md:w-5/12 text-center">
+                  <td className="hidden md:table-cell md:w-5/12 text-center hover:underline">
                     {song.album ? (
                       <Link
                         onClick={(e) => {
@@ -316,42 +318,56 @@ export default function SongList({ url }) {
       )}
 
       <Menu
-        anchorEl={songMenuAnchor}
         open={menuIsOpen}
+        anchorEl={songMenuAnchor}
         onClose={closeMenu}
         MenuListProps={{
           "aria-labelledby": "basic-button",
         }}
+        autoFocus={false}
       >
         <MenuItem
+          className="flex items-center"
           onClick={(e) => {
+            console.log(songInAction);
             dispatch(addSongToQueue(songInAction));
-            closeMenu();
+            closeMenu(e);
           }}
         >
           <ListItemIcon>
-            <MdOutlineQueueMusic className="text-light10" size={25} />
+            <MdOutlineQueueMusic
+              size={22}
+              className="text-light10 dark:text-dark10 mr-3"
+            />
+            <ListItemText className="text-right">Queue Song</ListItemText>
           </ListItemIcon>
-          <ListItemText>Add to Queue</ListItemText>
         </MenuItem>
-
-        <MenuItem
+        <MenuItem className="flex items-center"
           onClick={(e) => {
-            handleCreatePlaylist();
-            e.stopPropagation();
-          }}
-        >
+            openMenuPlaylist(e);
+          }}>
           <ListItemIcon>
-            <MdLibraryMusic className="text-light10" size={25} />
+            <MdLibraryMusic
+              size={20}
+              className="text-light10 dark:text-dark10 mr-3"
+            />
+            <ListItemText className="text-right">Add To Playlist</ListItemText>
           </ListItemIcon>
-          <ListItemText>Add to New Playlist</ListItemText>
         </MenuItem>
-
-        <PlayListAddMenu
-          userInfo={userInfo}
-          songInAction={songInAction}
-          closeMenu={closeMenu}
-        />
+      </Menu>
+      <Menu
+        anchorEl={playlistMenuAnchor}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        open={subMenuIsOpen}
+        onClose={() => setSubMenuIsOpen(false)}
+      >
+        <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
+        <div style={{ overflowY: "auto", maxHeight: "200px" }}>
+          <PlayListAddMenu songId={songInAction} />
+        </div>
       </Menu>
     </div>
   );

@@ -135,13 +135,13 @@ export default function LatestRelease() {
             <div className="lg:px-3 md:px-3 sm:px-8">
               <Link
                 to={`/songdetail/${track._id}`}
-                className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis">
+                className="text-lightText dark:text-darkText font-medium line-clamp-1 overflow-ellipsis hover:underline">
                 {track.song_name}
               </Link>
               <div className="flex">
                 <Link 
                 to={`/artist/${track.artist._id}`}
-                className="text-lightTextSecondary w-1/2 text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
+                className="text-lightTextSecondary w-1/2 text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis hover:underline">
                   {track.artist.artist_name}
                 </Link>
                 <p className="text-lightTextSecondary text-right w-1/2 text-sm dark:text-darkTextSecondary line-clamp-2 overflow-ellipsis">
@@ -213,7 +213,7 @@ export default function LatestRelease() {
           to={`songList/${encodeURIComponent(
             "songs-getLatest-50"
           )}/Latest-releases/`}
-          className="text-center underline"
+          className="text-center underline text-lightText dark:text-darkText"
         >
           See more
         </Link>

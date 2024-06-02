@@ -23,6 +23,7 @@ const createPaymentUrl = async (req, res) => {
   var orderId = dateFormat(date, "HHmmss");
   var amount = req.body.amount;
   var bankCode = req.body.bankCode;
+  console.log(bankCode);
   const decodedToken = req.decodedToken;
   var orderInfo = `Payment from user ${decodedToken.userId} for track ${req.body.songId}`;
   var orderType = "190000";
