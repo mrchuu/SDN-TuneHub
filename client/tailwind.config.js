@@ -15,6 +15,7 @@ module.exports = {
         darkText: "#FFFFFF",
         darkTextSecondary: "#ADADAD",
         lightTextSecondary: "#717171",
+        light5: "#FBFDF3"
       },
       animation: {
         spinSlow: 'spin 22s linear infinite', 

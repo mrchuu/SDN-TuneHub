@@ -10,7 +10,7 @@ import {
 import PerformRequest from "../utilities/PerformRequest.js";
 import { Box, Fade, Modal, Typography } from "@mui/material";
 import { setPurchaseSong } from "../redux/purchase.js";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 export default function Player() {
   const dispatch = useDispatch();
   const currentSong = useSelector((state) => state.player.currentSong);
@@ -140,12 +140,11 @@ export default function Player() {
                 {currentSong?.artist?.artist_name}
               </a>
             </Typography>
-            <button className="bg-dark10 px-5 py-3 rounded-md mt-3 mx-auto" onClick={(e)=>{
-              dispatch(setPurchaseSong(currentSong));
-              navigate("payment/purchase")
-            }}>
+            <Link
+              to={`/payment/purchase/${currentSong._id}`}
+              className="bg-dark10 px-5 py-3 rounded-md mt-3 mx-auto" onClick={handleClose}>
               Buy The Song
-            </button>
+            </Link>
           </Box>
         </Modal>
       </div>

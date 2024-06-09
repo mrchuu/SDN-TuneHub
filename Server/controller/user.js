@@ -44,13 +44,13 @@ const editProfile = async (req, res) => {
     }
 
     // Populate the artist_followed field with specific fields only
-    const populatedUser = await User.findById(updatedUser._id)
+    const populatedUser = await User.findById(updatedUser._doc._id)
       .populate({
         path: "artist_followed",
         select: "_id artist_name",
         populate: { path: "userId", select: "profile_picture" },
       })
-      .execPopulate();
+      .exec();
 
     console.log("UpdatedUser: ", populatedUser);
 

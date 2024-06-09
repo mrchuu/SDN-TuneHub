@@ -23,6 +23,7 @@ import PurchaseSong from "./screen/PurchaseSong";
 import SongListExpand from "./screen/SongListExpand";
 import MoodPlaylistScreen from "./screen/MoodPlaylistScreen";
 import ArtistTrack from "./screen/ArtistTrack";
+import CommentPopup from "./component/PopupComments";
 
 function App() {
   return (
@@ -43,7 +44,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/songdetail/:songId" element={<SongDetail />} />
-        {/* <Route path="/playlist" element={<PlaylistScreen />} /> */}
+        <Route path="/playlist" element={<PlaylistScreen />} />
         <Route path="/album/:id/:artistId" element={<DetailAlbum />} />
         <Route path="/playlist/:playlistId" element={<PlaylistScreen />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -56,6 +57,9 @@ function App() {
         <Route path="/payment/purchase" element={<PurchaseSong />} />
         <Route path="/songList/:url/:title" element={<SongListExpand />} />
         <Route path="/mood/:playlistId" element={<MoodPlaylistScreen />} />
+        <Route path="/payment/purchase/:songId" element={<PurchaseSong />} />
+        <Route path="/songList/:url/:title" element={<SongListExpand />} />
+        <Route path="/popupcoments" element={<CommentPopup />} />
       </Routes>
       {["/login", "/signup", "/forgot-password"].includes(
         window.location.pathname

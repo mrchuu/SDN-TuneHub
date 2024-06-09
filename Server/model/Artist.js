@@ -25,7 +25,13 @@ const albumDTO = new Schema({
   album_cover: { type: String, required: true },
   price: { type: Number, required: true },
 });
-
+// const followerSchema = new Schema({
+//   userId: {
+//     type: Schema.Types.ObjectId,
+//       ref: "User",
+//       default: [],
+//   }
+// }, {timestamps: true})
 const ArtistSchema = new Schema(
   {
     artist_name: {
