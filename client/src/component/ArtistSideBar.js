@@ -6,6 +6,7 @@ import { BsSoundwave } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { toogleExpand } from "../redux/sideBar.js";
 import { RiFolderUploadFill } from "react-icons/ri";
+import { FaFileAudio } from "react-icons/fa6";
 export default function SideBar() {
   const expanded = useSelector((state) => state.sideBar.expanded);
   const dispatch = useDispatch();
@@ -88,6 +89,17 @@ export default function SideBar() {
             text={"Upload"}
             url={"/artist/upload"}
             active={window.location.href === "http://localhost:3000/artist/upload"}
+          />
+          <SideBarItem
+            icon={
+              <FaFileAudio
+                size={22}
+                className="text-lightText dark:text-darkText"
+              />
+            }
+            text={"Track"}
+            url={"/artist/track"}
+            active={window.location.href === "http://localhost:3000/artist/track"}
           />
         </ul>
         <hr

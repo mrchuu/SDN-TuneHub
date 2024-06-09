@@ -22,6 +22,7 @@ import PaymentResult from "./screen/PaymentResult";
 import PurchaseSong from "./screen/PurchaseSong";
 import SongListExpand from "./screen/SongListExpand";
 import MoodPlaylistScreen from "./screen/MoodPlaylistScreen";
+import ArtistTrack from "./screen/ArtistTrack";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/artist/dashboard" element={<ArtistDashBoard />} />
         <Route path="/artist/upload" element={<ArtistUpload />} />
+        <Route path="/artist/track" element={<ArtistTrack />} />
         <Route path="/confirmSignUp/:token" element={<ConfirmSignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<UserProfile />} />
