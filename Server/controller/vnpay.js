@@ -3,7 +3,11 @@ import dateFormat from "dateformat";
 import crypto from "crypto";
 import querystring from "qs";
 import vnpay from "../utils/vnpay.js";
-import { SongRepository, UserRepository } from "../repository/index.js";
+import {
+  SongRepository,
+  UserRepository,
+  TransactionRepository,
+} from "../repository/index.js";
 const createPaymentUrl = async (req, res) => {
   var ipAddr =
     req.headers["x-forwarded-for"] ||
@@ -75,11 +79,20 @@ const vnpayReturn = async (req, res) => {
   const paymentInfo = vnp_Params.vnp_OrderInfo.split("+");
   const userId = paymentInfo[3];
   const songId = paymentInfo[6];
+  const song = await SongRepository.getSongsById(songId);
   console.log(vnp_Params);
   if (secureHash === signed) {
     if (vnp_Params.vnp_ResponseCode === "00") {
+      const transaction = await TransactionRepository.addTransaction({
+        user: userId,
+        seller: song.artist,
+        amount: song.price,
+        type: "song",
+        goodsId: songId,
+      });
       const updatedUser = await UserRepository.addSongPurchased(userId, songId);
       const updatedSong = await SongRepository.addPurchaser(userId, songId);
+
       console.log("giao dich thanh cong");
       res.redirect(
         302,
