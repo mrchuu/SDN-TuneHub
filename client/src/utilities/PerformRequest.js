@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut, setUserInfo } from "../redux/auth.js";
 import { useNavigate } from "react-router-dom";
-import socket from "../utilities/Socket.js"
+import socket from "../utilities/Socket.js";
 export default function PerformRequest() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -23,26 +23,30 @@ export default function PerformRequest() {
       console.log(requestBody);
       requestOption.body = JSON.stringify(requestBody);
     }
-    
-    const response = await fetch(`${SERVER_URL}${url}`, requestOption);
-    const data = await response.json();
-    if (response.ok) {
-      //if the response have a message, then toast it
-      //the attribute must be named message
-      if (data.message) {
-        toast.success(data.message);
-      }
-      return data;
-    } else {
-      if (response.status === 401) {
-        //calls to refresh token if the accessToken is expired
-        return RefreshToken(url, method, body);
-      } else if (response.status === 403) {
-        navigate("/");
-        toast.error(data.error);
+
+    try {
+      const response = await fetch(`${SERVER_URL}${url}`, requestOption);
+      const data = await response.json();
+      if (response.ok) {
+        //if the response have a message, then toast it
+        //the attribute must be named message
+        if (data.message) {
+          toast.success(data.message);
+        }
+        return data;
       } else {
-        toast.error(data.error);
+        if (response.status === 401) {
+          //calls to refresh token if the accessToken is expired
+          return RefreshToken(url, method, body);
+        } else if (response.status === 403) {
+          navigate("/");
+          toast.error(data.error);
+        } else {
+          toast.error(data.error);
+        }
       }
+    } catch (error) {
+      console.log(error.message);
     }
   };
 

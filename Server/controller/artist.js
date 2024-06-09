@@ -1,4 +1,8 @@
-import { ArtistRepository } from "../repository/index.js";
+import {
+  ArtistRepository,
+  TransactionRepository,
+  SongStreamRepository,
+} from "../repository/index.js";
 const findByName = async (req, res) => {
   try {
     const decodedToken = req.decodedToken;
@@ -60,11 +64,58 @@ const getArtistInfo = async (req, res) => {
     if (!artist) {
       return res.status(404).json({ error: "Not found" });
     }
-    console.log(artist);
     const { followers, ...filteredArtist } = artist;
 
     filteredArtist.followersCount = artist.followers.length;
     return res.status(200).json({ data: filteredArtist });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const getStatistic = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const span = req.params.span;
+    const sale = await TransactionRepository.getSaleOfArtist(artist._id, span);
+    console.log(sale);
+    const songStream = await SongStreamRepository.getArtistSongStream(
+      artist._id,
+      span
+    );
+
+    return res.status(200).json({
+      data: {
+        sale: sale,
+        followers: 10000,
+        streamTime: songStream[0].total,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const getSongStreamOrRevenueTrend = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const span = req.query.span || "weekly";
+    const type = req.query.type || "revenue";
+    const result = await TransactionRepository.getRevenueTrend(
+      artist,
+      span
+    );
+    return res.status(200).json({ data: result });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -75,4 +126,6 @@ export default {
   getRisingArtist,
   getAllHotArtist,
   getArtistInfo,
+  getStatistic,
+  getSongStreamOrRevenueTrend
 };
