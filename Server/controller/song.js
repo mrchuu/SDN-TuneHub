@@ -502,6 +502,21 @@ const getSongByGenre = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getFilterSongByArtist = async (req, res) => {
+  try {
+    // const artistId = req.decodedToken.userId;
+    const date = req.params.date;
+    const sort = req.params.sort;
+    const songs = await SongRepository.getFilterSongByArtist({
+      // artistId,
+      date,
+      sort,
+    });
+    return res.status(200).json({ data: songs });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export default {
   getAllSongs,
   streamSong,
@@ -522,4 +537,5 @@ export default {
   getLatestSongs,
   getSongByGenre,
   checkFavouriteSong,
+  getFilterSongByArtist
 };

@@ -19,69 +19,26 @@ function SongManagement() {
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
   const [SongList, setSong] = useState([]);
-  const [date, setDate] = useState("1");
-  const [check, setCheck] = useState("all");
-  const [showAllSongs, setShowAllSongs] = useState(false);
-  const [songInAction, setSongInAction] = useState(null);
-  const [menuIsOpen, setMenuIsOpen] = useState(false);
-  const [songMenuAnchor, setSongMenuAnchor] = useState(null);
-  const fetchSong = async (date, check) => {
+  const [date, setDate] = useState("alltime");
+  const [sort, setSort] = useState("streamCount");
+  const fetchSong = async (date, sort) => {
     const data = await OriginalRequest(
-      `songs/leaderboard/topSong/${date}/${check}`,
+      `songs/filterSongByArtist/${date}/${sort}`,
       "GET"
     );
-    console.log(date);
     if (data) {
       setSong(data.data);
     }
   };
 
   useEffect(() => {
-    fetchSong(date, check);
-  }, []);
-
-  const handleFavouriteClick = async (songId) => {
-    try {
-      const response = await OriginalRequest(
-        `songs/favourited/${songId}`,
-        "POST"
-      );
-      if (response) {
-        const updatedSongList = [...SongList];
-        updatedSongList.map((song, index) => {
-          if (song._id === response.result._id) {
-            song.favouritedByUser = response.favourited;
-          }
-        });
-        setSong(updatedSongList);
-      }
-    } catch (error) {
-      console.error("Error toggling favourite:", error);
-    }
-  };
-
-  const openMenu = (e, song) => {
-    setSongInAction(song);
-    setMenuIsOpen(true);
-    setSongMenuAnchor(e.currentTarget);
-  };
+    fetchSong(date, sort);
+  }, [date,sort]);
   const handleChange = (value, type) => {
-    if (type === "date") {
+    if (type === "sort") {
+      setSort(value);
+    } else if (type === "date") {
       setDate(value);
-    } else if (type === "check") {
-      setCheck(value);
-    }
-  };
-  const getDateText = () => {
-    switch (date) {
-      case "1":
-        return "Day";
-      case "7":
-        return "Week";
-      case "30":
-        return "Month";
-      default:
-        return "Time";
     }
   };
   return (
@@ -91,47 +48,56 @@ function SongManagement() {
       </h4>
       <div className="flex flex-row">
         <button
-          onClick={() => handleChange("1", "date")}
+          onClick={() => handleChange("1month", "date")}
           className={`px-3 py-2 font-semibold text-lightText dark:text-darkText m-1 ${
-            date === "1" ? "border-b-2 border-light10 dark:border-dark10" : ""
+            date === "1month" ? "border-b-2 border-light10 dark:border-dark10" : ""
           }`}
         >
-          <span className="cursor-pointer">Day</span>
+          <span className="cursor-pointer">Last month</span>
         </button>
         <button
-          onClick={() => handleChange("7", "date")}
+          onClick={() => handleChange("3month", "date")}
           className={`px-3 py-2 font-semibold text-lightText dark:text-darkText m-1 ${
-            date === "7" ? "border-b-2 border-light10 dark:border-dark10" : ""
+            date === "3month" ? "border-b-2 border-light10 dark:border-dark10" : ""
           }`}
         >
-          <span className="cursor-pointer">Week</span>
+          <span className="cursor-pointer">Last 3 months</span>
         </button>
         <button
-          onClick={() => handleChange("30", "date")}
+          onClick={() => handleChange("6month", "date")}
           className={`px-3 py-2 font-semibold text-lightText dark:text-darkText m-1 ${
-            date === "30" ? "border-b-2 border-light10 dark:border-dark10" : ""
+            date === "6month" ? "border-b-2 border-light10 dark:border-dark10" : ""
           }`}
         >
-          <span className="cursor-pointer">Month</span>
+          <span className="cursor-pointer">Last 6 months</span>
+        </button>
+        <button
+          onClick={() => handleChange("alltime", "date")}
+          className={`px-3 py-2 font-semibold text-lightText dark:text-darkText m-1 ${
+            date === "alltime" ? "border-b-2 border-light10 dark:border-dark10" : ""
+          }`}
+        >
+          <span className="cursor-pointer">All Time</span>
         </button>
         <div className="flex-grow"></div>{" "}
         <Select
-          value={check}
-          onChange={(e) => handleChange(e.target.value, "check")}
-          className="font-normal w-28 h-11 text-lightText dark:text-darkText rounded-md"
+          value={sort}
+          onChange={(e) => handleChange(e.target.value, "sort")}
+          className="font-normal w-36 h-10 text-lightText dark:text-darkText rounded-md"
         >
-          <MenuItem value="all">All</MenuItem>
-          <MenuItem value="true">Exclusive</MenuItem>
-          <MenuItem value="false">Free</MenuItem>
+          <MenuItem value="streamCount">Stream Counts</MenuItem>
+          <MenuItem value="date">Date</MenuItem>
+          <MenuItem value="revenue">Revenue</MenuItem>
         </Select>
       </div>
       <table className="w-full text-lightText dark:text-darkText mt-2">
         <thead className="font-semibold">
           <tr className="border-b border-neutral-300">
             <td className="w-1/12 pl-7">#</td>
-            <td className="w-3/12">Song</td>
+            <td className="w-2/12">Song</td>
             <td className="w-2/12">Date</td>
-            <td className="w-1/12">Album</td>
+            <td className="w-2/12">Album</td>
+            <td className="w-1/12">Feature</td>
             <td className="w-1/12 ">Status</td>
             <td className="w-1/12">Play</td>
             <td className="w-1/12">Revenue</td>
@@ -148,11 +114,11 @@ function SongManagement() {
               }}
             >
               <td className="w-1/12 pl-7">{index + 1}</td>
-              <td className="w-3/12 py-2">
+              <td className="w-3/12 py-1">
                 <div className="flex items-center">
                   <div
                     style={{ backgroundImage: `url('${song.cover_image}')` }}
-                    className={`relative w-14 h-14 bg-cover bg-center flex items-center justify-center rounded-md shadow-lg shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm`}
+                    className={`relative w-12 h-12 bg-cover bg-center flex items-center justify-center rounded-md shadow-lg shadow-neutral-400 dark:shadow-blue-800 dark:shadow-sm`}
                   >
                     <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-50 transition-opacity duration-300 rounded-md"></div>
 
@@ -166,10 +132,6 @@ function SongManagement() {
                           to={`/songdetail/${song._id}`}
                           className="text-xs hover:underline flex items-center"
                           style={{ fontSize: "1rem", lineHeight: "1rem" }}
-                          onClick={(e) => {
-                            dispatch(setCurrentSong(song));
-                            dispatch(toogleIsPlaying(true));
-                          }}
                         >
                           {song.song_name}
                           {song.is_exclusive ? (
@@ -206,7 +168,8 @@ function SongManagement() {
                   </div>
                 </div>
               </td>
-              <td className="w-2/12 hover:underline">
+              <td className="w-1/12">{song.createdAt}</td>
+              <td className="w-2/12 hover:underline pr-6">
                 {song.album ? (
                   <Link
                     onClick={(e) => {
@@ -220,44 +183,20 @@ function SongManagement() {
                   ""
                 )}
               </td>
-              <td className="w-1/12">{song.streamCount}</td>
               <td className="w-1/12">
-                {Math.floor(song.duration / 60)}:{song.duration % 60}
+              {song.participated_artists[0].artist_name} 
               </td>
-
-              <td className="w-1/12 ">
-                <div className="flex items-center justify-evenly">
-                  <div id={song._id}>
-                    {!song.favouritedByUser ? (
-                      <FaRegHeart
-                        className="text-light10 dark:text-dark10 mt-1"
-                        size={18}
-                        onClick={(e) => {
-                          handleFavouriteClick(song._id);
-                          e.stopPropagation();
-                        }}
-                      />
-                    ) : (
-                      <BsHeartFill
-                        className="text-light10 dark:text-dark10 mt-1"
-                        size={18}
-                        onClick={(e) => {
-                          handleFavouriteClick(song._id);
-                          e.stopPropagation();
-                        }}
-                      />
-                    )}
-                  </div>
-                  <IoEllipsisHorizontal
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openMenu(e, song);
-                    }}
-                  />
-                </div>
+              <td className="w-1/12">
+              {song.is_public ? 'Enable' : 'Disable'} 
+              </td>
+              <td className="w-1/12">
+              {song.streamCount} 
+              </td>
+              <td className="w-1/12">
+              {song.totalRevenue} 
               </td>
             </tr>
-          )).slice(0, showAllSongs ? SongList.length : 5)}
+          ))}
         </tbody>
       </table>
     </div>
