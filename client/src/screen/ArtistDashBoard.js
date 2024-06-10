@@ -16,7 +16,7 @@ import Trend from "../component/ArtistDashBoard/Trend";
 
 export default function ArtistDashBoard() {
   const [span, setSpan] = useState("weekly");
-  const [dataType, setDataType] = useState("Revenue");
+  const [dataType, setDataType] = useState("revenue");
   const hasMounted = useRef(false);
   const { OriginalRequest } = PerformRequest();
   const [statistic, setStatistic] = useState(null);
@@ -154,12 +154,12 @@ export default function ArtistDashBoard() {
                 setDataType(e.target.value);
               }}
             >
-              <MenuItem value={"Revenue"}>Revenue</MenuItem>
-              <MenuItem value={"Streams"}>Stream time</MenuItem>
+              <MenuItem value={"revenue"}>Revenue</MenuItem>
+              <MenuItem value={"streams"}>Stream time</MenuItem>
             </Select>
           </FormControl>
           <div className="h-96 w-full">
-            <Trend span={span} type={"revenue"} />
+            <Trend span={span} type={dataType} />
           </div>
         </div>
         <div className="w-full mt-3 flex justify-between items-center">

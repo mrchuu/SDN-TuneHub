@@ -83,17 +83,16 @@ const getStatistic = async (req, res) => {
     }
     const span = req.params.span;
     const sale = await TransactionRepository.getSaleOfArtist(artist._id, span);
-    console.log(sale);
     const songStream = await SongStreamRepository.getArtistSongStream(
       artist._id,
       span
     );
-
+    console.log(songStream);
     return res.status(200).json({
       data: {
         sale: sale,
         followers: 10000,
-        streamTime: songStream[0].total,
+        streamTime: songStream[0]?.total || 0,
       },
     });
   } catch (error) {
@@ -111,10 +110,18 @@ const getSongStreamOrRevenueTrend = async (req, res) => {
     }
     const span = req.query.span || "weekly";
     const type = req.query.type || "revenue";
-    const result = await TransactionRepository.getRevenueTrend(
-      artist,
-      span
-    );
+    let result = [];
+    if(type === "revenue"){
+      result = await TransactionRepository.getRevenueTrend(
+        artist,
+        span
+      );
+    }else{
+      result = await SongStreamRepository.getArtistSongStreamTrend(
+        artist,
+        span
+      )
+    }
     return res.status(200).json({ data: result });
   } catch (error) {
     return res.status(500).json({ error: error.message });

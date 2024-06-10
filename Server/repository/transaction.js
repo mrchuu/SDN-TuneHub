@@ -111,8 +111,6 @@ const getRevenueTrend = async (artist, span) => {
       acc[date] = totalAmount;
       return acc;
     }, {});
-    console.log(daysArray);
-    console.log(revenueMap);
     const finalResult = daysArray.map((day) => ({
       date: day,
       totalAmount: revenueMap[day] || 0,
