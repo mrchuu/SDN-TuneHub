@@ -9,6 +9,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useEffect, useRef, useState } from "react";
+import PerformRequest from "../../utilities/PerformRequest";
 
 ChartJS.register(
   Title,
@@ -19,12 +21,37 @@ ChartJS.register(
   BarElement,
   BarController
 );
-export default function Top5Tracks() {
+export default function Top5Tracks({ span }) {
+  const [songNames, setSongNames] = useState([]);
+  const [streamCount, setStreamCount] = useState([]);
+  const { OriginalRequest } = PerformRequest();
+  const hasMounted = useRef(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await OriginalRequest(
+        `artists/mostStreamed/${span}`,
+        "GET"
+      );
+      if (response) {
+        const names = response.data.map((i) => i.songDetail.song_name);
+        const count = response.data.map((i)=>i.streamCount)
+        console.log(names);
+        setSongNames(names);
+        console.log(streamCount);
+        setStreamCount(count)
+      }
+    };
+    if (hasMounted.current) {
+      fetchData();
+    } else {
+      hasMounted.current = true;
+    }
+  }, [span, hasMounted]);
   const data = {
-    labels: ["Label 1", "Label 2", "Label 3", "Label 4", "Label 5"],
+    labels: songNames,
     datasets: [
       {
-        label: "Data Series 1",
+        label: "Most streamed songs",
         backgroundColor: [
           "rgba(255, 193, 205, 0.5)",
           "rgba(252, 218, 184, 0.5)",
@@ -33,14 +60,14 @@ export default function Top5Tracks() {
           "rgba(205, 178, 255, 0.5)",
         ],
         borderColor: [
-            "rgba(255, 193, 205, 1)",
-            "rgba(252, 218, 184, 1)",
-            "rgba(255, 223, 155, 1)",
-            "rgba(174, 242, 242, 1)",
-            "rgba(205, 178, 255, 1)",
-          ],
+          "rgba(255, 193, 205, 1)",
+          "rgba(252, 218, 184, 1)",
+          "rgba(255, 223, 155, 1)",
+          "rgba(174, 242, 242, 1)",
+          "rgba(205, 178, 255, 1)",
+        ],
         borderWidth: 1,
-        data: [12, 19, 3, 5, 2],
+        data: streamCount,
       },
     ],
   };
@@ -58,18 +85,21 @@ export default function Top5Tracks() {
         text: "Top Streamed tracks",
       },
     },
-    // scales: {
+    scales: {
     //   x: {
     //     ticks: {
     //       color: "#0000FF", // Change X-axis labels text color
     //     },
     //   },
-    //   y: {
-    //     ticks: {
-    //       color: "#0000FF", // Change Y-axis labels text color
-    //     },
-    //   },
-    // },
+      y: {
+        ticks: {
+          stepSize: 1,
+          callback: function(value) {
+            return Number.isInteger(value) ? value : null;
+          }
+        },
+      },
+    },
   };
 
   return (

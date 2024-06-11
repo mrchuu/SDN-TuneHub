@@ -83,17 +83,16 @@ const getStatistic = async (req, res) => {
     }
     const span = req.params.span;
     const sale = await TransactionRepository.getSaleOfArtist(artist._id, span);
-    console.log(sale);
     const songStream = await SongStreamRepository.getArtistSongStream(
       artist._id,
       span
     );
-
+    console.log(songStream);
     return res.status(200).json({
       data: {
         sale: sale,
         followers: 10000,
-        streamTime: songStream[0].total,
+        streamTime: songStream[0]?.total || 0,
       },
     });
   } catch (error) {
@@ -111,7 +110,50 @@ const getSongStreamOrRevenueTrend = async (req, res) => {
     }
     const span = req.query.span || "weekly";
     const type = req.query.type || "revenue";
-    const result = await TransactionRepository.getRevenueTrend(
+    let result = [];
+    if (type === "revenue") {
+      result = await TransactionRepository.getRevenueTrend(artist, span);
+    } else {
+      result = await SongStreamRepository.getArtistSongStreamTrend(
+        artist,
+        span
+      );
+    }
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const getRevenueRatio = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const span = req.params.span || "weekly";
+    const result = await TransactionRepository.getArtistRevenueRatio(
+      artist,
+      span
+    );
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const getArtist5MostStreamSongs = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const span = req.params.span || "weekly";
+    const result = await SongStreamRepository.get5MostStreamedSongsOfArtist(
       artist,
       span
     );
@@ -127,5 +169,7 @@ export default {
   getAllHotArtist,
   getArtistInfo,
   getStatistic,
-  getSongStreamOrRevenueTrend
+  getSongStreamOrRevenueTrend,
+  getRevenueRatio,
+  getArtist5MostStreamSongs
 };

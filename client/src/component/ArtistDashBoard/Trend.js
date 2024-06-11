@@ -33,7 +33,7 @@ export default function Trend({span, type}) {
     const fetchData = async () => {
       try {
         const response = await OriginalRequest(
-          `artists/getTrend?span=${span}&type=revenue`,
+          `artists/getTrend?span=${span}&type=${type}`,
           "GET"
         );
 

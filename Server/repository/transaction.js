@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Transaction from "../model/Transaction.js";
 import moment from "moment";
+import artist from "./artist.js";
 const addTransaction = async ({ user, seller, amount, type, goodsId }) => {
   try {
     const result = await Transaction.create({
@@ -111,8 +112,6 @@ const getRevenueTrend = async (artist, span) => {
       acc[date] = totalAmount;
       return acc;
     }, {});
-    console.log(daysArray);
-    console.log(revenueMap);
     const finalResult = daysArray.map((day) => ({
       date: day,
       totalAmount: revenueMap[day] || 0,
@@ -123,8 +122,65 @@ const getRevenueTrend = async (artist, span) => {
     throw new Error(error.message);
   }
 };
+const getArtistRevenueRatio = async (artist, span) => {
+  try {
+    let filter = {};
+    // let daysArray = [];
+    // let format = "%Y-%m-%d";
+    if (span === "weekly") {
+      const startOfWeek = moment().startOf("isoWeek").toDate();
+      const currentDate = moment().endOf("day").toDate();
+      filter.createdAt = {
+        $gte: startOfWeek,
+        $lt: currentDate,
+      };
+    } else if (span === "monthly") {
+      const startOfMonth = moment().startOf("month").toDate();
+      const currentDate = moment().endOf("day").toDate();
+      filter.createdAt = {
+        $gte: startOfMonth,
+        $lt: currentDate,
+      };
+    }
+    const result = await Transaction.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              seller: new mongoose.Types.ObjectId(artist._id),
+            },
+            filter,
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: "$transactionType",
+          count: {
+            $sum: 1,
+          },
+          totalRevenue: {
+            $sum: "$amount",
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          type: "$_id",
+          count: 1,
+          totalRevenue: 1,
+        },
+      },
+    ]);
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   addTransaction,
   getSaleOfArtist,
   getRevenueTrend,
+  getArtistRevenueRatio,
 };
