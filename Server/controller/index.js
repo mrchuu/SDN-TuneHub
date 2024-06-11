@@ -7,6 +7,7 @@ import PlaylistController from "./playlist.js";
 import AlbumController from "./album.js"
 import VnpayController from "./vnpay.js"
 import NotificationController from "./notification.js";
+import CommentController from "./comment.js";
 export {
   AuthenticationController,
   SongController,
@@ -16,5 +17,6 @@ export {
   PlaylistController,
   AlbumController,
   VnpayController,
-  NotificationController
+  NotificationController,
+  CommentController
 };

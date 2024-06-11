@@ -131,8 +131,21 @@ const PlaylistScreen = () => {
             </div>
           )}
           {playlist && (
-            <SongList url={`playlist/getAllSongsByPlaylistId/${playlistId}`} />
+            <SongList playlistId={playlistId} url={`playlist/getAllSongsByPlaylistId/${playlistId}`} />
           )}
+          {/* <div className="w-full min-h-screen">
+          <div className="relative items-center mb-8 dark:bg-dark30 rounded-lg p-6 shadow-lg">
+            <h2 className="text-xl font-semibold mb-8 dark:text-white ml-4">
+              Recommended
+              <h3 className="text-base font-light">
+                Based on what's in this playlist
+              </h3>
+            </h2>
+            {playlist && (
+              <SongList/>
+            )}
+          </div>
+        </div> */}
         </div>
       </div>
     </DefaultTemplate>

@@ -56,6 +56,16 @@ const getAllPlaylistsByUserId = async (creator) => {
   }
 };
 
+// Get all playlists by user ID
+const getAllMoodsByUserId = async () => {
+  try {
+    const playlists = await Playlist.find({ is_admin_created: true });
+    return playlists;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const createPlaylist = async ({
   play_list_name,
   creator,
@@ -78,7 +88,8 @@ const createPlaylist = async ({
           cover_image: songDTO.cover_image,
         },
         play_list_cover: songDTO.cover_image,
-        stream_time,
+        is_admin_created: false,
+        stream_time
       });
 
       await User.findOneAndUpdate(
@@ -104,6 +115,7 @@ const createPlaylist = async ({
         songs,
         play_list_cover,
         stream_time,
+        is_admin_created: false
       });
 
       await User.findOneAndUpdate(
@@ -220,5 +232,5 @@ export default {
   addSongToPlaylist,
   getAllSongsByPlaylistId,
   deleteSongInPlaylist,
-  findSongInPlaylist,
+  findSongInPlaylist,getAllMoodsByUserId
 };

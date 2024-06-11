@@ -11,7 +11,7 @@ import {
   addSongToQueue,
 } from "../redux/player.js";
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
-import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
+import { MdLibraryMusic, MdOutlineQueueMusic, MdDelete  } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import "../style/soundWave.css";
@@ -122,6 +122,17 @@ export default function SongList({ url }) {
     }
     closeMenu();
   };
+
+  const handlePlaylistClick = async (e, id, playlistId) => {
+    await OriginalRequest("playlist/push", "POST", {
+      playlistId: playlistId,
+      songs: id,
+    });
+  };
+
+  const removeSongFromPlaylist = async (e, playlistId) => {
+    await OriginalRequest(`playlist/deleteSongInPlaylist/${playlistId}/${songInAction._id}`, "DELETE");
+  }
 
   return (
     <div className="w-full mt-5">

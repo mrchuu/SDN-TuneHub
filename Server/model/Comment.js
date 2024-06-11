@@ -4,7 +4,10 @@ import Song from "./Song.js";
 
 const CommentSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User"
+    },
     songId: { type: Schema.Types.ObjectId },
     parent_comment: { type: Schema.Types.ObjectId },
     content: {

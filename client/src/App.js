@@ -12,7 +12,7 @@ import UserProfile from "./screen/UserProfile";
 import ForgotPassword from "./screen/ForgotPassword";
 import ArtistDashBoard from "./screen/ArtistDashBoard";
 import ArtistUpload from "./screen/ArtistUpload";
-import PlaylistScreen from "./screen/PlaylistScreen"; 
+import PlaylistScreen from "./screen/PlaylistScreen";
 import ArtistProfile from "./screen/ArtistProfile";
 import SongDetail from "./screen/SongDetail";
 import DetailAlbum from "./screen/DetailAlbum";
@@ -21,6 +21,9 @@ import { useEffect } from "react";
 import PaymentResult from "./screen/PaymentResult";
 import PurchaseSong from "./screen/PurchaseSong";
 import SongListExpand from "./screen/SongListExpand";
+import MoodPlaylistScreen from "./screen/MoodPlaylistScreen";
+import ArtistTrack from "./screen/ArtistTrack";
+import CommentPopup from "./component/PopupComments";
 
 function App() {
   return (
@@ -36,12 +39,13 @@ function App() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/artist/dashboard" element={<ArtistDashBoard />} />
         <Route path="/artist/upload" element={<ArtistUpload />} />
+        <Route path="/artist/track" element={<ArtistTrack />} />
         <Route path="/confirmSignUp/:token" element={<ConfirmSignUp />} />
-        <Route path="/forgot-password" element={<ForgotPassword/>}/>
-        <Route path="/profile" element={<UserProfile/>}/>
-        <Route path="/songdetail/:songId" element={<SongDetail/>}/>
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/profile" element={<UserProfile />} />
+        <Route path="/songdetail/:songId" element={<SongDetail />} />
         <Route path="/playlist" element={<PlaylistScreen />} />
-        <Route path="/album/:id/:artistId" element={<DetailAlbum/>}/>
+        <Route path="/album/:id/:artistId" element={<DetailAlbum />} />
         <Route path="/playlist/:playlistId" element={<PlaylistScreen />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<UserProfile />} />
@@ -50,8 +54,12 @@ function App() {
           path="/payment/result/:status/:message"
           element={<PaymentResult />}
         />
-        <Route path="/payment/purchase" element={<PurchaseSong/>} />
-        <Route path="/songList/:url/:title" element={<SongListExpand/>} />
+        <Route path="/payment/purchase" element={<PurchaseSong />} />
+        <Route path="/songList/:url/:title" element={<SongListExpand />} />
+        <Route path="/mood/:playlistId" element={<MoodPlaylistScreen />} />
+        <Route path="/payment/purchase/:songId" element={<PurchaseSong />} />
+        <Route path="/songList/:url/:title" element={<SongListExpand />} />
+        <Route path="/popupcoments" element={<CommentPopup />} />
       </Routes>
       {["/login", "/signup", "/forgot-password"].includes(
         window.location.pathname

@@ -95,96 +95,89 @@ const getSongsByAlbum = async (album) => {
 };
 const getSongsByIdAgg = async (songId) => {
   try {
-    const existingSong = await Song.aggregate(
-      [
-        {
-          $match: { _id: new mongoose.Types.ObjectId(songId) }
+    const existingSong = await Song.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(songId) },
+      },
+      {
+        $lookup: {
+          from: "Artist",
+          localField: "artist",
+          foreignField: "_id",
+          as: "artist",
         },
-        {
-          $lookup: {
-            from: "Artist",
-            localField: "artist",
-            foreignField: "_id",
-            as: "artist",
+      },
+      {
+        $unwind: {
+          path: "$artist",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "Genre",
+          localField: "genre",
+          foreignField: "_id",
+          as: "genre",
+        },
+      },
+      {
+        $unwind: {
+          path: "$genre",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          participated_artist: {
+            $ifNull: ["$participated_artist", []],
           },
         },
-        {
-          $unwind: {
-            path: "$artist",
-            preserveNullAndEmptyArrays: true,
+      },
+      {
+        $lookup: {
+          from: "Artist",
+          let: {
+            participatedArtists: "$participated_artist",
           },
-        },
-        {
-          $lookup: {
-            from: "Genre",
-            localField: "genre",
-            foreignField: "_id",
-            as: "genre",
-          },
-        },
-        {
-          $unwind: {
-            path: "$genre",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $addFields: {
-            participated_artist: {
-              $ifNull: ["$participated_artist", []],
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: "Artist",
-            let: {
-              participatedArtists:
-                "$participated_artist",
-            },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $in: [
-                      "$_id",
-                      "$$participatedArtists",
-                    ],
-                  },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$_id", "$$participatedArtists"],
                 },
               },
-            ],
-            as: "participated_artists_details",
-          },
+            },
+          ],
+          as: "participated_artists_details",
         },
-        {
-          $lookup: {
-            from: "Users",
-            localField:
-              "participated_artists_details.userId",
-            foreignField: "_id",
-            as: "participated_artists_users",
-          },
+      },
+      {
+        $lookup: {
+          from: "Users",
+          localField: "participated_artists_details.userId",
+          foreignField: "_id",
+          as: "participated_artists_users",
         },
-        {
-          $project: {
-            _id: 1,
-            song_name: 1,
-            genre: "$genre.name",
-            price: 1,
-            is_exclusive: 1,
-            cover_image: 1,
-            artist: "$artist.artist_name",
-            favourited: 1,
-            "participated_artists_details._id": 1,
-            "participated_artists_details.artist_name": 1,
-            "participated_artists_users.profile_picture": 1,
-            "participated_artists_users.introduction": 1,
-            createdAt: 1,
-          },
+      },
+      {
+        $project: {
+          _id: 1,
+          song_name: 1,
+          genre: "$genre.name",
+          price: 1,
+          is_exclusive: 1,
+          cover_image: 1,
+          artist: "$artist.artist_name",
+          favourited: 1,
+          "participated_artists_details._id": 1,
+          "participated_artists_details.artist_name": 1,
+          "participated_artists_users.profile_picture": 1,
+          "participated_artists_users.introduction": 1,
+          createdAt: 1,
         },
-      ]
-    ).exec();
+      },
+    ]).exec();
     return existingSong;
   } catch (error) {
     throw new Error(error.message);
@@ -1004,7 +997,7 @@ const getLatestSongs = async (limit, songType) => {
   } else if (songType === "Free") {
     filter.is_exclusive = false;
   }
-  filter.is_public = true
+  filter.is_public = true;
   try {
     const result = await Song.find(filter)
       .populate("artist", "_id artist_name")
@@ -1035,7 +1028,7 @@ const getSongByGenre = async ({ limit, songType, genreId }) => {
         {
           $match: {
             genre: new mongoose.Types.ObjectId(genreId),
-            is_public: true
+            is_public: true,
           },
         },
         {
@@ -1252,6 +1245,205 @@ const checkFavouriteSong = async ({ songId, userId }) => {
     throw new Error(error.message);
   }
 };
+const getFilterSongByArtist = async ({ date, sort }) => {
+  try {
+    const now = new Date();
+    let dateFilter = {};
+    let orderBy = {};
+
+    switch (date) {
+      case "1month":
+        dateFilter = {
+          $gte: new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()),
+          $lte: now,
+        };
+        break;
+      case "3month":
+        dateFilter = {
+          $gte: new Date(now.getFullYear(), now.getMonth() - 3, now.getDate()),
+          $lte: now,
+        };
+        break;
+      case "6month":
+        dateFilter = {
+          $gte: new Date(now.getFullYear(), now.getMonth() - 3, now.getDate()),
+          $lte: now,
+        };
+        break;
+      case "alltime": {
+        dateFilter = {
+          $gte: new Date(now.getFullYear(), now.getMonth() - 12, now.getDate()),
+          $lte: now,
+        };
+        break;
+      }
+    }
+
+    switch (sort) {
+      case "streamCount":
+        orderBy = {
+          streamCount: -1,
+        };
+        break;
+      case "date":
+        orderBy = {
+          createdAt: -1,
+        };
+        break;
+      case "revenue":
+        orderBy = {
+          totalRevenue: -1,
+        };
+        break;
+    }
+
+    const result = await Song.aggregate([
+      {
+        $lookup: {
+          from: "SongStream",
+          localField: "_id",
+          foreignField: "song",
+          as: "streamTime",
+        },
+      },
+      {
+        $unwind: {
+          path: "$streamTime",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          "streamTime.createdAt": dateFilter,
+        },
+      },
+      {
+        $addFields: {
+          count: {
+            $cond: {
+              if: {
+                $lt: ["$streamTime.createdAt", new Date()],
+              },
+              then: 1,
+              else: 0,
+            },
+          },
+          lastStreamTime: {
+            $max: "$streamTime.createdAt",
+          },
+          totalRevenue: { $multiply: ["$price", { $size: "$purchased_user" }] },
+        },
+      },
+      {
+        $lookup: {
+          from: "Artist",
+          localField: "artist",
+          foreignField: "_id",
+          as: "artist_file",
+        },
+      },
+      {
+        $unwind: "$artist_file",
+      },
+      {
+        $lookup: {
+          from: "Album",
+          localField: "album",
+          foreignField: "_id",
+          as: "album_file",
+        },
+      },
+      {
+        $unwind: {
+          path: "$album_file",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "Artist",
+          localField: "participated_artist",
+          foreignField: "_id",
+          as: "participated_artists",
+        },
+      },
+      {
+        $unwind: {
+          path: "$participated_artists",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          song_name: { $first: "$song_name" },
+          totalRevenue: { $sum: "$totalRevenue" },
+          album: {
+            $first: {
+              _id: "$album_file._id",
+              album_name: "$album_file.album_name",
+            },
+          },
+          artist: {
+            $first: {
+              _id: "$artist_file._id",
+              artist_name: "$artist_file.artist_name",
+            },
+          },
+          cover_image: { $first: "$cover_image" },
+          streamCount: { $sum: "$count" },
+          duration: { $first: "$duration" },
+          is_exclusive: { $first: "$is_exclusive" },
+          lastStreamTime: {
+            $first: "$lastStreamTime",
+          },
+          participated_artists: {
+            $addToSet: {
+              _id: "$participated_artists._id",
+              artist_name: "$participated_artists.artist_name",
+            },
+          },
+          createdAt: {
+            $first: "$createdAt",
+          },
+          is_public: {
+            $first: "$is_public",
+          },
+          favourited: {
+            $first: "$favourited",
+          },
+        },
+      },
+      {
+        $sort: orderBy,
+      },
+      {
+        $project: {
+          _id: 1,
+          song_name: 1,
+          album: 1,
+          artist: 1,
+          cover_image: 1,
+          streamCount: 1,
+          duration: 1,
+          is_exclusive: 1,
+          lastStreamTime: 1,
+          participated_artists: 1,
+          favourited: 1,
+          createdAt: 1,
+          is_public: 1,
+          totalRevenue: 1,
+        },
+      },
+      // {
+      //   $limit: 15,
+      // },
+    ]);
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   getAllSongs,
   streamSong,
@@ -1274,4 +1466,5 @@ export default {
   getSongByGenre,
   checkFavouriteSong,
   hotestSongByDay1,
+  getFilterSongByArtist,
 };
