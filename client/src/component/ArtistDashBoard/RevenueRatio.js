@@ -5,8 +5,8 @@ import PerformRequest from "../../utilities/PerformRequest";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 export default function RevenueRatio({span}) {
-  const [songRev, setSongRev] = useState(15);
-  const [albumRev, setAlbumRev] = useState(20);
+  const [songRev, setSongRev] = useState(0);
+  const [albumRev, setAlbumRev] = useState(0);
   const { OriginalRequest } = PerformRequest();
   const hasMounted = useRef(false);
   useEffect(() => {

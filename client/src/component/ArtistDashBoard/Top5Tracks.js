@@ -51,7 +51,7 @@ export default function Top5Tracks({ span }) {
     labels: songNames,
     datasets: [
       {
-        label: "Data Series 1",
+        label: "Most streamed songs",
         backgroundColor: [
           "rgba(255, 193, 205, 0.5)",
           "rgba(252, 218, 184, 0.5)",
