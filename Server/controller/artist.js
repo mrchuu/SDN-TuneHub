@@ -111,17 +111,52 @@ const getSongStreamOrRevenueTrend = async (req, res) => {
     const span = req.query.span || "weekly";
     const type = req.query.type || "revenue";
     let result = [];
-    if(type === "revenue"){
-      result = await TransactionRepository.getRevenueTrend(
-        artist,
-        span
-      );
-    }else{
+    if (type === "revenue") {
+      result = await TransactionRepository.getRevenueTrend(artist, span);
+    } else {
       result = await SongStreamRepository.getArtistSongStreamTrend(
         artist,
         span
-      )
+      );
     }
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const getRevenueRatio = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const span = req.params.span || "weekly";
+    const result = await TransactionRepository.getArtistRevenueRatio(
+      artist,
+      span
+    );
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const getArtist5MostStreamSongs = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const span = req.params.span || "weekly";
+    const result = await SongStreamRepository.get5MostStreamedSongsOfArtist(
+      artist,
+      span
+    );
     return res.status(200).json({ data: result });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -134,5 +169,7 @@ export default {
   getAllHotArtist,
   getArtistInfo,
   getStatistic,
-  getSongStreamOrRevenueTrend
+  getSongStreamOrRevenueTrend,
+  getRevenueRatio,
+  getArtist5MostStreamSongs
 };

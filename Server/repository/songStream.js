@@ -73,7 +73,6 @@ const getArtistSongStream = async (artistId, span) => {
   }
 };
 const getArtistSongStreamTrend = async (artist, span) => {
-
   try {
     let filter = {};
     let daysArray = [];
@@ -131,7 +130,7 @@ const getArtistSongStreamTrend = async (artist, span) => {
             {
               "songDetail.artist": new mongoose.Types.ObjectId(artist._id),
             },
-            filter
+            filter,
           ],
         },
       },
@@ -178,9 +177,83 @@ const getArtistSongStreamTrend = async (artist, span) => {
     throw new Error(error.message);
   }
 };
+const get5MostStreamedSongsOfArtist = async (artist, span) => {
+  try {
+    let filter = {};
+    if (span === "weekly") {
+      const startOfWeek = moment().startOf("isoWeek").toDate();
+      const currentDate = moment().endOf("day").toDate();
+      filter.createdAt = {
+        $gte: startOfWeek,
+        $lt: currentDate,
+      };
+    } else if (span === "monthly") {
+      const startOfMonth = moment().startOf("month").toDate();
+      const currentDate = moment().endOf("day").toDate();
+      filter.createdAt = {
+        $gte: startOfMonth,
+        $lt: currentDate,
+      };
+    }
+    const result = SongStream.aggregate([
+      {
+        $lookup: {
+          from: "Song",
+          localField: "song",
+          foreignField: "_id",
+          as: "songDetail",
+        },
+      },
+      {
+        $unwind: "$songDetail",
+      },
+      {
+        $match: {
+          $and: [
+            {
+              "songDetail.artist": new mongoose.Types.ObjectId(artist._id),
+            },
+            filter,
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: "$songDetail._id",
+          streamCount: {
+            $sum: 1,
+          },
+          songDetail: {
+            $first: "$songDetail",
+          },
+        },
+      },
+      {
+        $sort: {
+          streamCount: -1,
+        },
+      },
+      {
+        $limit: 5,
+      },
+      {
+        $project: {
+          streamCount: 1,
+          _id: 0,
+          "songDetail._id": 1,
+          "songDetail.song_name": 1,
+        },
+      },
+    ]);
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   addSongStreamm,
   getRecentlyPlayedSongStreams,
   getArtistSongStream,
   getArtistSongStreamTrend,
+  get5MostStreamedSongsOfArtist
 };

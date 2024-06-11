@@ -11,4 +11,6 @@ artistRouter.get("/explore/rising", ArtistController.getRisingArtist);
 artistRouter.get("/leaderboard/topArtist", ArtistController.getAllHotArtist)
 artistRouter.get("/getStatistic/:span",verifyToken ,ArtistController.getStatistic)
 artistRouter.get("/getTrend/", verifyToken, ArtistController.getSongStreamOrRevenueTrend)
+artistRouter.get("/revenueRatio/:span", verifyToken, ArtistController.getRevenueRatio)
+artistRouter.get("/mostStreamed/:span", verifyToken, ArtistController.getArtist5MostStreamSongs)
 export default artistRouter;
