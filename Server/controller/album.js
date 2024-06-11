@@ -77,10 +77,22 @@ const getAllAlbums = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 }
+
+const getFilterAlbumByArtist = async (req, res) => {
+  try {
+    const date = req.params.date;
+    const sort = req.params.sort;
+    const albums = await AlbumRepository.getFilterAlbumByArtist({ sort, date });
+    res.status(200).json({ data: albums });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
 export default {
   addAlbum,
   getAlbumsOfArtists,
   getAlbumById,
   getAllAlbums,
-  getAllHotAlbums
+  getAllHotAlbums,
+  getFilterAlbumByArtist
 };

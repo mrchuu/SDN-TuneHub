@@ -517,6 +517,20 @@ const getFilterSongByArtist = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+const disableEnableSong = async (req, res) => {
+  try {
+    // const artistId = req.decodedToken.userId;
+    const {songId} = req.body;
+    const songs = await SongRepository.disableEnableSong({
+      songId
+    });
+    return res.status(200).json({ data: songs });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export default {
   getAllSongs,
   streamSong,
@@ -537,5 +551,6 @@ export default {
   getLatestSongs,
   getSongByGenre,
   checkFavouriteSong,
-  getFilterSongByArtist
+  getFilterSongByArtist,
+  disableEnableSong
 };

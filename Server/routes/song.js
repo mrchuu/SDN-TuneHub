@@ -26,4 +26,5 @@ songRouter.get("/getLatest/:limit/:songType", SongController.getLatestSongs)
 songRouter.get("/getSongByGenre/:limit/:genreId/:songType", SongController.getSongByGenre)
 songRouter.get("/checkFavorite/:songId", SongController.checkFavouriteSong)
 songRouter.get("/filterSongByArtist/:date/:sort", SongController.getFilterSongByArtist);
+songRouter.post("/disableEnableSong", SongController.disableEnableSong);
 export default songRouter;

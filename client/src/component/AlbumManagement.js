@@ -23,7 +23,7 @@ function AlbumManagement() {
   const [sort, setSort] = useState("streamCount");
   const fetchSong = async (date, sort) => {
     const data = await OriginalRequest(
-      `album/getHotAlbum`,
+      `album/filterAlbumByArtist/${date}/${sort}`,
       "GET"
     );
     if (data) {
@@ -142,44 +142,30 @@ function AlbumManagement() {
                       ) : (
                         <></>
                       )}
-                      {song.participated_artists &&
+                      {/* {song.participated_artists &&
                         song.participated_artists.length > 0 && (
                           <>
                             {song.participated_artists.map((artist, index) => (
                               <span key={index}>{index >= 0 && ", "}</span>
                             ))}
                           </>
-                        )}
+                        )} */}
                     </h6>
                   </div>
                 </div>
               </td>
               <td className="w-1/12">{song.createdAt}</td>
               <td className="w-2/12 hover:underline pr-6">
-                {/* {song.album ? (
-                  <Link
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                    to={"/album/" + song.album._id + "/" + song.artist._id}
-                  >
-                    {song.album.album_name}
-                  </Link>
-                ) : (
-                  ""
-                )} */}
+                {song.highStreamSong.song_name}
               </td>
               <td className="w-1/12">
-              {/* {song.participated_artists[0].artist_name}  */}
+              {song.price} 
               </td>
               <td className="w-1/12">
-              {/* {song.is_public}  */}
+              {song.totalStreams} 
               </td>
               <td className="w-1/12">
               {/* {song.streamCount}  */}
-              </td>
-              <td className="w-1/12">
-              {/* {song.totalRevenue}  */}
               </td>
             </tr>
           ))}

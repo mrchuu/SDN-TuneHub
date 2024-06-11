@@ -15,6 +15,8 @@ import {
 import { Link } from "react-router-dom";
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import Select from "@mui/material/Select";
+import Modal from "react-modal";
+import "../App.css";
 function SongManagement() {
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
@@ -33,7 +35,7 @@ function SongManagement() {
 
   useEffect(() => {
     fetchSong(date, sort);
-  }, [date,sort]);
+  }, [date, sort]);
   const handleChange = (value, type) => {
     if (type === "sort") {
       setSort(value);
@@ -41,6 +43,57 @@ function SongManagement() {
       setDate(value);
     }
   };
+
+  const [songId, setSongId] = useState("");
+
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [currentSong, setCurrentSong] = useState(null);
+
+  const openModal = (id) => {
+    setSongId(id);
+    setCurrentSong(id);
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setCurrentSong(null);
+    setIsOpen(false);
+  };
+
+  const handleConfirm = () => {
+    handleFavouriteClick(songId);
+    console.log("Song status changed:", currentSong);
+    closeModal();
+  };
+
+  const handleFavouriteClick = async (songId) => {
+    try {
+      await OriginalRequest(`songs/disableEnableSong`, "POST", { songId });
+      setSong((prevSongList) =>
+        prevSongList.map((song) =>
+          song._id === songId ? { ...song, is_public: !song.is_public } : song
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling favourite:", error);
+    }
+  };
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      borderRadius: "8px",
+      padding: "20px",
+      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      border: "none",
+    },
+  };
+
   return (
     <div className="w-full">
       <h4 className="text-base font-extralight dark:text-white mt-1 ml-3">
@@ -50,7 +103,9 @@ function SongManagement() {
         <button
           onClick={() => handleChange("1month", "date")}
           className={`px-3 py-2 font-semibold text-lightText dark:text-darkText m-1 ${
-            date === "1month" ? "border-b-2 border-light10 dark:border-dark10" : ""
+            date === "1month"
+              ? "border-b-2 border-light10 dark:border-dark10"
+              : ""
           }`}
         >
           <span className="cursor-pointer">Last month</span>
@@ -58,7 +113,9 @@ function SongManagement() {
         <button
           onClick={() => handleChange("3month", "date")}
           className={`px-3 py-2 font-semibold text-lightText dark:text-darkText m-1 ${
-            date === "3month" ? "border-b-2 border-light10 dark:border-dark10" : ""
+            date === "3month"
+              ? "border-b-2 border-light10 dark:border-dark10"
+              : ""
           }`}
         >
           <span className="cursor-pointer">Last 3 months</span>
@@ -66,7 +123,9 @@ function SongManagement() {
         <button
           onClick={() => handleChange("6month", "date")}
           className={`px-3 py-2 font-semibold text-lightText dark:text-darkText m-1 ${
-            date === "6month" ? "border-b-2 border-light10 dark:border-dark10" : ""
+            date === "6month"
+              ? "border-b-2 border-light10 dark:border-dark10"
+              : ""
           }`}
         >
           <span className="cursor-pointer">Last 6 months</span>
@@ -74,7 +133,9 @@ function SongManagement() {
         <button
           onClick={() => handleChange("alltime", "date")}
           className={`px-3 py-2 font-semibold text-lightText dark:text-darkText m-1 ${
-            date === "alltime" ? "border-b-2 border-light10 dark:border-dark10" : ""
+            date === "alltime"
+              ? "border-b-2 border-light10 dark:border-dark10"
+              : ""
           }`}
         >
           <span className="cursor-pointer">All Time</span>
@@ -95,9 +156,9 @@ function SongManagement() {
           <tr className="border-b border-neutral-300">
             <td className="w-1/12 pl-7">#</td>
             <td className="w-2/12">Song</td>
-            <td className="w-2/12">Date</td>
-            <td className="w-2/12">Album</td>
-            <td className="w-1/12">Feature</td>
+            <td className="w-1/12 pl-3">Date</td>
+            <td className="w-2/12 pl-3">Album</td>
+            <td className="w-1/12 pr-3">Feature</td>
             <td className="w-1/12 ">Status</td>
             <td className="w-1/12">Play</td>
             <td className="w-1/12">Revenue</td>
@@ -108,10 +169,10 @@ function SongManagement() {
             <tr
               className="border-b border-neutral-300  hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group"
               key={song._id}
-              onClick={(e) => {
-                dispatch(setCurrentSong(song));
-                dispatch(toogleIsPlaying(true));
-              }}
+              // onClick={(e) => {
+              //   dispatch(setCurrentSong(song));
+              //   dispatch(toogleIsPlaying(true));
+              // }}
             >
               <td className="w-1/12 pl-7">{index + 1}</td>
               <td className="w-3/12 py-1">
@@ -156,20 +217,12 @@ function SongManagement() {
                       ) : (
                         <></>
                       )}
-                      {song.participated_artists &&
-                        song.participated_artists.length > 0 && (
-                          <>
-                            {song.participated_artists.map((artist, index) => (
-                              <span key={index}>{index >= 0 && ", "}</span>
-                            ))}
-                          </>
-                        )}
                     </h6>
                   </div>
                 </div>
               </td>
-              <td className="w-1/12">{song.createdAt}</td>
-              <td className="w-2/12 hover:underline pr-6">
+              <td className="w-1/12 pl-3">{new Date(song.createdAt).toISOString().slice(0, 10)}</td>
+              <td className="w-2/12 hover:underline pr-6 pl-3">
                 {song.album ? (
                   <Link
                     onClick={(e) => {
@@ -183,22 +236,67 @@ function SongManagement() {
                   ""
                 )}
               </td>
-              <td className="w-1/12">
-              {song.participated_artists[0].artist_name} 
+              <td className="w-2/12 pr-3">
+                {song.participated_artists &&
+                  song.participated_artists.length > 0 && (
+                    <>
+                      {song.participated_artists.map((artist, index) => (
+                        <span key={index}>
+                          {artist.artist_name}
+                          {index >= 0 && index != song.participated_artists.length - 1 ? ", " : ""}
+                        </span>
+                      ))}
+                    </>
+                  )}
               </td>
               <td className="w-1/12">
-              {song.is_public ? 'Enable' : 'Disable'} 
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openModal(song._id);
+                  }}
+                  className={`px-2 py-1 rounded ${
+                    song.is_public ? "bg-green-500" : "bg-red-500"
+                  } text-white`}
+                >
+                  {song.is_public ? "Enable" : "Disable"}
+                </button>
               </td>
-              <td className="w-1/12">
-              {song.streamCount} 
-              </td>
-              <td className="w-1/12">
-              {song.totalRevenue} 
-              </td>
+              <td className="w-1/12">{song.streamCount}</td>
+              <td className="w-1/12">{song.totalRevenue}</td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Confirm Action"
+      >
+        <div className="p-4">
+          <h2 className="text-xl font-semibold mb-4">Confirm Action</h2>
+          <p className="mb-4">
+            Are you sure you want to{" "}
+            {currentSong?.is_public ? "Disable" : "Enable"} this song?
+          </p>
+          <div className="flex justify-end">
+            <button
+              onClick={handleConfirm}
+              className="px-4 py-1 bg-orange-500 text-white rounded mr-2 hover:bg-orange-600"
+            >
+              Confirm
+            </button>
+            <button
+              onClick={closeModal}
+              className="px-4 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

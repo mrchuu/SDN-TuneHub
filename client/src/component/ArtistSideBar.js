@@ -97,7 +97,7 @@ export default function SideBar() {
                 className="text-lightText dark:text-darkText"
               />
             }
-            text={"Track"}
+            text={"Management"}
             url={"/artist/track"}
             active={window.location.href === "http://localhost:3000/artist/track"}
           />
