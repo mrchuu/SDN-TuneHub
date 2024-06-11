@@ -34,6 +34,10 @@ const playListSchema = new Schema(
     stream_time: {
       type: Number,
     },
+    is_admin_created: {
+      type: Boolean,
+      default: false
+    },
   },
   { timestamps: true, collection: "Playlist" }
 );

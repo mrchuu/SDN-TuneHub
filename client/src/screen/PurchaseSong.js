@@ -1,23 +1,43 @@
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import DefaultTemplate from "../template/DefaultTemplate";
 import PerformRequest from "../utilities/PerformRequest";
 
 export default function PurchaseSong() {
   const { OriginalRequest } = PerformRequest();
-  const purchaseSong = useSelector((state) => state.purchase.song);
-  const handlePayment = async () => {
-    const vnpayUrl = await OriginalRequest(
-      "payment/create_payment_url",
-      "POST",
-      {
-        amount: purchaseSong.price,
-        bankCode: "BIDV",
-        songId: purchaseSong._id,
-        language: "en",
+  const { songId } = useParams();
+  const [song, setSong] = useState(null);
+
+  useEffect(() => {
+    const fetchSong = async () => {
+      try {
+        const response = await OriginalRequest(`songs/detailSong/${songId}`, "GET");
+        if (response && response.data && response.data.length > 0) {
+          setSong(response.data[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching song:", error);
       }
-    );
-    if (vnpayUrl) {
-      window.location = vnpayUrl.data;
+    };
+    fetchSong();
+  }, [songId]);
+
+  const handlePayment = async () => {
+    try {
+      if (!song) {
+        return;
+      }
+      const vnpayUrl = await OriginalRequest("payment/create_payment_url", "POST", {
+        amount: song.price,
+        bankCode: "BIDV",
+        songId: song._id,
+        language: "en",
+      });
+      if (vnpayUrl) {
+        window.location = vnpayUrl.data;
+      }
+    } catch (error) {
+      console.error("Error creating payment URL:", error);
     }
   };
 
@@ -28,12 +48,12 @@ export default function PurchaseSong() {
           Purchase
         </h1>
         <hr style={{ height: "2px" }} className="bg-neutral-600/50 my-2 mx-6" />
-        {purchaseSong ? (
+        {song ? (
           <div className="mx-6 flex">
             <div className="w-1/2">
               <img
                 className="h-72 w-72 object-cover object-center mx-auto rounded-lg mt-8 border-2 border-light10/50 dark:border-dark10/50"
-                src={purchaseSong.cover_image}
+                src={song.cover_image}
               />
             </div>
             <div className="w-1/2 pr-5">
@@ -58,7 +78,7 @@ export default function PurchaseSong() {
                     className="bg-neutral-700 dark:bg-neutral-300 my-2"
                   />
                   <h4 className="text-lightText dark:text-darkText text-lg mt-2">
-                    Album{" "}
+                    Genre{" "}
                   </h4>
                   <hr
                     style={{ height: "2px", opacity: "0.2" }}
@@ -70,28 +90,28 @@ export default function PurchaseSong() {
                 </div>
                 <div className="w-9/12">
                   <h4 className="text-lightText dark:text-darkText text-lg mt-4 text-right">
-                    {purchaseSong.song_name}
+                    {song.song_name}
                   </h4>
                   <hr
                     style={{ height: "2px", opacity: "0.2" }}
                     className="bg-neutral-700 dark:bg-neutral-300 my-2"
                   />
                   <h4 className="text-lightText dark:text-darkText text-lg mt-2 text-right">
-                    {purchaseSong.artist.artist_name}
+                    {song.artist}
                   </h4>
                   <hr
                     style={{ height: "2px", opacity: "0.2" }}
                     className="bg-neutral-700 dark:bg-neutral-300 my-2"
                   />
                   <h4 className="text-lightText dark:text-darkText text-lg mt-2 text-right">
-                    {purchaseSong.album ? purchaseSong.album.album_name : "NaN"}
+                    {song.genre ? song.genre : "NaN"}
                   </h4>
                   <hr
                     style={{ height: "2px", opacity: "0.2" }}
                     className="bg-neutral-700 dark:bg-neutral-300 my-2"
                   />
                   <h4 className="text-lightText dark:text-darkText text-lg mt-2 text-right">
-                    {new Intl.NumberFormat("en-US").format(purchaseSong.price)}{" "}
+                    {new Intl.NumberFormat("en-US").format(song.price)}{" "}
                     vnd
                   </h4>
                 </div>
@@ -113,3 +133,4 @@ export default function PurchaseSong() {
     </DefaultTemplate>
   );
 }
+

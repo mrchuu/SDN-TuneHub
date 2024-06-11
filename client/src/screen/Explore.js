@@ -6,57 +6,16 @@ import PerformRequest from "../utilities/PerformRequest.js";
 import { color } from "framer-motion";
 import { red } from "@mui/material/colors";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import '../style/explore.css'
 
 function Explore() {
-  const playlist = [
-    {
-      name: "Rock 'n' roll",
-      image:
-        "https://vapa.vn/wp-content/uploads/2022/12/hinh-nen-hoa-tulip-001.jpg",
-    },
-    {
-      name: "Hiphop",
-      image:
-        "https://tamanh.net/wp-content/uploads/2023/01/tao-dang-chup-anh-ao-dai-voi-hoa.jpg",
-    },
-    {
-      name: "Blues",
-      image:
-        "https://vapa.vn/wp-content/uploads/2022/12/hinh-nen-hoa-tulip-001.jpg",
-    },
-    {
-      name: "RnB",
-      image:
-        "https://tamanh.net/wp-content/uploads/2023/01/tao-dang-chup-anh-ao-dai-voi-hoa.jpg",
-    },
-    {
-      name: "Pop",
-      image:
-        "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/8/18/1082524/1660404545-Fadkeqhve.jpg",
-    },
-    {
-      name: "Classical",
-      image:
-        "https://cattour.vn/images/upload/images/quang-binh/deo-ngang-quang-binh/deo-ngang-quang-binh-14.jpg",
-    },
-    {
-      name: "Electronic",
-      image:
-        "https://i.pinimg.com/736x/6f/a9/c3/6fa9c33211ce7c08f2cc4fcef6144b7d.jpg",
-    },
-    {
-      name: "Country",
-      image:
-        "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/8/18/1082524/1660404545-Fadkeqhve.jpg",
-    },
-  ];
-
   const { OriginalRequest } = PerformRequest();
 
   const [artistList, setArtistList] = useState([]);
   const [risingArtist, setRisingArtist] = useState([]);
   const [genres, setGenres] = useState([]);
+  const [moods, setMoods] = useState([]);
 
   const searchValue = useSelector((state) => state.search.searchKey);
   console.log(searchValue);
@@ -93,7 +52,23 @@ function Explore() {
       }
     };
     fetchGenres();
+
+    const fetchMoods = async () => {
+      const genresSong = await OriginalRequest(
+        `playlist/getAllMoodsByUserId`,
+        "GET"
+      );
+      if (genresSong) {
+        setMoods(genresSong.data);
+      }
+    };
+    fetchMoods();
   }, []);
+
+  const navigate = useNavigate();
+  const handlePlaylistClick = (e, playlistId) => {
+    navigate(`/mood/${playlistId}`);
+  };
 
   return (
     <DefaultTemplate>
@@ -182,14 +157,16 @@ function Explore() {
                 </h2>
               </div>
               <div className="container mx-auto flex flex-wrap items-center">
-                {playlist.map((artist, index) => (
-                  <div className="w-80 h-44 card m-3 mb-4 border rounded-sm bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-200 dark:shadow-blue-300 dark:shadow-md dark:border-none">
+                {moods.map((artist, index) => (
+                  <div className="w-80 h-44 card m-3 mb-4 border rounded-sm bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-200 dark:shadow-blue-300 dark:shadow-md dark:border-none"
+                  onClick={(e) => handlePlaylistClick(e, artist._id)}
+                  >
                     <img
-                      src={artist.image}
+                      src={artist.play_list_cover}
                       className="rounded-md w-full h-full object-cover object-center filter brightness-75"
                     />
                     <h3 className="absolute top-2 left-2 text-lg font-semibold text-white m-2">
-                      {artist.name}
+                      {artist.play_list_name}
                     </h3>
                   </div>
                 ))}

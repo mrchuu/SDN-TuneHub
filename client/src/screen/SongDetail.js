@@ -1,7 +1,7 @@
 import NoSpaceHeaderTemplate from "../template/NoSpaceHeaderTemplat";
 import SongList from "../component/SongList.js";
 import { useParams } from "react-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -19,6 +19,8 @@ import { FaRegHeart } from "react-icons/fa";
 import auth, { setUserInfo } from "../redux/auth.js";
 import PlayListAddMenu from "./PlayListAddMenu.js";
 import { FaPlay } from "react-icons/fa";
+import { TiShoppingCart } from "react-icons/ti";
+import CommentPopup from "../component/PopupComments.js";
 
 export default function SongDetail() {
   const { songId } = useParams();
@@ -55,7 +57,7 @@ export default function SongDetail() {
     setSubMenuIsOpen(false);
     setPlaylistMenuAnchor(null);
   };
-
+  ;
   const handleCreatePlaylist = async () => {
     const response = await OriginalRequest(`playlist/create`, "POST", {
       songs: songInAction,
@@ -68,21 +70,6 @@ export default function SongDetail() {
     closeMenu();
   };
 
-  const handlePayment = async () => {
-    const vnpayUrl = await OriginalRequest(
-      "payment/create_payment_url",
-      "POST",
-      {
-        amount: song.price,
-        bankCode: "NCB",
-        songId: song._id,
-        language: "en",
-      }
-    );
-    if (vnpayUrl) {
-      window.location = vnpayUrl.data;
-    }
-  };
   const fetchSong = async () => {
     try {
       const data = await OriginalRequest(`songs/detailSong/${songId}`, "GET");
@@ -112,6 +99,10 @@ export default function SongDetail() {
       return createdAt.split("T")[0];
     }
     return "";
+  };
+
+  const formatPrice = (price) => {
+    return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
   };
 
   const handleSongChange = async (newSongId) => {
@@ -154,38 +145,51 @@ export default function SongDetail() {
               <div className="bg-light30 dark:bg-dark30 max-w h-44 rounded-lg m-10">
                 <div className="flex items-center h-full pl-12 ">
                   <img src={song.cover_image} alt={song.song_name} className={`w-36 h-36 rounded-full object-cover object-center ${isPlaying ? "animate-spinSlow" : ""}`} />
-                  <FaPlay className="absolute hover:opacity-50 size-9 text-light10 dark:text-dark10 left-0 ml-32"
+                  <FaPlay className="absolute hover:opacity-50 size-9 text-light10 dark:text-dark10 left-0 ml-36"
                     key={song._id}
                     onClick={(e) => {
                       dispatch(setCurrentSong(song));
                       dispatch(toogleIsPlaying(true));
                     }} />
                   <div className="text-dark60 dark:text-light60 m-2 ml-4">
-                    <h1 className="text-3xl font-bold ml-2">{song.song_name}</h1>
-                    <p className="text-2xl m-2">{song.genre}</p>
-                    <p className="text-1xl m-2">{formatCreatedAt(song.createdAt)}</p>
-                    {song.is_exclusive ? (
-                      userInfo && userInfo?.songs_purchased?.includes(currentSong._id) ? (
-                        <span className="text-white px-2 bg-sky-600/70 text-lg rounded ml-14 font-medium">
-                          OWNED
-                        </span>
-                      ) : (
-                        <>
-                          <span className="text-white px-2 bg-amber-500 text-lg rounded ml-2 font-medium" onClick={handlePayment}>
-                            BUY {song.price}VND
+                    <div className="flex mb-3">
+                      <h1 className="text-4xl font-bold ml-2 uppercase text-lightTextSecondary dark:text-darkTextSecondary">{song.song_name}</h1>
+                      <p className="text-1xl m-2 text-lightTextSecondary">( {formatCreatedAt(song.createdAt)} )</p>
+                    </div>
+                    <div className="flex items-center mb-2">
+                      <span className="text-2xl ml-2 px-5 text-darkText dark:text-darkText bg-light10 dark:bg-dark10 rounded-lg">{song.genre}</span>
+                      {song.is_exclusive ? (
+                        userInfo && userInfo?.songs_purchased?.includes(currentSong._id) ? (
+                          <span className="text-2xl text-white px-5 bg-sky-600/70 rounded-lg ml-2 font-medium">
+                            OWNED
                           </span>
-                        </>
-                      )
-                    ) : (
-                      <></>
-                    )}
+                        ) : (
+                          <>
+                            <span
+                              className=" text-white px-5 bg-amber-500 text-2xl rounded-lg ml-2 font-medium right-0">
+                              {formatPrice(song.price)}
+                            </span>
+                          </>
+                        )
+                      ) : (
+                        <></>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-dark60 dark:text-light60 w-12 h-12 absolute right-0 mr-10">
-                    <IoEllipsisHorizontal onClick={(e) => {
-                      e.stopPropagation();
-                      openMenu(e, song);
-                    }} />
+                  <p className="text-lightTextSecondary dark:text-darkTextSecondary w-12 h-12 absolute right-0 mr-20">
+                    <IoEllipsisHorizontal
+                      className='text-4xl'
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openMenu(e, song);
+                      }} />
                   </p>
+                  <CommentPopup url={`comments/getAllComments/${songId}`} />
+                  <Link
+                    to={`/payment/purchase/${song._id}`}
+                    className="text-lightTextSecondary dark:text-darkTextSecondary w-12 h-12 absolute right-0 mr-60">
+                    <TiShoppingCart className='text-4xl' />
+                  </Link>
                   <Menu
                     open={menuIsOpen}
                     anchorEl={songMenuAnchor}

@@ -14,6 +14,7 @@ import {
   PlaylistRouter,
   VnPayRouter,
   NotificationRouter,
+  CommentRouter
 } from "./routes/index.js";
 import "./utils/google-oauth2.js";
 import path from "path";
@@ -72,6 +73,7 @@ app.use(
   express.static(path.join(__dirname, `upload`, "image"))
 );
 app.use("/api/artists", ArtistRouter);
+app.use("/api/comments", CommentRouter);
 const port = process.env.PORT || 9999;
 const MONGODB_URI = process.env.MONGODB_URI;
 const io = new Server(server, {

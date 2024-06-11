@@ -46,6 +46,16 @@ const getAllPlaylistsByUserId = async (req, res) => {
   }
 };
 
+const getAllMoodsByUserId = async (req, res) => {
+  try {
+    const creator = req.params.creator;
+    const playlists = await PlaylistRepository.getAllMoodsByUserId();
+    res.status(200).json({ data: playlists });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const createPlaylist = async (req, res) => {
   try {
     const { play_list_name, songs, play_list_cover, stream_time } = req.body;
@@ -126,4 +136,5 @@ export default {
   addSongToPlaylist,
   getAllSongsByPlaylistId,
   deleteSongInPlaylist,
+  getAllMoodsByUserId
 };
