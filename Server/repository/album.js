@@ -116,11 +116,11 @@ const getFilterAlbumByArtist = async ({ sort, date }) => {
           createdAt: -1,
         };
         break;
-      // case "revenue":
-      //   ordsortFiltererBy = {
-      //     totalRevenue: -1,
-      //   };
-      //   break;
+      case "revenue":
+        sortFilter = {
+          totalRevenue: -1,
+        };
+        break;
     }
 
     switch (date) {
@@ -256,6 +256,21 @@ const getFilterAlbumByArtist = async ({ sort, date }) => {
         },
       },
       {
+        $lookup: {
+          from: "Transaction",
+          localField: "_id",
+          foreignField: "goodsId",
+          as: "transactions",
+        },
+      },
+      {
+        $addFields: {
+          totalRevenue: {
+            $sum: "$transactions.amount",
+          },
+        },
+      },
+      {
         $project: {
           album_name: 1,
           album_cover: 1,
@@ -266,6 +281,7 @@ const getFilterAlbumByArtist = async ({ sort, date }) => {
           highStreamSong: "$highStreamSongDetails",
           totalStreams: 1,
           createdAt: 1,
+          totalRevenue: 1,
         },
       },
       {

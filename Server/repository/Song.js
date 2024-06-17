@@ -1347,7 +1347,6 @@ const getFilterSongByArtist = async ({ date, sort }) => {
           lastStreamTime: {
             $max: "$streamTime.createdAt",
           },
-          totalRevenue: { $multiply: ["$price", { $size: "$purchased_user" }] },
         },
       },
       {
@@ -1390,10 +1389,25 @@ const getFilterSongByArtist = async ({ date, sort }) => {
         },
       },
       {
+        $lookup: {
+          from: "Transaction",
+          localField: "_id",
+          foreignField: "goodsId",
+          as: "transactions",
+        },
+      },
+      {
+        $addFields: {
+          totalRevenue: {
+            $sum: "$transactions.amount",
+          },
+        },
+      },
+      {
         $group: {
           _id: "$_id",
           song_name: { $first: "$song_name" },
-          totalRevenue: { $sum: "$totalRevenue" },
+          totalRevenue: { $first: "$totalRevenue" },
           album: {
             $first: {
               _id: "$album_file._id",

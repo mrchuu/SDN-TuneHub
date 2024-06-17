@@ -29,7 +29,7 @@ export default function PurchaseSong() {
       }
       const vnpayUrl = await OriginalRequest("payment/create_payment_url", "POST", {
         amount: song.price,
-        bankCode: "BIDV",
+        bankCode: "NCB",
         songId: song._id,
         language: "en",
       });

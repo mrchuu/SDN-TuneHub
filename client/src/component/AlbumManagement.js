@@ -165,7 +165,7 @@ function AlbumManagement() {
               {song.totalStreams} 
               </td>
               <td className="w-1/12">
-              {/* {song.streamCount}  */}
+              {song.totalRevenue} 
               </td>
             </tr>
           ))}
