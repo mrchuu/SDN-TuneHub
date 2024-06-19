@@ -74,7 +74,7 @@ export default function UserProfile() {
     updateEditProfile.profilePicture = imageSrc;
     try {
       const data = await OriginalRequest(
-        user / edit - profile,
+        "user/edit-profile",
         "PUT",
         updateEditProfile
       );
@@ -159,14 +159,14 @@ export default function UserProfile() {
   const [playList, setPlayList] = useState([]);
 
   const fetchArtistFollowed = async () => {
-    const data = await OriginalRequest(user / artistFollowed, "GET");
+    const data = await OriginalRequest("user/artistFollowed", "GET");
     if (data) {
       setArtistFollowed(data.data);
     }
   };
 
   const fetchPlayList = async () => {
-    const data = await OriginalRequest(user / listPlayList, "GET");
+    const data = await OriginalRequest("user/listPlayList", "GET");
     if (data) {
       setPlayList(data.data);
     }
