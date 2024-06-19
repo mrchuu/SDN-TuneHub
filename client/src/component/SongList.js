@@ -97,7 +97,7 @@ export default function SongList({ url }) {
     };
     fetch();
   }, [hasMounted, url]);
-
+ 
   const handleFavouriteClick = async (songId) => {
     try {
       await OriginalRequest(`songs/favourited/${songId}`, "POST");

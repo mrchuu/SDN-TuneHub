@@ -1,6 +1,10 @@
 import Artist from "../model/Artist.js";
 import song from "../model/Song.js";
 import User from "../model/RegisteredUser.js";
+import Transaction from "../model/Transaction.js"
+import { mongo } from "mongoose";
+import mongoose from "mongoose";
+
 const findArtistByName = async ({ searchInput, artistId }) => {
   try {
     return await Artist.find({
@@ -235,6 +239,286 @@ const makeAlbum = async ({
   );
   return result;
 };
+
+const topGenre = async (artistId) => {
+  try {
+    const result = await Artist.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(artistId),
+        },
+      },
+      {
+        $unwind: "$song_uploads",
+      },
+      {
+        $lookup: {
+          from: "SongStream",
+          localField: "song_uploads.songId",
+          foreignField: "song",
+          as: "songStreams",
+        },
+      },
+      {
+        $lookup: {
+          from: "Song",
+          localField: "song_uploads.songId",
+          foreignField: "_id",
+          as: "songDetail",
+        },
+      },
+      {
+        $unwind: "$songDetail",
+      },
+      {
+        $unwind: {
+          path: "$followers",
+        },
+      },
+      {
+        $lookup: {
+          from: "SongStream",
+          localField: "followers.userId",
+          foreignField: "user",
+          as: "user_stream",
+          pipeline: [
+            {
+              $lookup: {
+                from: "Song",
+                localField: "song",
+                foreignField: "_id",
+                as: "songDetail",
+              },
+            },
+            {
+              $unwind: {
+                path: "$songDetail",
+                preserveNullAndEmptyArrays: false,
+              },
+            },
+            {
+              $lookup: {
+                from: "Genre",
+                localField: "songDetail.genre",
+                foreignField: "_id",
+                as: "songGenre",
+              },
+            },
+            {
+              $unwind: {
+                path: "$songGenre",
+                preserveNullAndEmptyArrays: false,
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                genre: "$songGenre.name",
+                hasStream: {
+                  $cond: {
+                    if: {
+                      $gt: ["$song", null],
+                    },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: "$user_stream",
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+      {
+        $group: {
+          _id: "$user_stream.genre",
+          stream_count: {
+            $sum: "$user_stream.hasStream",
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          genre: "$_id",
+          stream_count: 1,
+        },
+      },
+    ]).exec();
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const topStreamFavouritePurchase = async (artistId) => {
+  try {
+    const result = await Artist.aggregate(
+      [
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(artistId),
+          },
+        },
+        {
+          $unwind: "$song_uploads",
+        },
+        {
+          $lookup: {
+            from: "SongStream",
+            localField: "song_uploads.songId",
+            foreignField: "song",
+            as: "songStreams",
+          },
+        },
+        {
+          $lookup: {
+            from: "Song",
+            localField: "song_uploads.songId",
+            foreignField: "_id",
+            as: "songDetail",
+          },
+        },
+        {
+          $unwind: "$songDetail",
+        },
+        {
+          $project: {
+            _id: 0,
+            song_name: "$songDetail.song_name",
+            stream_count: { $size: "$songStreams" },
+            favourite_count: {
+              $size: "$songDetail.favourited",
+            },
+            purchased_count: {
+              $size: "$songDetail.purchased_user",
+            },
+          },
+        }
+      ]
+    ).exec();
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+const topDonateUser = async (artistId) => {
+  try {
+    const result = await Transaction.aggregate(
+      [
+        {
+          $match: {
+            seller: new mongoose.Types.ObjectId(artistId),
+            transactionType: "donate",
+          },
+        },
+        {
+          $group: {
+            _id: "$user",
+            totalAmount: {
+              $sum: "$amount"
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "Users",
+            localField: "_id",
+            foreignField: "_id",
+            as: "user_detail",
+          },
+        },
+        {
+          $unwind: {
+            path: "$user_detail",
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            first_name: "$user_detail.first_name",
+            last_name: "$user_detail.last_name",
+            totalAmount: 1,
+          },
+        },
+        {
+          $sort: {
+            totalAmount: -1
+          },
+        },
+        {
+          $limit: 3
+        },
+      ]
+    ).exec();
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+
+const topFollower = async (artistId) => {
+  try {
+    const result = await Artist.aggregate(
+      [
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(artistId),
+          },
+        },
+        {
+          $unwind: "$followers",
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: "%Y-%m",
+                date: "$followers.createdAt",
+              },
+            },
+            totalFollowers: { $sum: 1 },
+            createdAtArray: { $push: "$createdAt" },
+          },
+        },
+        {
+          $sort: { _id: 1 },
+        },
+        {
+          $project: {
+            _id: 0,
+            date: "$_id",
+            totalFollowers: 1,
+            createdAt: {
+              $dateToString: {
+                format: "%Y-%m",
+                date: {
+                  $arrayElemAt: ["$createdAtArray", 0],
+                },
+              },
+            },
+          },
+        },
+        {
+          $sort: {
+            date: -1
+          },
+        },
+      ]
+    ).exec();
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 export default {
   findArtistByName,
   findArtistByUserId,
@@ -244,4 +528,8 @@ export default {
   hotArtist,
   makeAlbum,
   findByArtistId,
+  topGenre,
+  topStreamFavouritePurchase,
+  topDonateUser,
+  topFollower
 };

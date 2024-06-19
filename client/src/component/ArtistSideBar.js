@@ -89,6 +89,17 @@ export default function SideBar() {
             url={"/artist/upload"}
             active={window.location.href === "http://localhost:3000/artist/upload"}
           />
+          <SideBarItem
+            icon={
+              <FaUser
+                size={22}
+                className="text-lightText dark:text-darkText"
+              />
+            }
+            text={"Follower"}
+            url={"/artist/follower"}
+            active={window.location.href === "http://localhost:3000/artist/follower"}
+          />
         </ul>
         <hr
           className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${

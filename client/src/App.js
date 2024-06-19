@@ -12,6 +12,7 @@ import UserProfile from "./screen/UserProfile";
 import ForgotPassword from "./screen/ForgotPassword";
 import ArtistDashBoard from "./screen/ArtistDashBoard";
 import ArtistUpload from "./screen/ArtistUpload";
+import ArtistFollower from "./screen/ArtisFollower";
 import PlaylistScreen from "./screen/PlaylistScreen";
 import ArtistProfile from "./screen/ArtistProfile";
 import SongDetail from "./screen/SongDetail";
@@ -36,6 +37,7 @@ function App() {
         <Route path="/leaderboard" element={<LeaderBoard />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/artist/dashboard" element={<ArtistDashBoard />} />
+        <Route path="/artist/follower" element={<ArtistFollower />} />
         <Route path="/artist/upload" element={<ArtistUpload />} />
         <Route path="/confirmSignUp/:token" element={<ConfirmSignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

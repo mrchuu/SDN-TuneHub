@@ -1,4 +1,4 @@
-import { AuthenticateRepository, UserRepository } from "../repository/index.js";
+import { AuthenticateRepository, SongRepository, UserRepository } from "../repository/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -75,7 +75,7 @@ const followArtist = async (req, res) => {
     });
     return res.status(200).json({ data: registeredUser });
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -129,14 +129,24 @@ const getListPlayList = async (req, res) => {
 const getListFavouritedSong = async (req, res) => {
   try {
     const userId = req.decodedToken.userId;
-    const listFavouritedSong = await UserRepository.getListFavouritedSong(
-      userId
-    );
+    const listFavouritedSong = await UserRepository.getListFavouritedSong(userId);
     res.status(200).json({ data: listFavouritedSong });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
+const getStreamSong = async (req, res) => {
+  try {
+    const userId = req.decodedToken.userId;
+    console.log(userId, " hehee");
+    const listStreamSong = await SongRepository.getStreamSongbyId(userId);
+    res.status(200).json({ data: listStreamSong });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export default {
   changePassword,
   editProfile,
@@ -145,4 +155,5 @@ export default {
   getListArtistFollowed,
   getListPlayList,
   getListFavouritedSong,
+  getStreamSong
 };

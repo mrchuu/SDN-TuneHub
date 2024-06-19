@@ -351,8 +351,8 @@ export default function UserProfile() {
                     </div>
                 </div>
                 <div className="px-5">
-                    <h1 className="text-2xl font-semibold dark:text-darkText">Recent song</h1>
-                    <SongList url={`songs/recentSong/`} />
+                    <h1 className="text-2xl font-semibold dark:text-darkText">Favorite song</h1>
+                    <SongList url={`user/favouritedSong`} />
                 </div>
                 {artistFollowed.length != 0 ? (
                     <div className="mt-8">
@@ -425,6 +425,10 @@ export default function UserProfile() {
 
                                 </div>
                             ))}
+                        </div>
+                        <div className="px-5">
+                            <h1 className="text-2xl font-semibold dark:text-darkText">Top 5 Stream Song</h1>
+                            <SongList url={`user/StreamSong`} />
                         </div>
                     </div>
                 ) : (<></>)}

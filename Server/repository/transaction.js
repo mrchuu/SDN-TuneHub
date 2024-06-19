@@ -30,6 +30,7 @@ const getSaleOfArtist = async (artistId, span) => {
     }, 0);
     return result;
   } catch (error) {
+    console.log("dit cu");
     throw new Error(error.message);
   }
 };

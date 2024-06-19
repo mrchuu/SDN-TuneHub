@@ -1252,6 +1252,89 @@ const checkFavouriteSong = async ({ songId, userId }) => {
     throw new Error(error.message);
   }
 };
+
+const getStreamSongbyId = async (userId) => {
+  try {
+    const song = await Song.aggregate([
+      [
+        {
+          $lookup: {
+            from: "SongStream",
+            localField: "_id",
+            foreignField: "song",
+            as: "songStream",
+          },
+        },
+        {
+          $unwind: {
+            path: "$songStream",
+          },
+        },
+        {
+          $match: {
+            "songStream.user": new mongoose.Types.ObjectId(userId),
+          },
+        },
+        {
+          $lookup: {
+            from: "Album",
+            localField: "album",
+            foreignField: "_id",
+            as: "album",
+          },
+        },
+        {
+          $unwind: {
+            path: "$album",
+          },
+        },
+        {
+          $lookup: {
+            from: "Artist",
+            localField: "artist",
+            foreignField: "_id",
+            as: "artist",
+          },
+        },
+        {
+          $unwind: {
+            path: "$artist",
+          },
+        },
+        {
+          $group: {
+            _id: "$_id",
+            cover_image: { $first: "$cover_image" },
+            duration: { $first: "$duration" },
+            song_name: { $first: "$song_name" },
+            artist: { $first: "$artist" },
+            album: { $first: "$album" },
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $match: {
+            count: { $gt: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            cover_image: 1,
+            duration: 1,
+            song_name: 1,
+            "artist.artist_artistname": 1,
+            "album.album_name": 1,
+            streamCount: { $sum: "$count" },
+          },
+        },
+      ]
+    ]);
+    return song;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   getAllSongs,
   streamSong,
@@ -1274,4 +1357,5 @@ export default {
   getSongByGenre,
   checkFavouriteSong,
   hotestSongByDay1,
+  getStreamSongbyId
 };
