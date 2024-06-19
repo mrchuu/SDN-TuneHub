@@ -6,6 +6,7 @@ import { BsSoundwave } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { toogleExpand } from "../redux/sideBar.js";
 import { RiFolderUploadFill } from "react-icons/ri";
+import { FaFileAudio } from "react-icons/fa6";
 export default function SideBar() {
   const expanded = useSelector((state) => state.sideBar.expanded);
   const dispatch = useDispatch();
@@ -23,16 +24,14 @@ export default function SideBar() {
   }, []);
   return (
     <div
-      className={` h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-10 ${
-        expanded ? "w-60" : "w-20"
-      }`}
+      className={` h-screen fixed top-0 left-0 bg-light60 dark:bg-dark60 overflow-hidden transition-all z-10 ${expanded ? "w-60" : "w-20"
+        }`}
     >
       <nav className="h-full flex flex-col border-r shadow-lg border-lightTextSecondary dark:border-darkTextSecondary">
         <div className="p-4 flex items-center justify-between">
           <div
-            className={`flex items-center overflow-hidden transition-all ${
-              expanded ? "w-36" : "w-0"
-            }`}
+            className={`flex items-center overflow-hidden transition-all ${expanded ? "w-36" : "w-0"
+              }`}
           >
             <BsSoundwave color="#ff5e3a" size={33} />
             <h3 className="text-lightText dark:text-darkText font-bold text-xl">
@@ -99,12 +98,23 @@ export default function SideBar() {
             text={"Follower"}
             url={"/artist/follower"}
             active={window.location.href === "http://localhost:3000/artist/follower"}
+
+          />
+          <SideBarItem
+            icon={
+              <FaFileAudio
+                size={22}
+                className="text-lightText dark:text-darkText"
+              />
+            }
+            text={"Management"}
+            url={"/artist/track"}
+            active={window.location.href === "http://localhost:3000/artist/track"}
           />
         </ul>
         <hr
-          className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${
-            expanded ? "w-3/5" : "w-0"
-          }`}
+          className={`mx-auto overflow-hidden border-lightText dark:border-darkText transition-all ${expanded ? "w-3/5" : "w-0"
+            }`}
         />
       </nav>
       <div className="h-20">

@@ -8,6 +8,7 @@ import AlbumController from "./album.js"
 import VnpayController from "./vnpay.js"
 import NotificationController from "./notification.js";
 import CommentController from "./comment.js";
+import TransactionController from "./transaction.js"
 export {
   AuthenticationController,
   SongController,
@@ -18,5 +19,6 @@ export {
   AlbumController,
   VnpayController,
   NotificationController,
-  CommentController
+  CommentController,
+  TransactionController
 };

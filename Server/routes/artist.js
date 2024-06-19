@@ -15,4 +15,7 @@ artistRouter.get("/getTopGenre", verifyToken, ArtistController.getTopGenre)
 artistRouter.get("/getStreamFavouritePurchase", verifyToken, ArtistController.getStreamFavouritePurchase)
 artistRouter.get("/getTopDonateUser", verifyToken, ArtistController.getTopDonateUser)
 artistRouter.get("/getCountFollower", verifyToken, ArtistController.getCountFollower)
+artistRouter.get("/revenueRatio/:span", verifyToken, ArtistController.getRevenueRatio)
+artistRouter.get("/mostStreamed/:span", verifyToken, ArtistController.getArtist5MostStreamSongs);
+artistRouter.get("/trackPerformance/:span", verifyToken, ArtistController.getTrackPerformance)
 export default artistRouter;

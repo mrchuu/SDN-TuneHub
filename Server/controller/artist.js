@@ -193,6 +193,66 @@ const getCountFollower = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+const getRevenueRatio = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const span = req.params.span || "weekly";
+    const result = await TransactionRepository.getArtistRevenueRatio(
+      artist,
+      span
+    );
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const getArtist5MostStreamSongs = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const span = req.params.span || "weekly";
+    const result = await SongStreamRepository.get5MostStreamedSongsOfArtist(
+      artist,
+      span
+    );
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const getTrackPerformance = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const span = req.params.span || "weekly";
+    const result = await SongRepository.getTrackPerformance(
+      artist,
+      span
+    );
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
 export default {
   findByName,
   searchArtistByName,
@@ -204,5 +264,8 @@ export default {
   getTopGenre,
   getStreamFavouritePurchase,
   getTopDonateUser,
-  getCountFollower
+  getCountFollower,
+  getRevenueRatio,
+  getTrackPerformance,
+  getArtist5MostStreamSongs
 };

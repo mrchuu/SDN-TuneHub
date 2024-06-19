@@ -16,7 +16,7 @@ import Trend from "../component/ArtistDashBoard/Trend";
 
 export default function ArtistDashBoard() {
   const [span, setSpan] = useState("weekly");
-  const [dataType, setDataType] = useState("Revenue");
+  const [dataType, setDataType] = useState("revenue");
   const hasMounted = useRef(false);
   const { OriginalRequest } = PerformRequest();
   const [statistic, setStatistic] = useState(null);
@@ -27,7 +27,10 @@ export default function ArtistDashBoard() {
           `artists/getStatistic/${span}`,
           "GET"
         );
-        setStatistic(response.data);
+        console.log(response);
+        if (response) {
+          setStatistic(response.data);
+        }
       };
       if (hasMounted.current) {
         fetchStatistic();
@@ -154,12 +157,12 @@ export default function ArtistDashBoard() {
                 setDataType(e.target.value);
               }}
             >
-              <MenuItem value={"Revenue"}>Revenue</MenuItem>
-              <MenuItem value={"Streams"}>Stream time</MenuItem>
+              <MenuItem value={"revenue"}>Revenue</MenuItem>
+              <MenuItem value={"streams"}>Stream time</MenuItem>
             </Select>
           </FormControl>
           <div className="h-96 w-full">
-            <Trend span={span} type={"revenue"} />
+            <Trend span={span} type={dataType} />
           </div>
         </div>
         <div className="w-full mt-3 flex justify-between items-center">
@@ -167,13 +170,13 @@ export default function ArtistDashBoard() {
             <h4 className="font-medium text-lightText dark:text-darkText">
               Revenue ratio
             </h4>
-            <RevenueRatio />
+            <RevenueRatio span={span}/>
           </div>
           <div className="w-9/12 px-5 flex flex-col justify-between py-2 h-80 bg-light5 rounded-md dark:bg-dark30 shadow-md dark:shadow-blue-700/30 border-2 border-lightTextSecondary/30 dark:border-darkTextSecondary/30">
             <h4 className="font-medium text-lightText dark:text-darkText">
               Most Streamed Songs
             </h4>
-            <Top5Tracks />
+            <Top5Tracks span={span}/>
           </div>
         </div>
         <div className="mt-3 w-full px-5 py-2 h-96 bg-light5 rounded-md dark:bg-dark30 mr-2 shadow-md dark:shadow-blue-700/30 border-2 border-lightTextSecondary/30 dark:border-darkTextSecondary/30">

@@ -22,7 +22,10 @@ import { useEffect } from "react";
 import PaymentResult from "./screen/PaymentResult";
 import PurchaseSong from "./screen/PurchaseSong";
 import SongListExpand from "./screen/SongListExpand";
+import MoodPlaylistScreen from "./screen/MoodPlaylistScreen";
+import ArtistTrack from "./screen/ArtistTrack";
 import CommentPopup from "./component/PopupComments";
+import DonateArtist from "./screen/DonateArtist";
 
 function App() {
   return (
@@ -39,6 +42,7 @@ function App() {
         <Route path="/artist/dashboard" element={<ArtistDashBoard />} />
         <Route path="/artist/follower" element={<ArtistFollower />} />
         <Route path="/artist/upload" element={<ArtistUpload />} />
+        <Route path="/artist/track" element={<ArtistTrack />} />
         <Route path="/confirmSignUp/:token" element={<ConfirmSignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<UserProfile />} />
@@ -49,10 +53,14 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/artist/:artistId" element={<ArtistProfile />} />
+        <Route path="/donateArtist/:artistId" element={<DonateArtist />} />
         <Route
           path="/payment/result/:status/:message"
           element={<PaymentResult />}
         />
+        <Route path="/payment/purchase" element={<PurchaseSong />} />
+        <Route path="/songList/:url/:title" element={<SongListExpand />} />
+        <Route path="/mood/:playlistId" element={<MoodPlaylistScreen />} />
         <Route path="/payment/purchase/:songId" element={<PurchaseSong />} />
         <Route path="/songList/:url/:title" element={<SongListExpand />} />
         <Route path="/popupcoments" element={<CommentPopup />} />

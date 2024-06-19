@@ -14,7 +14,8 @@ import {
   PlaylistRouter,
   VnPayRouter,
   NotificationRouter,
-  CommentRouter
+  CommentRouter,
+  TransactionRouter
 } from "./routes/index.js";
 import "./utils/google-oauth2.js";
 import path from "path";
@@ -68,6 +69,7 @@ app.use("/api/user", UserRouter);
 app.use("/api/playlist", PlaylistRouter);
 app.use("/api/notification", NotificationRouter);
 app.use("/api/payment", VnPayRouter);
+app.use("/api/transaction", TransactionRouter);
 app.use(
   "/upload/image",
   express.static(path.join(__dirname, `upload`, "image"))
