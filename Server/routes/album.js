@@ -10,6 +10,6 @@ albumRouter.get(
 );
 albumRouter.get("/getHotAlbum", AlbumController.getAllHotAlbums)
 albumRouter.get("/getAlbumById/:id",AlbumController.getAlbumById);
-albumRouter.get("/filterAlbumByArtist/:date/:sort",AlbumController.getFilterAlbumByArtist);
+albumRouter.get("/filterAlbumByArtist/:date/:sort",verifyToken, AlbumController.getFilterAlbumByArtist);
 
 export default albumRouter;

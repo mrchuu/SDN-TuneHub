@@ -263,7 +263,7 @@ function SongManagement() {
                 </button>
               </td>
               <td className="w-1/12">{song.streamCount}</td>
-              <td className="w-1/12">{song.totalRevenue}</td>
+              <td className="w-1/12">{Intl.NumberFormat("de-DE").format(song.totalRevenue)}</td>
             </tr>
           ))}
         </tbody>

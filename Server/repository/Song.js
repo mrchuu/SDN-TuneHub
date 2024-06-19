@@ -3,6 +3,7 @@ import { SongRepository } from "./index.js";
 import SongStreamRepository from "./songStream.js";
 import artist from "./artist.js";
 import mongoose from "mongoose";
+import Artist from "../model/Artist.js";
 const getSongsByIds = async (songId) => {
   return await Song.aggregate([
     { $match: { _id: songId } },
@@ -1261,8 +1262,17 @@ const checkFavouriteSong = async ({ songId, userId }) => {
     throw new Error(error.message);
   }
 };
-const getFilterSongByArtist = async ({ date, sort }) => {
+const getFilterSongByArtist = async ({ userId ,date, sort }) => {
+  if (!userId) {
+    throw new Error("userId is required");
+  }
   try {
+    const artist = await Artist.findOne({ userId: userId });
+    if (!artist) {
+      throw new Error("Artist not found for the given userId");
+    }
+    const artistId = artist._id;
+
     const now = new Date();
     let dateFilter = {};
     let orderBy = {};
@@ -1330,6 +1340,7 @@ const getFilterSongByArtist = async ({ date, sort }) => {
       },
       {
         $match: {
+          artist: artistId,
           "streamTime.createdAt": dateFilter,
         },
       },

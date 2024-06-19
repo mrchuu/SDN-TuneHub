@@ -4,6 +4,7 @@ import {
   ArtistRepository,
   SongRepository,
 } from "../repository/index.js";
+import mongoose from "mongoose";
 
 const addAlbum = async (req, res) => {
   try {
@@ -39,7 +40,7 @@ const addAlbum = async (req, res) => {
       artistId: artist._id,
     });
     return res.status(201).json({ message: "New album has been published !!" });
-  } catch (error) { }
+  } catch (error) {}
 };
 const getAlbumsOfArtists = async (req, res) => {
   try {
@@ -68,7 +69,7 @@ const getAlbumById = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
 const getAllAlbums = async (req, res) => {
   try {
     const albums = await AlbumRepository.getAllAlbums();
@@ -76,23 +77,28 @@ const getAllAlbums = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};
 
 const getFilterAlbumByArtist = async (req, res) => {
   try {
     const date = req.params.date;
     const sort = req.params.sort;
-    const albums = await AlbumRepository.getFilterAlbumByArtist({ sort, date });
+    const userId = req.decodedToken.userId;
+    const albums = await AlbumRepository.getFilterAlbumByArtist({
+      userId: new mongoose.Types.ObjectId(userId),
+      sort,
+      date,
+    });
     res.status(200).json({ data: albums });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
 export default {
   addAlbum,
   getAlbumsOfArtists,
   getAlbumById,
   getAllAlbums,
   getAllHotAlbums,
-  getFilterAlbumByArtist
+  getFilterAlbumByArtist,
 };

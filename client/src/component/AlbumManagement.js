@@ -165,7 +165,7 @@ function AlbumManagement() {
               {song.totalStreams} 
               </td>
               <td className="w-1/12">
-              {song.totalRevenue} 
+              {Intl.NumberFormat("de-DE").format(song.totalRevenue)}
               </td>
             </tr>
           ))}

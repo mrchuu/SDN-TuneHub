@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Album from "../model/Album.js";
+import Artist from "../model/Artist.js";
 
 const createAlbum = async ({
   artist,
@@ -99,8 +100,17 @@ const getAllAlbums = async () => {
   }
 };
 
-const getFilterAlbumByArtist = async ({ sort, date }) => {
+const getFilterAlbumByArtist = async ({ userId, sort, date }) => {
+  if (!userId) {
+    throw new Error("userId is required");
+  }
   try {
+    const artist = await Artist.findOne({ userId: userId });
+    if (!artist) {
+      throw new Error("Artist not found for the given userId");
+    }
+    const artistId = artist._id;
+
     let sortFilter = {};
     const now = new Date();
     let dateFilter = {};
@@ -162,6 +172,7 @@ const getFilterAlbumByArtist = async ({ sort, date }) => {
       },
       {
         $match: {
+          artist: artistId,
           "streams.createdAt": dateFilter,
         },
       },

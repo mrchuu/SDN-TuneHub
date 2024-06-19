@@ -216,7 +216,7 @@ const uploadSong = async (req, res) => {
         songCover: result.cover_image,
         isExclusive: result.is_exclusive,
       });
-      const followers = artist.followers.map((f)=>f.toString());
+      const followers = artist.followers.map((f) => f.toString());
       const followersSet = new Set(followers);
       artist.followers.forEach(async (follower) => {
         await NotificationRespository.addNotification({
@@ -504,11 +504,16 @@ const getSongByGenre = async (req, res) => {
 };
 const getFilterSongByArtist = async (req, res) => {
   try {
-    // const artistId = req.decodedToken.userId;
     const date = req.params.date;
     const sort = req.params.sort;
+    const userId = req.decodedToken.userId;
+
+    if (!userId) {
+      return res.status(400).json({ error: "userId is required" });
+    }
+    
     const songs = await SongRepository.getFilterSongByArtist({
-      // artistId,
+      userId: new mongoose.Types.ObjectId(userId),
       date,
       sort,
     });
@@ -521,9 +526,9 @@ const getFilterSongByArtist = async (req, res) => {
 const disableEnableSong = async (req, res) => {
   try {
     // const artistId = req.decodedToken.userId;
-    const {songId} = req.body;
+    const { songId } = req.body;
     const songs = await SongRepository.disableEnableSong({
-      songId
+      songId,
     });
     return res.status(200).json({ data: songs });
   } catch (error) {
@@ -552,5 +557,5 @@ export default {
   getSongByGenre,
   checkFavouriteSong,
   getFilterSongByArtist,
-  disableEnableSong
+  disableEnableSong,
 };
