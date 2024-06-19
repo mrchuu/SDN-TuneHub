@@ -59,7 +59,7 @@ const getAllPlaylistsByUserId = async (creator) => {
 // Get all playlists by user ID
 const getAllMoodsByUserId = async () => {
   try {
-    const playlists = await Playlist.find({ is_admin_created: true });
+    const playlists = await Playlist.find({ is_admin_created: true, is_public:true });
     return playlists;
   } catch (error) {
     throw new Error(error.message);

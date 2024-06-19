@@ -1,9 +1,8 @@
 import Song from "../model/Song.js";
-import { SongRepository } from "./index.js";
 import SongStreamRepository from "./songStream.js";
-import artist from "./artist.js";
 import mongoose from "mongoose";
 import moment from "moment";
+import Artist from "../model/Artist.js";
 const getSongsByIds = async (songId) => {
   return await Song.aggregate([
     { $match: { _id: songId } },
@@ -65,7 +64,7 @@ const getSongsByIds = async (songId) => {
 
 const getAllSongs = async () => {
   try {
-    const songList = await Song.find()
+    const songList = await Song.find({is_public: true})
       .populate("artist", "_id artist_name")
       .populate("album", "_id album_name")
       .select("_id price")
@@ -81,7 +80,7 @@ const getAllSongs = async () => {
 };
 const getSongsByAlbum = async (album) => {
   try {
-    const songList = await Song.find({ album })
+    const songList = await Song.find({ album, is_public: true })
       .populate("artist", "_id artist_name")
       .populate("album", "_id album_name")
       .select("_id")
@@ -98,7 +97,7 @@ const getSongsByIdAgg = async (songId) => {
   try {
     const existingSong = await Song.aggregate([
       {
-        $match: { _id: new mongoose.Types.ObjectId(songId) },
+        $match: { _id: new mongoose.Types.ObjectId(songId), is_public: true },
       },
       {
         $lookup: {
@@ -246,6 +245,7 @@ const getPopularSongOfArtist = async (artistId) => {
       {
         $match: {
           artist: new mongoose.Types.ObjectId(artistId),
+          is_public: true,
         },
       },
       {
@@ -474,6 +474,11 @@ const hotestSongByDay = async (date, check) => {
     const byDay = new Date(new Date() - 24 * date * 60 * 60 * 1000);
     let aggregationPipeline = [
       {
+        $match: {
+          is_public: true,
+        },
+      },
+      {
         $lookup: {
           from: "SongStream",
           localField: "_id",
@@ -629,6 +634,11 @@ const hotestSongByDay1 = async (date, check) => {
   try {
     const byDay = new Date(new Date() - 24 * date * 60 * 60 * 1000);
     let aggregationPipeline = [
+      {
+        $match: {
+          is_public: true,
+        },
+      },
       {
         $lookup: {
           from: "SongStream",
@@ -788,6 +798,11 @@ const hotestSongByDay1 = async (date, check) => {
 const hotestSong = async () => {
   try {
     const results = await Song.aggregate([
+      {
+        $match: {
+          is_public: true,
+        },
+      },
       {
         $lookup: {
           from: "SongStream",
@@ -1246,8 +1261,17 @@ const checkFavouriteSong = async ({ songId, userId }) => {
     throw new Error(error.message);
   }
 };
-const getFilterSongByArtist = async ({ date, sort }) => {
+const getFilterSongByArtist = async ({ userId ,date, sort }) => {
+  if (!userId) {
+    throw new Error("userId is required");
+  }
   try {
+    const artist = await Artist.findOne({ userId: userId });
+    if (!artist) {
+      throw new Error("Artist not found for the given userId");
+    }
+    const artistId = artist._id;
+
     const now = new Date();
     let dateFilter = {};
     let orderBy = {};
@@ -1315,6 +1339,7 @@ const getFilterSongByArtist = async ({ date, sort }) => {
       },
       {
         $match: {
+          artist: artistId,
           "streamTime.createdAt": dateFilter,
         },
       },
@@ -1332,7 +1357,6 @@ const getFilterSongByArtist = async ({ date, sort }) => {
           lastStreamTime: {
             $max: "$streamTime.createdAt",
           },
-          totalRevenue: { $multiply: ["$price", { $size: "$purchased_user" }] },
         },
       },
       {
@@ -1375,10 +1399,25 @@ const getFilterSongByArtist = async ({ date, sort }) => {
         },
       },
       {
+        $lookup: {
+          from: "Transaction",
+          localField: "_id",
+          foreignField: "goodsId",
+          as: "transactions",
+        },
+      },
+      {
+        $addFields: {
+          totalRevenue: {
+            $sum: "$transactions.amount",
+          },
+        },
+      },
+      {
         $group: {
           _id: "$_id",
           song_name: { $first: "$song_name" },
-          totalRevenue: { $sum: "$totalRevenue" },
+          totalRevenue: { $first: "$totalRevenue" },
           album: {
             $first: {
               _id: "$album_file._id",
@@ -1526,6 +1565,24 @@ const getTrackPerformance = async (artist, span) =>{
     throw new Error(error.message);
   }
 }
+
+const disableEnableSong = async ({ songId }) => {
+  try {
+    const song = await Song.findById(songId);
+    if (!song) {
+      throw new Error("Song not found");
+    }
+    const updatedSong = await Song.findByIdAndUpdate(
+      songId,
+      { is_public: !song.is_public },
+      { new: true } // Trả về tài liệu đã được cập nhật
+    );
+
+    return updatedSong;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   getAllSongs,
   streamSong,
@@ -1549,5 +1606,6 @@ export default {
   checkFavouriteSong,
   hotestSongByDay1,
   getFilterSongByArtist,
-  getTrackPerformance
+  getTrackPerformance,
+  disableEnableSong,
 };

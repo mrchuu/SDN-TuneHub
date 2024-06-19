@@ -39,7 +39,7 @@ export default function ArtistTrack() {
     <ArtistTemplate>
       <div className="w-full min-h-screen px-5">
         <h4 className="text-lightText dark:text-darkText text-2xl font-semibold pl-3">
-        TRACK MANAGEMENT
+        ARTIST MANAGEMENT
         </h4>
         <div>
           <Box
