@@ -8,6 +8,7 @@ import AlbumRouter from "./album.js";
 import VnPayRouter from "./vnpay.js"
 import NotificationRouter from "./notification.js"
 import CommentRouter from "./comment.js";
+import TransactionRouter from "./transaction.js";
 export {
   AuthenticationRouter,
   SongRouter,
@@ -18,5 +19,6 @@ export {
   AlbumRouter,
   VnPayRouter,
   NotificationRouter,
-  CommentRouter
+  CommentRouter,
+  TransactionRouter
 };

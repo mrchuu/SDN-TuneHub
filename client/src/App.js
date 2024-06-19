@@ -24,6 +24,7 @@ import SongListExpand from "./screen/SongListExpand";
 import MoodPlaylistScreen from "./screen/MoodPlaylistScreen";
 import ArtistTrack from "./screen/ArtistTrack";
 import CommentPopup from "./component/PopupComments";
+import DonateArtist from "./screen/DonateArtist";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/artist/:artistId" element={<ArtistProfile />} />
+        <Route path="/donateArtist/:artistId" element={<DonateArtist />} />
         <Route
           path="/payment/result/:status/:message"
           element={<PaymentResult />}

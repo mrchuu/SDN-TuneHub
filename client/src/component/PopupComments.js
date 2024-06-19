@@ -93,8 +93,8 @@ export default function AlertDialog({ url }) {
 
     return (
         <React.Fragment>
-            <div className="text-lightTextSecondary dark:text-darkTextSecondary w-12 h-12 absolute right-0 mr-40" onClick={handleClickOpen} >
-                <FaRegComment className='text-3xl' />
+            <div className="text-lightTextSecondary dark:text-darkTextSecondary" onClick={handleClickOpen} >
+                <FaRegComment size={25} />
             </div>
             <Dialog
                 open={open}

@@ -178,9 +178,21 @@ const getArtistRevenueRatio = async (artist, span) => {
     throw new Error(error.message);
   }
 };
+const getTransactionHistory = async (userId) => {
+  try {
+    const result = await Transaction.find({ user: userId }).populate({
+      path: "seller",
+      select: "artist_name",
+    });
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 export default {
   addTransaction,
   getSaleOfArtist,
   getRevenueTrend,
   getArtistRevenueRatio,
+  getTransactionHistory,
 };

@@ -14,7 +14,7 @@ const TransactionSchema = new Schema(
     },
     transactionType: {
       type: String,
-      enum: ["album", "song", "artistKit"],
+      enum: ["album", "song", "artistKit", "donate"],
       required: true,
     },
     amount: {

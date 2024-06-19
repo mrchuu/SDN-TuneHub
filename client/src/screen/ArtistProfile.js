@@ -8,7 +8,7 @@ import AlbumList from "../component/AlbumsList";
 import PerformRequest from "../utilities/PerformRequest";
 import FeaturedIn from "../component/artistProfile/FeaturedIn";
 import { setUserInfo } from "../redux/auth.js";
-
+import { useNavigate } from "react-router-dom";
 export default function ArtistProfile() {
   const dispatch = useDispatch();
   const { artistId } = useParams();
@@ -16,7 +16,7 @@ export default function ArtistProfile() {
   const { OriginalRequest } = PerformRequest();
   const hasMounted = useRef(false);
   const [followed, setFollowed] = useState(false);
-
+  const navigate = useNavigate();
   const checkFollowed = async () => {
     try {
       const check = await OriginalRequest(
@@ -59,6 +59,7 @@ export default function ArtistProfile() {
           `artists/getArtistInfo/${artistId}`,
           "GET"
         );
+        console.log(artist.data);
         setArtistInfo(artist.data);
       } catch (error) {
         console.log(error);
@@ -98,16 +99,24 @@ export default function ArtistProfile() {
                       onClick={handleFollowArtist}
                       className="z-50 cursor-pointer border-2 border-light10 px-5 py-1 text-white rounded-full ml-7 font-bold"
                     >
-                      follow
+                      Follow
                     </button>
                   ) : (
                     <button
                       onClick={handleFollowArtist}
                       className="z-50 cursor-pointer bg-orange-500 border-2 border-light10 px-5 py-1 text-white rounded-full ml-7 font-bold"
                     >
-                      followed
+                      Followed
                     </button>
                   )}
+                  <button
+                    className="z-50 cursor-pointer text-white rounded-full ml-5 font-bold border-light10 border-2 px-5 py-1"
+                    onClick={(e) => {
+                      navigate(`/donateArtist/${artistId}`);
+                    }}
+                  >
+                    Donate
+                  </button>
                 </div>
               </div>
             </div>
@@ -117,9 +126,7 @@ export default function ArtistProfile() {
                 Popular Tracks
               </h4>
               <div className="px-3">
-                <SongList
-                  url={`songs/getArtistPopularSongs/${artistId}`}
-                />
+                <SongList url={`songs/getArtistPopularSongs/${artistId}`} />
               </div>
               <h4 className="text-lightText dark:text-darkText font-semibold text-xl mt-7">
                 Albums

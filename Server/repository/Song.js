@@ -3,6 +3,7 @@ import { SongRepository } from "./index.js";
 import SongStreamRepository from "./songStream.js";
 import artist from "./artist.js";
 import mongoose from "mongoose";
+import moment from "moment";
 const getSongsByIds = async (songId) => {
   return await Song.aggregate([
     { $match: { _id: songId } },
@@ -1444,6 +1445,87 @@ const getFilterSongByArtist = async ({ date, sort }) => {
     throw new Error(error.message);
   }
 };
+const getTrackPerformance = async (artist, span) =>{
+  try {
+    let filter = {};
+    if (span === "weekly") {
+      const startOfWeek = moment().startOf("isoWeek").toDate();
+      const currentDate = moment().endOf("day").toDate();
+      filter.createdAt = {
+        $gte: startOfWeek,
+        $lt: currentDate,
+      };
+    } else if (span === "monthly") {
+      const startOfMonth = moment().startOf("month").toDate();
+      const currentDate = moment().endOf("day").toDate();
+      filter.createdAt = {
+        $gte: startOfMonth,
+        $lt: currentDate,
+      };
+    }
+    const result = await Song.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              artist: new mongoose.Types.ObjectId(artist._id),
+            },
+            // filter,
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "SongStream",
+          localField: "_id",
+          foreignField: "song",
+          as: "songStream"
+        }
+      },
+      {
+        $addFields: {
+          streamCount: {
+            $size: "$songStream"
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: "Transaction",
+          localField: "_id",
+          foreignField: "goodsId",
+          as: "purchase"
+        }
+      },
+      {
+        $addFields: {
+          purchaseCount: {
+            $size: "$purchase"
+          }
+        }
+      },
+      {
+        $sort: {
+          purchaseCount: -1
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          song_name: 1,
+          cover_image: 1,
+          participated_artist: 1,
+          is_exclusive: 1,
+          album: 1,
+          artist: 1
+        }
+      }
+    ]);
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 export default {
   getAllSongs,
   streamSong,
@@ -1467,4 +1549,5 @@ export default {
   checkFavouriteSong,
   hotestSongByDay1,
   getFilterSongByArtist,
+  getTrackPerformance
 };
