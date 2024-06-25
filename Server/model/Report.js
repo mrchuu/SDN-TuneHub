@@ -2,14 +2,14 @@ import mongoose, { Schema } from "mongoose";
 import Song from "./Song.js";
 
 const songDTO = new Schema({
-  songId: {type: Schema.Types.ObjectId},
+  songId: { type: Schema.Types.ObjectId },
   artist: {
     type: String
   }
 });
 
 const userDTO = new Schema({
-  userId: {type: Schema.Types.ObjectId},
+  userId: { type: Schema.Types.ObjectId },
   user_name: {
     type: String
   }
@@ -18,7 +18,8 @@ const userDTO = new Schema({
 const reportsSchema = new Schema(
   {
     reporter: userDTO,
-    song_reported: songDTO
+    song_reported: { type: songDTO, default: null },
+    comment_reported: { type: Schema.Types.ObjectId, default: null },
   },
   { timestamps: true, collection: "Report" }
 );

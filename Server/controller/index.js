@@ -9,6 +9,7 @@ import VnpayController from "./vnpay.js"
 import NotificationController from "./notification.js";
 import CommentController from "./comment.js";
 import TransactionController from "./transaction.js"
+import ReportquestionController from "./reportquestion.js"
 export {
   AuthenticationController,
   SongController,
@@ -20,5 +21,6 @@ export {
   VnpayController,
   NotificationController,
   CommentController,
-  TransactionController
+  TransactionController,
+  ReportquestionController
 };
