@@ -108,10 +108,7 @@ const getSongsByIdAgg = async (songId) => {
         },
       },
       {
-        $unwind: {
-          path: "$artist",
-          preserveNullAndEmptyArrays: true,
-        },
+        $unwind: "$artist",
       },
       {
         $lookup: {
@@ -164,11 +161,12 @@ const getSongsByIdAgg = async (songId) => {
         $project: {
           _id: 1,
           song_name: 1,
-          genre: "$genre.name",
+          genre: 1,
           price: 1,
           is_exclusive: 1,
           cover_image: 1,
-          artist: "$artist.artist_name",
+          "artist._id": 1,
+          "artist.artist_name": 1,
           favourited: 1,
           "participated_artists_details._id": 1,
           "participated_artists_details.artist_name": 1,
@@ -1337,7 +1335,7 @@ const getStreamSongbyId = async (userId) => {
             streamCount: { $sum: "$count" },
           },
         },
-      ]
+      ],
     ]);
     return song;
   } catch (error) {
@@ -1602,35 +1600,35 @@ const getTrackPerformance = async (artist, span) => {
           from: "SongStream",
           localField: "_id",
           foreignField: "song",
-          as: "songStream"
-        }
+          as: "songStream",
+        },
       },
       {
         $addFields: {
           streamCount: {
-            $size: "$songStream"
-          }
-        }
+            $size: "$songStream",
+          },
+        },
       },
       {
         $lookup: {
           from: "Transaction",
           localField: "_id",
           foreignField: "goodsId",
-          as: "purchase"
-        }
+          as: "purchase",
+        },
       },
       {
         $addFields: {
           purchaseCount: {
-            $size: "$purchase"
-          }
-        }
+            $size: "$purchase",
+          },
+        },
       },
       {
         $sort: {
-          purchaseCount: -1
-        }
+          purchaseCount: -1,
+        },
       },
       {
         $project: {
@@ -1640,15 +1638,15 @@ const getTrackPerformance = async (artist, span) => {
           participated_artist: 1,
           is_exclusive: 1,
           album: 1,
-          artist: 1
-        }
-      }
+          artist: 1,
+        },
+      },
     ]);
     return result;
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 const disableEnableSong = async ({ songId }) => {
   try {
@@ -1663,6 +1661,107 @@ const disableEnableSong = async ({ songId }) => {
     );
 
     return updatedSong;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+const getRelevantSong = async ({ genres, artistIds }) => {
+  console.log(artistIds);
+  const genresConverted = genres.map((g) => new mongoose.Types.ObjectId(g));
+  const artistIdsConverted = artistIds.map(
+    (a) => new mongoose.Types.ObjectId(a)
+  );
+  try {
+    const result = await Song.aggregate([
+      {
+        $match: {
+          is_public: true,
+        },
+      },
+      {
+        $addFields: {
+          relevance: {
+            $sum: [
+              {
+                $cond: [
+                  {
+                    $in: ["$genre", genresConverted],
+                  },
+                  1,
+                  0,
+                ],
+              },
+              {
+                $cond: [
+                  {
+                    $in: ["$artist", artistIdsConverted],
+                  },
+                  1,
+                  0,
+                ],
+              },
+              {
+                $size: {
+                  $setIntersection: [
+                    {
+                      $ifNull: ["$participated_artist", []],
+                    },
+                    artistIdsConverted,
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+      {
+        $sort: {
+          relevance: -1,
+        },
+      },
+      {
+        $lookup: {
+          from: "Artist",
+          localField: "artist",
+          foreignField: "_id",
+          as: "artist",
+        },
+      },
+      {
+        $unwind: "$artist",
+      },
+      {
+        $lookup: {
+          from: "Album",
+          localField: "album",
+          foreignField: "_id",
+          as: "album",
+        },
+      },
+      {
+        $unwind: "$album",
+      },
+      {
+        $limit: 5,
+      },
+      {
+        $project: {
+          _id: 1,
+          song_name: 1,
+          price: 1,
+          is_exclusive: 1,
+          file_name: 1,
+          cover_image: 1,
+          "artist._id": 1,
+          "artist.artist_name": 1,
+          duration: 1,
+          "album._id": 1,
+          "album.album_name": 1,
+          relevance: 1,
+        },
+      },
+    ]);
+    return result;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -1693,4 +1792,5 @@ export default {
   getFilterSongByArtist,
   getTrackPerformance,
   disableEnableSong,
+  getRelevantSong,
 };

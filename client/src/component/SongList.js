@@ -11,7 +11,7 @@ import {
   addSongToQueue,
 } from "../redux/player.js";
 import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
-import { MdLibraryMusic, MdOutlineQueueMusic, MdDelete  } from "react-icons/md";
+import { MdLibraryMusic, MdOutlineQueueMusic, MdDelete } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import "../style/soundWave.css";
@@ -20,7 +20,7 @@ import PlayListAddMenu from "./PlayListAddMenu.js";
 import { RiVipDiamondFill } from "react-icons/ri";
 import { BsHeartFill } from "react-icons/bs";
 
-export default function SongList({ url }) {
+export default function SongList({ url, method, body }) {
   const [SongList, setSongList] = useState([]);
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
@@ -76,7 +76,11 @@ export default function SongList({ url }) {
       if (hasMounted.current) {
         try {
           setLoading(true);
-          const data = await OriginalRequest(url ? url : "songs/getAll", "GET");
+          const data = await OriginalRequest(
+            url ? url : "songs/getAll",
+            method ? method : "GET",
+            body
+          );
           if (data) {
             const songListWithFavorites = await Promise.all(
               data.data.map(async (song) => {
@@ -97,7 +101,7 @@ export default function SongList({ url }) {
     };
     fetch();
   }, [hasMounted, url]);
- 
+
   const handleFavouriteClick = async (songId) => {
     try {
       await OriginalRequest(`songs/favourited/${songId}`, "POST");
@@ -131,8 +135,11 @@ export default function SongList({ url }) {
   };
 
   const removeSongFromPlaylist = async (e, playlistId) => {
-    await OriginalRequest(`playlist/deleteSongInPlaylist/${playlistId}/${songInAction._id}`, "DELETE");
-  }
+    await OriginalRequest(
+      `playlist/deleteSongInPlaylist/${playlistId}/${songInAction._id}`,
+      "DELETE"
+    );
+  };
 
   return (
     <div className="w-full mt-5">
@@ -162,10 +169,11 @@ export default function SongList({ url }) {
             ) : (
               SongList.map((song, index) => (
                 <tr
-                  className={`border-b border-neutral-300 ${song._id === currentSong._id
-                    ? "dark:bg-dark30 bg-light30"
-                    : ""
-                    } hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group`}
+                  className={`border-b border-neutral-300 ${
+                    song._id === currentSong._id
+                      ? "dark:bg-dark30 bg-light30"
+                      : ""
+                  } hover:bg-light30 dark:hover:bg-dark30 cursor-pointer group`}
                   key={song._id}
                   onClick={(e) => {
                     dispatch(setCurrentSong(song));
@@ -342,10 +350,12 @@ export default function SongList({ url }) {
             <ListItemText className="text-right">Queue Song</ListItemText>
           </ListItemIcon>
         </MenuItem>
-        <MenuItem className="flex items-center"
+        <MenuItem
+          className="flex items-center"
           onClick={(e) => {
             openMenuPlaylist(e);
-          }}>
+          }}
+        >
           <ListItemIcon>
             <MdLibraryMusic
               size={20}
@@ -364,7 +374,9 @@ export default function SongList({ url }) {
         open={subMenuIsOpen}
         onClose={() => setSubMenuIsOpen(false)}
       >
-        <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
+        <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>
+          Create a Playlist
+        </MenuItem>
         <div style={{ overflowY: "auto", maxHeight: "200px" }}>
           <PlayListAddMenu songId={songInAction} />
         </div>

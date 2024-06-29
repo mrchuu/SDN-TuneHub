@@ -25,6 +25,8 @@ import CommentPopup from "../component/PopupComments.js";
 import { GoDotFill } from "react-icons/go";
 export default function SongDetail() {
   const { songId } = useParams();
+  const [artistIds, setArtistIds] = useState([]);
+  const [genres, setGenres] = useState([]);
   const [song, setSong] = useState({});
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
@@ -68,7 +70,6 @@ export default function SongDetail() {
     }
     closeMenu();
   };
-
   const fetchSong = async () => {
     try {
       console.log(userInfo);
@@ -140,10 +141,10 @@ export default function SongDetail() {
               className="w-full h-96 bg-center bg-cover"
             ></div>
             <div className={`w-full h-full pt-56 relative`}>
-              <div
+              {/* <div
                 className="absolute inset-0 bg-light30 dark:bg-dark30"
                 style={{ opacity: `${(scrollPos * 0.7) / 180}` }}
-              ></div>
+              ></div> */}
               <div className="bg-light60 dark:bg-dark30 max-w h-44 rounded-lg m-10 shadow-lg">
                 <div className="flex items-center h-full pl-5 ">
                   <div
@@ -166,8 +167,11 @@ export default function SongDetail() {
                         <div>
                           <p className="text-2xl font-medium flex items-center">
                             {song.song_name} &nbsp;
-                            {userInfo && userInfo?.songs_purchased?.includes(songId) ? (
-                              <div className="bg-sky-600/70 px-2 rounded-md font-semibold text-base">OWNED</div>
+                            {userInfo &&
+                            userInfo?.songs_purchased?.includes(songId) ? (
+                              <div className="bg-sky-600/70 px-2 rounded-md font-semibold text-base">
+                                OWNED
+                              </div>
                             ) : (
                               <RiVipDiamondFill
                                 size={20}
@@ -176,7 +180,10 @@ export default function SongDetail() {
                             )}
                           </p>
                           <div className="flex items-center text-md text-lightTextSecondary dark:text-darkTextSecondary">
-                            <p>{song.artist} &nbsp;</p>
+                            <p>
+                              {song.artist ? song.artist.artist_name : ""}{" "}
+                              &nbsp;
+                            </p>
                             <GoDotFill size={10} />
                             <p>
                               &nbsp; {formatCreatedAt(song.createdAt)} &nbsp;
@@ -184,7 +191,7 @@ export default function SongDetail() {
                             <GoDotFill size={10} />
                             <p className=" text-lightTextSecondary dark:text-darkTextSecondary ">
                               &nbsp;
-                              {song.genre}
+                              {song.genre?.name}
                             </p>
                           </div>
                         </div>
@@ -221,7 +228,7 @@ export default function SongDetail() {
         <div className="bg-light60 dark:bg-dark60 px-5">
           {song.participated_artists_users &&
           song?.participated_artists_users.length > 0 ? (
-            <div>
+            <div className="">
               <h4 className="text-lightText dark:text-darkText font-semibold text-xl mt-20 ml-5 mb-5">
                 Participated Artist
               </h4>
@@ -260,10 +267,24 @@ export default function SongDetail() {
             <></>
           )}
           <div className="px-5">
-            <h4 className="text-lightText dark:text-darkText font-semibold text-xl m-5">
-              Popular Tracks
+            <h4
+              className={`text-lightText dark:text-darkText font-semibold text-xl ${
+                song?.participated_artists_users?.length === 0 ? "mt-20" : ""
+              }`}
+            >
+              You Might Like
             </h4>
-            <SongList onSongChange={handleSongChange} />
+            {song.artist && song.genre && (
+              <SongList
+                onSongChange={handleSongChange}
+                url={"songs/getRelevantSongs"}
+                method={"POST"}
+                body={{
+                  artistIds: [song.artist?._id],
+                  genres: [song.genre?._id],
+                }}
+              />
+            )}
           </div>
           <div className="h-5"></div>
         </div>

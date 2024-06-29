@@ -9,6 +9,7 @@ import VnPayRouter from "./vnpay.js"
 import NotificationRouter from "./notification.js"
 import CommentRouter from "./comment.js";
 import TransactionRouter from "./transaction.js";
+import EventRouter from "./event.js";
 export {
   AuthenticationRouter,
   SongRouter,
@@ -20,5 +21,6 @@ export {
   VnPayRouter,
   NotificationRouter,
   CommentRouter,
-  TransactionRouter
+  TransactionRouter,
+  EventRouter
 };
