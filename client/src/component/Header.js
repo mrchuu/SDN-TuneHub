@@ -47,7 +47,7 @@ export default function Header() {
       {currentPath === "/explore" ? <Search /> : null}
       <ThemeSwitcher />
       <IoIosNotifications
-        className="text-light10 dark:text-dark10 ml-5"
+        className="text-light10 dark:text-dark10 ml-5 z-50"
         size={28}
       />
       <div className="">

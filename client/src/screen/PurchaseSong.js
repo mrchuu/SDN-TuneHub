@@ -96,7 +96,7 @@ export default function PurchaseSong() {
                 <div className="w-6/12 flex-col text-lightTextSecondary dark:text-darkTextSecondary text-end">
                   <p>{song.song_name}</p>
                   <p>Song Purchase</p>
-                  <p>{song.artist}</p>
+                  <p>{song.artist.artist_name}</p>
                   <p>{song.price} đ</p>
                 </div>
               </div>

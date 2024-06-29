@@ -10,6 +10,7 @@ import NotificationController from "./notification.js";
 import CommentController from "./comment.js";
 import TransactionController from "./transaction.js"
 import ReportquestionController from "./reportquestion.js"
+import EventController from "./event.js"
 export {
   AuthenticationController,
   SongController,
@@ -22,5 +23,6 @@ export {
   NotificationController,
   CommentController,
   TransactionController,
-  ReportquestionController
+  ReportquestionController,
+  EventController
 };

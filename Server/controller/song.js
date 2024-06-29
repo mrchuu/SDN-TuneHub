@@ -511,7 +511,7 @@ const getFilterSongByArtist = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ error: "userId is required" });
     }
-    
+
     const songs = await SongRepository.getFilterSongByArtist({
       userId: new mongoose.Types.ObjectId(userId),
       date,
@@ -535,7 +535,16 @@ const disableEnableSong = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
+const getRelevantSongs = async (req, res) => {
+  try {
+    const { artistIds, genres } = req.body;
+    console.log(genres);
+    const result = await SongRepository.getRelevantSong({ genres, artistIds });
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export default {
   getAllSongs,
   streamSong,
@@ -558,4 +567,5 @@ export default {
   checkFavouriteSong,
   getFilterSongByArtist,
   disableEnableSong,
+  getRelevantSongs
 };

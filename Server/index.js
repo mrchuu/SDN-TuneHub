@@ -16,7 +16,8 @@ import {
   NotificationRouter,
   CommentRouter,
   TransactionRouter,
-  ReportQuestionRouter
+  ReportQuestionRouter,
+  EventRouter,
 } from "./routes/index.js";
 import "./utils/google-oauth2.js";
 import path from "path";
@@ -78,6 +79,7 @@ app.use(
 );
 app.use("/api/artists", ArtistRouter);
 app.use("/api/comments", CommentRouter);
+app.use("/api/event", EventRouter);
 const port = process.env.PORT || 9999;
 const MONGODB_URI = process.env.MONGODB_URI;
 const io = new Server(server, {

@@ -10,6 +10,7 @@ import NotificationRouter from "./notification.js"
 import CommentRouter from "./comment.js";
 import TransactionRouter from "./transaction.js";
 import ReportQuestionRouter from "./reportquestion.js";
+import EventRouter from "./event.js";
 export {
   AuthenticationRouter,
   SongRouter,
@@ -22,5 +23,6 @@ export {
   NotificationRouter,
   CommentRouter,
   TransactionRouter,
-  ReportQuestionRouter
+  ReportQuestionRouter,
+  EventRouter
 };
