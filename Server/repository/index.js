@@ -9,6 +9,7 @@ import AlbumRepository from "./album.js"
 import NotificationRespository from "./notification.js"
 import CommentRepository from "./comment.js";
 import TransactionRepository from "./transaction.js"
+import ReportQuestionRepository from "./reportquestion.js";
 export {
   AuthenticateRepository,
   SongRepository,
@@ -20,5 +21,6 @@ export {
   AlbumRepository,
   NotificationRespository,
   CommentRepository,
-  TransactionRepository
+  TransactionRepository,
+  ReportQuestionRepository
 };

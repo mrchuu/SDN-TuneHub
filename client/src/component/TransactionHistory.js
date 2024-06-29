@@ -26,10 +26,10 @@ export default function TransactionHistory() {
     }
   }, [hasMounted]);
   return (
-    <div className="">
-      <h4 className="text-2xl text-lightText dark:text-darkText font-semibold">
+    <div className="mt-7">
+      {/* <h4 className="text-2xl text-lightText dark:text-darkText font-semibold">
         Transactions
-      </h4>
+      </h4> */}
       {transactions.length === 0 ? (
         <div className="w-full h-40 flex items-center justify-center">
           <h4 className="text-center">No Transaction have been made</h4>

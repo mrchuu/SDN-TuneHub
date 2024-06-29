@@ -101,13 +101,6 @@ export default function SongDetail() {
     return "";
   };
 
-  const formatPrice = (price) => {
-    return price.toLocaleString("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    });
-  };
-
   const handleSongChange = async (newSongId) => {
     try {
       const data = await OriginalRequest(

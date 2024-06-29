@@ -1332,11 +1332,17 @@ const getStreamSongbyId = async (userId) => {
             cover_image: 1,
             duration: 1,
             song_name: 1,
-            "artist.artist_artistname": 1,
+            artist: 1,
             "album.album_name": 1,
             streamCount: { $sum: "$count" },
           },
         },
+        {
+          $sort: { streamCount: -1 },
+        },
+        {
+          $limit: 5
+        }
       ]
     ]);
     return song;

@@ -31,7 +31,7 @@ export default function UserProfile() {
   const { OriginalRequest } = PerformRequest();
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [songMenuAnchor, setSongMenuAnchor] = useState(null);
-
+  const [selectedButton, setSelectedButton] = useState('yourself');
   const [editProfile, setEditProfile] = useState({
     id: auth._id,
     firstName: auth.first_name,
@@ -176,6 +176,11 @@ export default function UserProfile() {
     fetchArtistFollowed();
     fetchPlayList();
   }, []);
+
+  const handleChangeType = (buttonName) => {
+    setSelectedButton(buttonName);
+  };
+
   return (
     <NoSpaceHeaderTemplate>
       <div className="w-full min-h-screen p-5">
@@ -362,100 +367,122 @@ export default function UserProfile() {
             </Modal>
           </div>
         </div>
-        <div className="px-5">
-          <h1 className="text-2xl font-semibold dark:text-darkText">Favorite song</h1>
-          <SongList url={`user/favouritedSong`} />
+        <div className="flex flex-row">
+          <button
+            onClick={() => handleChangeType('yourself')}
+            className={`px-4 py-2 m-1 ${selectedButton === 'yourself' ? 'border-b-2 border-orange-500' : ''}`}
+          >
+            <h1 className="text-xl font-semibold dark:text-darkText">Yourself</h1>
+          </button>
+          <button
+            onClick={() => handleChangeType('recent')}
+            className={`px-4 py-2 m-1 ${selectedButton === 'recent' ? 'border-b-2 border-orange-500' : ''}`}
+          >
+            <h1 className="text-xl font-semibold dark:text-darkText">Recent</h1>
+          </button>
+          <button
+            onClick={() => handleChangeType('transaction')}
+            className={`px-4 py-2 m-1 ${selectedButton === 'transaction' ? 'border-b-2 border-orange-500' : ''}`}
+          >
+            <h1 className="text-xl font-semibold dark:text-darkText">Transaction</h1>
+          </button>
         </div>
-        {artistFollowed.length != 0 ? (
-          <div className="mt-8">
-            <div className="mx-auto">
-              <h2 className="text-2xl font-semibold mb-5 dark:text-white ml-4">
-                Artist Followed
-              </h2>
-            </div>
-            <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
-              {artistFollowed.map((art, index) => (
-                <div className="card p-4 pr-0 ml-4 mr-5 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30  dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8">
-                  <img
-                    src={art.profile_picture}
-                    className="rounded-full w-40 h-40 object-cover object-center"
-                  />
-                  <Link
-                    key={index}
-                    to={`/artist/${art._id}`}
-                    className="text-xs hover:underline"
-                  >
-                    <h3
-                      id="h3-card"
-                      className="text-lg text-lightText font-semibold dark:text-white m-2 w-40 overflow-hidden line-clamp-1"
-                    >
-                      {art.artist_name}
-                    </h3>
-                  </Link>
-                  {art.introduction ? (
-                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2 w-40 h-12 overflow-hidden line-clamp-2">
-                      {art.introduction}
-                    </p>
-                  ) : (
-                    <p className="text-md text-light30 dark:text-dark30 ml-2">
-                      Null
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <></>
-        )}
-        {playList.length != 0 ? (
-          <div className="mt-5 ml-5">
-            <div className="mx-auto ">
-              <h2 className="text-2xl font-semibold mb-5 dark:text-white ml-0">
-                Playlist
-              </h2>
-            </div>
-            <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
-              {playList.map((ply, index) => (
-                <div className="card p-4 pr-2 ml-0 mr-8 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30  dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8">
-                  <img
-                    src={ply.play_list_cover}
-                    className="rounded-md w-40 h-40 object-cover object-center"
-                  />
-                  <Link
-                    key={index}
-                    to={`/playlist/${ply._id}`}
-                    className="text-xs hover:underline"
-                  >
-                    <h3
-                      id="h3-card"
-                      className="text-lg text-lightText font-semibold dark:text-white m-2 w-40 overflow-hidden line-clamp-1"
-                    >
-                      {ply.play_list_name}
-                    </h3>
-                  </Link>
-                  {ply.createdAt ? (
-                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2 w-40 h-12 overflow-hidden line-clamp-2">
-                      Date created: <br />
-                      {ply.createdAt}
-                    </p>
-                  ) : (
-                    <p className="text-md text-light30 dark:text-dark30 ml-2">
-                      Null
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
+        {selectedButton === 'transaction' ? (
+          <TransactionHistory />
+        ) : selectedButton === 'recent' ? (
+          <>
             <div className="px-5">
-              <h1 className="text-2xl font-semibold dark:text-darkText">Top 5 Stream Song</h1>
+              <h1 className="text-lg font-semibold dark:text-darkText mt-5">Top Stream Song</h1>
               <SongList url={`user/StreamSong`} />
             </div>
-          </div>
+            {artistFollowed.length !== 0 && (
+              <div className="mt-8">
+                <div className="mx-auto">
+                  <h2 className="text-lg font-semibold mb-5 dark:text-white ml-4">
+                    Artist Followed
+                  </h2>
+                </div>
+                <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+                  {artistFollowed.map((art, index) => (
+                    <div
+                      key={index}
+                      className="card p-4 pr-0 ml-4 mr-5 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30 dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8"
+                    >
+                      <img
+                        src={art.profile_picture}
+                        className="rounded-full w-40 h-40 object-cover object-center"
+                      />
+                      <Link to={`/artist/${art._id}`} className="text-xs hover:underline">
+                        <h3
+                          id="h3-card"
+                          className="text-lg text-lightText font-semibold dark:text-white m-2 w-40 overflow-hidden line-clamp-1"
+                        >
+                          {art.artist_name}
+                        </h3>
+                      </Link>
+                      {art.introduction ? (
+                        <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2 w-40 h-12 overflow-hidden line-clamp-2">
+                          {art.introduction}
+                        </p>
+                      ) : (
+                        <p className="text-md text-light30 dark:text-dark30 ml-2">
+                          Null
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         ) : (
-          <></>
+          <>
+            <div className="px-5">
+              <h1 className="text-lg font-semibold dark:text-darkText mt-5">Favorite song</h1>
+              <SongList url={`user/favouritedSong`} />
+            </div>
+            {playList.length !== 0 && (
+              <div className="mt-5 ml-5">
+                <div className="mx-auto">
+                  <h2 className="text-lg font-semibold mb-5 dark:text-white ml-0">
+                    Playlist
+                  </h2>
+                </div>
+                <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary">
+                  {playList.map((ply, index) => (
+                    <div
+                      key={index}
+                      className="card p-4 pr-2 ml-0 mr-8 border rounded-md bg-light60 dark:bg-dark60 relative shadow-md hover:shadow-neutral-400 hover:bg-light30 dark:hover:shadow-blue-500/50 dark:hover:bg-dark30 dark:shadow-md dark:border-none mb-8"
+                    >
+                      <img
+                        src={ply.play_list_cover}
+                        className="rounded-md w-40 h-40 object-cover object-center"
+                      />
+                      <Link to={`/playlist/${ply._id}`} className="text-xs hover:underline">
+                        <h3
+                          id="h3-card"
+                          className="text-lg text-lightText font-semibold dark:text-white m-2 w-40 overflow-hidden line-clamp-1"
+                        >
+                          {ply.play_list_name}
+                        </h3>
+                      </Link>
+                      {ply.createdAt ? (
+                        <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2 w-40 h-12 overflow-hidden line-clamp-2">
+                          Date created: <br />
+                          {ply.createdAt}
+                        </p>
+                      ) : (
+                        <p className="text-md text-light30 dark:text-dark30 ml-2">
+                          Null
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
-        <TransactionHistory />
       </div>
     </NoSpaceHeaderTemplate>
   );
