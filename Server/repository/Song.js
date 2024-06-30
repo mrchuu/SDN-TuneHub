@@ -88,7 +88,26 @@ const getSongsByAlbum = async (album) => {
       .select("song_name")
       .select("cover_image")
       .select("duration")
-      .select("is_exclusive");
+      .select("is_exclusive")
+      .select("price")
+    return songList;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const getSongByAlbumByArtist = async (album) => {
+  try {
+    const songList = await Song.find({ album })
+      .populate("artist", "_id artist_name")
+      .populate("album", "_id album_name")
+      .select("_id")
+      .select("song_name")
+      .select("cover_image")
+      .select("duration")
+      .select("is_exclusive")
+      .select("is_public")
+      .select("price")
     return songList;
   } catch (error) {
     throw new Error(error.message);
@@ -185,7 +204,7 @@ const getSongsByIdAgg = async (songId) => {
   }
 };
 
-const getSongsById = async (songId) => {
+const getSongsById = async ({songId}) => {
   try {
     const existingSong = await Song.findById(songId)
       .populate("artist")
@@ -1527,4 +1546,5 @@ export default {
   hotestSongByDay1,
   getFilterSongByArtist,
   disableEnableSong,
+  getSongByAlbumByArtist
 };

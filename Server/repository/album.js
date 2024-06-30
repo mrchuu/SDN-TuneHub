@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Album from "../model/Album.js";
 import Artist from "../model/Artist.js";
-
+import Song from "../model/Song.js";
 const createAlbum = async ({
   artist,
   album_name,
@@ -306,6 +306,48 @@ const getFilterAlbumByArtist = async ({ userId, sort, date }) => {
   }
 };
 
+const disableEnableAlbum = async ({ albumId, status }) => {
+  try {
+    const album = await Album.findById(albumId);
+    if (!album) {
+      throw new Error("Album not found");
+    }
+    const updatedAlbum = await Album.findByIdAndUpdate(
+      albumId,
+      { is_public: !album.is_public },
+      { new: true }
+    );
+
+    await Song.updateMany({ album: albumId }, { is_public: status });
+
+    return updatedAlbum;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const updateAlbumById = async ({ albumChange }) => {
+  try {
+    const ab = await Album.findById(albumChange._id);
+    if (!ab) {
+      throw new Error("Album not found");
+    }
+    const updatedAlbum = await Album.findByIdAndUpdate(
+      albumChange._id,
+      {
+        album_name: albumChange.album_name,
+        description: albumChange.description,
+        album_cover: albumChange.album_cover,
+        price: albumChange.price,
+      },
+      { new: true }
+    );
+
+    return updatedAlbum;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export default {
   createAlbum,
   getAlbumsOfArtists,
@@ -313,4 +355,6 @@ export default {
   getAllAlbums,
   getHotestAlbums,
   getFilterAlbumByArtist,
+  disableEnableAlbum,
+  updateAlbumById,
 };

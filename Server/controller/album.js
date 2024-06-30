@@ -94,6 +94,31 @@ const getFilterAlbumByArtist = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+const disableEnableAlbum = async (req, res) => {
+  try {
+    const {songId, status} = req.body;
+    const albumId = songId;
+    const albums = await AlbumRepository.disableEnableAlbum({
+      albumId,
+      status,
+    });
+    res.status(200).json({ data: albums });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const updateAlbumById = async (req, res) => {
+  try {
+    const {albumChange} = req.body;
+    const album = await AlbumRepository.updateAlbumById({
+      albumChange
+    })
+    res.status(200).json({ data: album });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 export default {
   addAlbum,
   getAlbumsOfArtists,
@@ -101,4 +126,6 @@ export default {
   getAllAlbums,
   getAllHotAlbums,
   getFilterAlbumByArtist,
+  disableEnableAlbum,
+  updateAlbumById
 };
