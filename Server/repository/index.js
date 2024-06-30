@@ -23,5 +23,6 @@ export {
   NotificationRespository,
   CommentRepository,
   TransactionRepository,
-  EventRepository
+  EventRepository, 
+  ReportQuestionRepository
 };

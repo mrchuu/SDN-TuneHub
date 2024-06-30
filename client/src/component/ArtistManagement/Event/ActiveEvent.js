@@ -21,7 +21,7 @@ export default function ActiveEvent() {
     <div className="flex flex-wrap w-full ">
       {events.map((e) => (
         <div
-          className="h-32 w-96 justify-between bg-center bg-cover mr-4 mb-3 rounded-md relative"
+          className="shadow-md h-32 w-96 justify-between bg-center bg-cover mr-4 mb-3 rounded-md relative"
           key={e._id}
           style={{ backgroundImage: `url(${e.eventBanner})` }}
         >
