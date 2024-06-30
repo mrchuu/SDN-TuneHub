@@ -8,7 +8,6 @@ import { FaRegHeart, FaSearch, FaEdit } from "react-icons/fa";
 import { BsHeartFill } from "react-icons/bs";
 import { RiVipDiamondFill } from "react-icons/ri";
 import { TbPlaylistOff, TbPlaylist } from "react-icons/tb";
-import { toogleIsPlaying, addSongToQueue } from "../redux/player.js";
 import { Link } from "react-router-dom";
 import {
   ListItemIcon,
@@ -29,7 +28,6 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import "../App.css";
 function SongManagement() {
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
