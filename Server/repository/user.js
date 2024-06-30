@@ -4,6 +4,8 @@ import Artist from "../model/Artist.js";
 import Playlist from "../model/Playlist.js";
 import moment from 'moment'
 import Song from "../model/Song.js";
+import Album from "../model/Album.js";
+
 const findById = async (id) => {
     try {
         const user = await User.findById(id);
@@ -57,14 +59,14 @@ const followArtist = async ({ artistId, userId }) => {
                 $push: { artist_followed: new mongoose.Types.ObjectId(artistId) },
             });
             await Artist.findByIdAndUpdate(artistId, {
-                $push: { followers: new mongoose.Types.ObjectId(userId) },
+                $push: { followers: { userId: new mongoose.Types.ObjectId(userId) } },
             });
         } else {
             registerUser = await User.findByIdAndUpdate(userId, {
                 $pull: { artist_followed: artistId },
             });
             await Artist.findByIdAndUpdate(artistId, {
-                $pull: { followers: userId },
+                $pull: { followers: { userId: userId } },
             });
         }
         return registerUser;
@@ -129,7 +131,7 @@ const getListPlayList = async (userId) => {
 }
 const getListFavouritedSong = async (userId) => {
     try {
-        const favouritedSongs = await Song.find({ favourited: userId }).select("_id song_name genre file_name cover_image artist duration");
+        const favouritedSongs = await Song.find({ favourited: userId }).populate("album artist").select("_id song_name genre file_name cover_image artist duration");
         return favouritedSongs;
     } catch (error) {
         throw new Error(error.message);

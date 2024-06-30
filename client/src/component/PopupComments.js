@@ -9,8 +9,12 @@ import { FaRegComment } from "react-icons/fa";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { Input } from "@mui/material";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { BsFillSendFill } from "react-icons/bs";
+import { TbMessageReport } from "react-icons/tb";
+import { RiReplyLine } from "react-icons/ri";
+import ReportDialog from "./ReportDialog.js";
+
 export default function AlertDialog({ url }) {
     const [open, setOpen] = useState(false);
     const [comment, setComments] = useState([]);
@@ -20,6 +24,9 @@ export default function AlertDialog({ url }) {
     const userInfo = useSelector((state) => state.auth.userInfo);
     const [parentCommentId, setParentCommentId] = useState(null);
     const [commentHistory, setCommentHistory] = useState([]);
+    const [reportOpen, setReportOpen] = useState(false);
+    const [reportCommentId, setReportCommentId] = useState(null);
+
     const handleClickOpen = () => {
         setOpen(true);
         fetchComments(null);
@@ -29,6 +36,7 @@ export default function AlertDialog({ url }) {
         setOpen(false);
         setParentCommentId(null);
     };
+
     const fetchComments = async (parentId = null) => {
         try {
             const data = await OriginalRequest(url, "GET");
@@ -54,7 +62,7 @@ export default function AlertDialog({ url }) {
         }
     };
 
-    const postComment = async (event) => {
+    const postComment = async () => {
         if (newComment.trim()) {
             try {
                 const payload = {
@@ -75,6 +83,7 @@ export default function AlertDialog({ url }) {
             }
         }
     };
+
     const handleCommentChange = (event) => {
         setNewComment(event.target.value);
     };
@@ -91,10 +100,25 @@ export default function AlertDialog({ url }) {
         fetchComments(previousParentId);
     };
 
+    const handleReportClick = (id) => {
+        setReportCommentId(id);
+        setReportOpen(true);
+    };
+
+    const handleReportClose = () => {
+        setReportOpen(false);
+        setReportCommentId(null);
+    };
+
+    const handleReportSubmit = async () => {
+        await OriginalRequest(`reportquestion/addReport/${reportCommentId}`, "POST");
+        setReportOpen(false);
+    };
+
     return (
         <React.Fragment>
-            <div className="text-lightTextSecondary dark:text-darkTextSecondary w-12 h-12 absolute right-0 mr-40" onClick={handleClickOpen} >
-                <FaRegComment className='text-3xl' />
+            <div className="text-lightTextSecondary dark:text-darkTextSecondary" onClick={handleClickOpen} >
+                <FaRegComment size={25} />
             </div>
             <Dialog
                 open={open}
@@ -134,16 +158,31 @@ export default function AlertDialog({ url }) {
                                         {comment.user.first_name} {comment.user.last_name}
                                     </p>
                                     <p>{comment.content}</p>
-                                    {comment.is_root ? (
-                                        <p
-                                            className="ml-96 cursor-pointer"
-                                            onClick={() => handleReplyClick(comment._id)}
-                                        >
-                                            reply
-                                        </p>
-                                    ) : (
-                                        <span>&nbsp;</span>
-                                    )}
+                                    <div className="ml-80 cursor-pointer flex">
+                                        <div className="items-center flex flex-row mr-7">
+                                            {comment.is_root ? (
+                                                <>
+                                                    <RiReplyLine className="mr-1" />
+                                                    <p onClick={() => handleReplyClick(comment._id)}>
+                                                        reply
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                <span>&nbsp;</span>
+                                            )}
+                                        </div>
+                                        <div className="items-center flex flex-row">
+                                            <TbMessageReport
+                                                className="mr-1"
+                                            />
+                                            <span
+                                                // className="cursor-pointer"
+                                                onClick={() => handleReportClick(comment._id)}
+                                            >
+                                                report
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -172,7 +211,6 @@ export default function AlertDialog({ url }) {
                                     />
                                 </div>
                             </div>
-
                         </div>
                     </DialogContentText>
                 </DialogContent>
@@ -183,6 +221,11 @@ export default function AlertDialog({ url }) {
                     <Button onClick={handleClose}>Close</Button>
                 </DialogActions>
             </Dialog>
+            <ReportDialog
+                open={reportOpen}
+                onClose={handleReportClose}
+                onSubmit={handleReportSubmit}
+            />
         </React.Fragment >
     );
 }

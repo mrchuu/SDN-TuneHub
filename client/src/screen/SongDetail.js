@@ -5,27 +5,29 @@ import React, { useEffect, useState } from "react";
 import PerformRequest from "../utilities/PerformRequest.js";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import SoundWaveCanvas from "../component/SoundWaveCanvas.js";
 import { setScrollPos } from "../redux/window";
+import { RiVipDiamondFill } from "react-icons/ri";
 import { IoEllipsisHorizontal } from "react-icons/io5";
-import { Button, ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
+import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import {
   setCurrentSong,
   toogleIsPlaying,
-  addSongToQueue
+  addSongToQueue,
 } from "../redux/player.js";
 import { MdLibraryMusic, MdOutlineQueueMusic } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import auth, { setUserInfo } from "../redux/auth.js";
 import PlayListAddMenu from "./PlayListAddMenu.js";
 import { FaPlay } from "react-icons/fa";
-import { TiShoppingCart } from "react-icons/ti";
-import CommentPopup from "../component/PopupComments.js";
 
+import { MdOutlineAttachMoney } from "react-icons/md";
+import CommentPopup from "../component/PopupComments.js";
+import { GoDotFill } from "react-icons/go";
 export default function SongDetail() {
   const { songId } = useParams();
+  const [artistIds, setArtistIds] = useState([]);
+  const [genres, setGenres] = useState([]);
   const [song, setSong] = useState({});
-  const [SongLists, setSongLists] = useState([]);
   const { OriginalRequest } = PerformRequest();
   const dispatch = useDispatch();
   const isPlaying = useSelector((state) => state.player.isPlaying);
@@ -57,7 +59,6 @@ export default function SongDetail() {
     setSubMenuIsOpen(false);
     setPlaylistMenuAnchor(null);
   };
-  ;
   const handleCreatePlaylist = async () => {
     const response = await OriginalRequest(`playlist/create`, "POST", {
       songs: songInAction,
@@ -69,9 +70,9 @@ export default function SongDetail() {
     }
     closeMenu();
   };
-
   const fetchSong = async () => {
     try {
+      console.log(userInfo);
       const data = await OriginalRequest(`songs/detailSong/${songId}`, "GET");
       if (data && data.data) {
         setSong(data.data[0]);
@@ -101,10 +102,6 @@ export default function SongDetail() {
     return "";
   };
 
-  const formatPrice = (price) => {
-    return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-  };
-
   const handleSongChange = async (newSongId) => {
     try {
       const data = await OriginalRequest(
@@ -123,171 +120,226 @@ export default function SongDetail() {
     <NoSpaceHeaderTemplate>
       <div className="overflow-hidden">
         {song && (
-          <div
-            className={`profileHeader w-full h-96 relative`}
-
-          >
-            <div style={{
-              backgroundImage: `url('${song.cover_image}')`,
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              filter: 'blur(5px)'
-            }} className="w-full h-96 bg-center bg-cover"></div>
+          <div className={`profileHeader w-full h-96 relative`}>
+            <div
+              style={{
+                backgroundImage: `url('${song.cover_image}')`,
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                filter: "blur(5px)",
+              }}
+              className="w-full h-96 bg-center bg-cover"
+            ></div>
             <div className={`w-full h-full pt-56 relative`}>
-              <div
+              {/* <div
                 className="absolute inset-0 bg-light30 dark:bg-dark30"
                 style={{ opacity: `${(scrollPos * 0.7) / 180}` }}
-              >
-              </div>
-              <div className="bg-light30 dark:bg-dark30 max-w h-44 rounded-lg m-10">
-                <div className="flex items-center h-full pl-12 ">
-                  <img src={song.cover_image} alt={song.song_name} className={`w-36 h-36 rounded-full object-cover object-center ${isPlaying ? "animate-spinSlow" : ""}`} />
-                  <FaPlay className="absolute hover:opacity-50 size-9 text-light10 dark:text-dark10 left-0 ml-36"
-                    key={song._id}
-                    onClick={(e) => {
-                      dispatch(setCurrentSong(song));
-                      dispatch(toogleIsPlaying(true));
-                    }} />
-                  <div className="text-dark60 dark:text-light60 m-2 ml-4">
-                    <div className="flex mb-3">
-                      <h1 className="text-4xl font-bold ml-2 uppercase text-lightTextSecondary dark:text-darkTextSecondary">{song.song_name}</h1>
-                      <p className="text-1xl m-2 text-lightTextSecondary">( {formatCreatedAt(song.createdAt)} )</p>
+              ></div> */}
+              <div className="bg-light60 dark:bg-dark30 max-w h-44 rounded-lg m-10 shadow-lg">
+                <div className="flex items-center h-full pl-5 ">
+                  <div
+                    style={{ backgroundImage: `url(${song.cover_image})` }}
+                    className={`w-40 h-36 rounded-lg relative bg-cover bg-center flex items-center justify-center group`}
+                  >
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-50 transition-opacity duration-300 rounded-md"></div>
+                    <FaPlay
+                      className="size-9 text-light10 dark:text-dark10 z-10 opacity-0 group-hover:opacity-100"
+                      key={song._id}
+                      onClick={(e) => {
+                        dispatch(setCurrentSong(song));
+                        dispatch(toogleIsPlaying(true));
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between px-5 py-3 h-full w-full">
+                    <div className="text-lightText dark:text-darkText">
+                      <div className="flex flex-col justify-around h-full">
+                        <div>
+                          <p className="text-2xl font-medium flex items-center">
+                            {song.song_name} &nbsp;
+                            {userInfo &&
+                            userInfo?.songs_purchased?.includes(songId) ? (
+                              <div className="bg-sky-600/70 px-2 rounded-md font-semibold text-base">
+                                OWNED
+                              </div>
+                            ) : (
+                              <RiVipDiamondFill
+                                size={20}
+                                className="text-[#E6CA69]"
+                              />
+                            )}
+                          </p>
+                          <div className="flex items-center text-md text-lightTextSecondary dark:text-darkTextSecondary">
+                            <p>
+                              {song.artist ? song.artist.artist_name : ""}{" "}
+                              &nbsp;
+                            </p>
+                            <GoDotFill size={10} />
+                            <p>
+                              &nbsp; {formatCreatedAt(song.createdAt)} &nbsp;
+                            </p>
+                            <GoDotFill size={10} />
+                            <p className=" text-lightTextSecondary dark:text-darkTextSecondary ">
+                              &nbsp;
+                              {song.genre?.name}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex">
+                          <CommentPopup
+                            url={`comments/getAllComments/${songId}`}
+                          />
+                          <Link
+                            to={`/payment/purchase/${song._id}`}
+                            className="text-lightTextSecondary dark:text-darkTextSecondary ml-3"
+                          >
+                            <MdOutlineAttachMoney size={28} />
+                          </Link>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center mb-2">
-                      <span className="text-2xl ml-2 px-5 text-darkText dark:text-darkText bg-light10 dark:bg-dark10 rounded-lg">{song.genre}</span>
-                      {song.is_exclusive ? (
-                        userInfo && userInfo?.songs_purchased?.includes(currentSong._id) ? (
-                          <span className="text-2xl text-white px-5 bg-sky-600/70 rounded-lg ml-2 font-medium">
-                            OWNED
-                          </span>
-                        ) : (
-                          <>
-                            <span
-                              className=" text-white px-5 bg-amber-500 text-2xl rounded-lg ml-2 font-medium right-0">
-                              {formatPrice(song.price)}
-                            </span>
-                          </>
-                        )
-                      ) : (
-                        <></>
-                      )}
+                    <div className="flex items-center z-10 pr-2">
+                      <IoEllipsisHorizontal
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openMenu(e, song);
+                        }}
+                        size={30}
+                        className="text-lightTextSecondary dark:text-darkTextSecondary"
+                      />
                     </div>
                   </div>
-                  <p className="text-lightTextSecondary dark:text-darkTextSecondary w-12 h-12 absolute right-0 mr-20">
-                    <IoEllipsisHorizontal
-                      className='text-4xl'
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openMenu(e, song);
-                      }} />
-                  </p>
-                  <CommentPopup url={`comments/getAllComments/${songId}`} />
-                  <Link
-                    to={`/payment/purchase/${song._id}`}
-                    className="text-lightTextSecondary dark:text-darkTextSecondary w-12 h-12 absolute right-0 mr-60">
-                    <TiShoppingCart className='text-4xl' />
-                  </Link>
-                  <Menu
-                    open={menuIsOpen}
-                    anchorEl={songMenuAnchor}
-                    onClose={closeMenu}
-                    MenuListProps={{
-                      "aria-labelledby": "basic-button",
-                    }}
-                    autoFocus={false}
-                  >
-                    <MenuItem
-                      className="flex items-center"
-                      onClick={(e) => {
-                        console.log(songInAction);
-                        dispatch(addSongToQueue(songInAction));
-                        closeMenu(e);
-                      }}
-                    >
-                      <ListItemIcon>
-                        <MdOutlineQueueMusic
-                          size={22}
-                          className="text-light10 dark:text-dark10 mr-3"
-                        />
-                        <ListItemText className="text-right">Queue Song</ListItemText>
-                      </ListItemIcon>
-                    </MenuItem>
-                    <MenuItem className="flex items-center"
-                      onClick={(e) => {
-                        openMenuPlaylist(e);
-                      }}>
-                      <ListItemIcon>
-                        <MdLibraryMusic
-                          size={20}
-                          className="text-light10 dark:text-dark10 mr-3"
-                        />
-                        <ListItemText className="text-right">Add To Playlist</ListItemText>
-                      </ListItemIcon>
-                    </MenuItem>
-                  </Menu>
-                  <Menu
-                    anchorEl={playlistMenuAnchor}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    open={subMenuIsOpen}
-                    onClose={() => setSubMenuIsOpen(false)}
-                  >
-                    <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>Create a Playlist</MenuItem>
-                    <div style={{ overflowY: "auto", maxHeight: "200px" }}>
-                      <PlayListAddMenu songId={songInAction} />
-                    </div>
-                  </Menu>
                 </div>
               </div>
             </div>
           </div>
         )}
+
         <div className="bg-light60 dark:bg-dark60 px-5">
-          <h4 className="text-lightText dark:text-darkText font-semibold text-xl m-10 mt-20">
-            Participated Artist
-          </h4>
-          <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary ml-8 w-full">
-            {song.participated_artists_users && song.participated_artists_users.map((user, index) => (
-              <div
-                key={index}
-                className="card p-4 ml-4 mr-5 border rounded-md bg-light30 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8"
-              >
-                <img
-                  src={user.profile_picture}
-                  className="rounded-full w-40 h-40 object-cover object-center"
-                />
-                <h3 className="text-lg font-semibold dark:text-white m-2">
-                  <Link
-                    to={`/artist/${song.participated_artists_details[index]._id}`}
-                    className="text-xs hover:underline"
-                    style={{ fontSize: "1.125rem", lineHeight: "1.25rem" }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
+          {song.participated_artists_users &&
+          song?.participated_artists_users.length > 0 ? (
+            <div className="">
+              <h4 className="text-lightText dark:text-darkText font-semibold text-xl mt-20 ml-5 mb-5">
+                Participated Artist
+              </h4>
+              <div className="mx-auto flex flex-wrap items-center text-lightTextSecondary dark:text-darkTextSecondary w-full">
+                {song.participated_artists_users.map((user, index) => (
+                  <div
+                    key={index}
+                    className="card p-4 ml-4 mr-5 border rounded-md bg-light5 dark:bg-dark30 relative shadow-md shadow-neutral-400 dark:shadow-blue-500/50 dark:shadow-md dark:border-none mb-8"
                   >
-                    {song.participated_artists_details[index].artist_name}
-                  </Link>
-                </h3>
-                <h3 className="m-2">{user.introduction}</h3>
-                <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2">
-                </p>
+                    <img
+                      src={user.profile_picture}
+                      className="rounded-full w-40 h-40 object-cover object-center"
+                    />
+                    <h3 className="text-lg font-semibold dark:text-white m-2">
+                      <Link
+                        to={`/artist/${song.participated_artists_details[index]._id}`}
+                        className="text-xs hover:underline"
+                        style={{
+                          fontSize: "1.125rem",
+                          lineHeight: "1.25rem",
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        {song.participated_artists_details[index].artist_name}
+                      </Link>
+                    </h3>
+                    <h3 className="m-2">{user.introduction}</h3>
+                    <p className="text-md text-lightTextSecondary dark:text-darkTextSecondary ml-2"></p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <></>
+          )}
           <div className="px-5">
-            <h4 className="text-lightText dark:text-darkText font-semibold text-xl m-5">
-              Popular Tracks
+            <h4
+              className={`text-lightText dark:text-darkText font-semibold text-xl ${
+                song?.participated_artists_users?.length === 0 ? "mt-20" : ""
+              }`}
+            >
+              You Might Like
             </h4>
-            <SongList onSongChange={handleSongChange} />
+            {song.artist && song.genre && (
+              <SongList
+                onSongChange={handleSongChange}
+                url={"songs/getRelevantSongs"}
+                method={"POST"}
+                body={{
+                  artistIds: [song.artist?._id],
+                  genres: [song.genre?._id],
+                }}
+              />
+            )}
           </div>
           <div className="h-5"></div>
         </div>
+        <Menu
+          open={menuIsOpen}
+          anchorEl={songMenuAnchor}
+          onClose={closeMenu}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+          autoFocus={false}
+        >
+          <MenuItem
+            className="flex items-center"
+            onClick={(e) => {
+              console.log(songInAction);
+              dispatch(addSongToQueue(songInAction));
+              closeMenu(e);
+            }}
+          >
+            <ListItemIcon>
+              <MdOutlineQueueMusic
+                size={22}
+                className="text-light10 dark:text-dark10 mr-3"
+              />
+              <ListItemText className="text-right">Queue Song</ListItemText>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem
+            className="flex items-center"
+            onClick={(e) => {
+              openMenuPlaylist(e);
+            }}
+          >
+            <ListItemIcon>
+              <MdLibraryMusic
+                size={20}
+                className="text-light10 dark:text-dark10 mr-3"
+              />
+              <ListItemText className="text-right">
+                Add To Playlist
+              </ListItemText>
+            </ListItemIcon>
+          </MenuItem>
+        </Menu>
+        <Menu
+          anchorEl={playlistMenuAnchor}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={subMenuIsOpen}
+          onClose={() => setSubMenuIsOpen(false)}
+        >
+          <MenuItem className="cursor-pointer" onClick={handleCreatePlaylist}>
+            Create a Playlist
+          </MenuItem>
+          <div style={{ overflowY: "auto", maxHeight: "200px" }}>
+            <PlayListAddMenu songId={songInAction} />
+          </div>
+        </Menu>
       </div>
-    </NoSpaceHeaderTemplate >
+    </NoSpaceHeaderTemplate>
   );
 }

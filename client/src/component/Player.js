@@ -8,12 +8,13 @@ import {
   setSliderValue,
 } from "../redux/player.js";
 import PerformRequest from "../utilities/PerformRequest.js";
-import { Box, Fade, Modal, Typography } from "@mui/material";
+import { Box, Button, Fade, Modal, Typography } from "@mui/material";
 import { setPurchaseSong } from "../redux/purchase.js";
 import { Link, useNavigate } from "react-router-dom";
 export default function Player() {
   const dispatch = useDispatch();
   const currentSong = useSelector((state) => state.player.currentSong);
+  const theme = useSelector((state) => state.theme.theme);
   const isPlaying = useSelector((state) => state.player.isPlaying);
   const volume = useSelector((state) => state.player.volume);
   const userInfo = useSelector((state) => state.auth.userInfo);
@@ -66,12 +67,12 @@ export default function Player() {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "rgb(38 40 41)",
-    border: "2px solid #000",
+    width: 350,
+    bgcolor: theme ? "#172A46" : "#FBFDF3",
     boxShadow: 24,
     p: 4,
     color: "#eaebe4s",
+    borderRadius: "5px",
   };
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -123,16 +124,15 @@ export default function Player() {
             </Typography>
             <img
               src={currentSong.cover_image}
-              className="w-52 h-52 mx-auto object-cover object-center rounded-md"
+              className="w-60 h-60 mx-auto object-cover mt-2 object-center rounded-md"
             />
             <Typography
               id="modal-modal-description"
               sx={{ mt: 2 }}
-              color={"#ADADAD"}
+              className="text-lightTextSecondary dark:text-darkTextSecondary"
             >
-              This is a preview version of an{" "}
-              <span>exclusive release</span>. You can
-              purchase the song to enjoy the full version and support{" "}
+              This is a preview version of an <span>exclusive release</span>.
+              You can purchase the song to enjoy the full version and support{" "}
               <a
                 href={`/artist/${currentSong?.artist?._id}`}
                 className="text-sky-600"
@@ -140,11 +140,21 @@ export default function Player() {
                 {currentSong?.artist?.artist_name}
               </a>
             </Typography>
-            <Link
+            {/* <Link
               to={`/payment/purchase/${currentSong._id}`}
               className="bg-dark10 px-5 py-3 rounded-md mt-3 mx-auto" onClick={handleClose}>
               Buy The Song
-            </Link>
+            </Link> */}
+            <Button
+              className="bg-light10 dark:bg-dark10 mt-2 text-lightText dark:text-darkText"
+              onClick={(e) => {
+                e.preventDefault();
+                handleClose();
+                navigate(`/payment/purchase/${currentSong._id}`);
+              }}
+            >
+              Buy The Song
+            </Button>
           </Box>
         </Modal>
       </div>

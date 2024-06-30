@@ -12,6 +12,7 @@ import UserProfile from "./screen/UserProfile";
 import ForgotPassword from "./screen/ForgotPassword";
 import ArtistDashBoard from "./screen/ArtistDashBoard";
 import ArtistUpload from "./screen/ArtistUpload";
+import ArtistFollower from "./screen/ArtisFollower";
 import PlaylistScreen from "./screen/PlaylistScreen";
 import ArtistProfile from "./screen/ArtistProfile";
 import SongDetail from "./screen/SongDetail";
@@ -24,6 +25,7 @@ import SongListExpand from "./screen/SongListExpand";
 import MoodPlaylistScreen from "./screen/MoodPlaylistScreen";
 import ArtistTrack from "./screen/ArtistTrack";
 import CommentPopup from "./component/PopupComments";
+import DonateArtist from "./screen/DonateArtist";
 
 function App() {
   return (
@@ -38,6 +40,7 @@ function App() {
         <Route path="/leaderboard" element={<LeaderBoard />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/artist/dashboard" element={<ArtistDashBoard />} />
+        <Route path="/artist/follower" element={<ArtistFollower />} />
         <Route path="/artist/upload" element={<ArtistUpload />} />
         <Route path="/artist/track" element={<ArtistTrack />} />
         <Route path="/confirmSignUp/:token" element={<ConfirmSignUp />} />
@@ -50,6 +53,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/artist/:artistId" element={<ArtistProfile />} />
+        <Route path="/donateArtist/:artistId" element={<DonateArtist />} />
         <Route
           path="/payment/result/:status/:message"
           element={<PaymentResult />}

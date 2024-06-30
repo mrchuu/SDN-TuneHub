@@ -14,7 +14,10 @@ import {
   PlaylistRouter,
   VnPayRouter,
   NotificationRouter,
-  CommentRouter
+  CommentRouter,
+  TransactionRouter,
+  ReportQuestionRouter,
+  EventRouter,
 } from "./routes/index.js";
 import "./utils/google-oauth2.js";
 import path from "path";
@@ -68,12 +71,15 @@ app.use("/api/user", UserRouter);
 app.use("/api/playlist", PlaylistRouter);
 app.use("/api/notification", NotificationRouter);
 app.use("/api/payment", VnPayRouter);
+app.use("/api/transaction", TransactionRouter);
+app.use("/api/reportquestion", ReportQuestionRouter);
 app.use(
   "/upload/image",
   express.static(path.join(__dirname, `upload`, "image"))
 );
 app.use("/api/artists", ArtistRouter);
 app.use("/api/comments", CommentRouter);
+app.use("/api/event", EventRouter);
 const port = process.env.PORT || 9999;
 const MONGODB_URI = process.env.MONGODB_URI;
 const io = new Server(server, {

@@ -545,7 +545,6 @@ const disableEnableSong = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
 const getSongById = async (req, res) => {
   try {
     const { songId } = req.params;
@@ -553,6 +552,16 @@ const getSongById = async (req, res) => {
       songId,
     });
     return res.status(200).json({ data: songs });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+const getRelevantSongs = async (req, res) => {
+  try {
+    const { artistIds, genres } = req.body;
+    console.log(genres);
+    const result = await SongRepository.getRelevantSong({ genres, artistIds });
+    return res.status(200).json({ data: result });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -581,5 +590,6 @@ export default {
   getFilterSongByArtist,
   disableEnableSong,
   getSongByAlbumByArtist,
-  getSongById
+  getSongById,
+  getRelevantSongs
 };

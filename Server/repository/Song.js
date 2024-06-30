@@ -1,8 +1,7 @@
 import Song from "../model/Song.js";
-import { SongRepository } from "./index.js";
 import SongStreamRepository from "./songStream.js";
-import artist from "./artist.js";
 import mongoose from "mongoose";
+import moment from "moment";
 import Artist from "../model/Artist.js";
 const getSongsByIds = async (songId) => {
   return await Song.aggregate([
@@ -65,7 +64,7 @@ const getSongsByIds = async (songId) => {
 
 const getAllSongs = async () => {
   try {
-    const songList = await Song.find({is_public: true})
+    const songList = await Song.find({ is_public: true })
       .populate("artist", "_id artist_name")
       .populate("album", "_id album_name")
       .select("_id price")
@@ -128,10 +127,7 @@ const getSongsByIdAgg = async (songId) => {
         },
       },
       {
-        $unwind: {
-          path: "$artist",
-          preserveNullAndEmptyArrays: true,
-        },
+        $unwind: "$artist",
       },
       {
         $lookup: {
@@ -184,11 +180,12 @@ const getSongsByIdAgg = async (songId) => {
         $project: {
           _id: 1,
           song_name: 1,
-          genre: "$genre.name",
+          genre: 1,
           price: 1,
           is_exclusive: 1,
           cover_image: 1,
-          artist: "$artist.artist_name",
+          "artist._id": 1,
+          "artist.artist_name": 1,
           favourited: 1,
           "participated_artists_details._id": 1,
           "participated_artists_details.artist_name": 1,
@@ -1281,7 +1278,97 @@ const checkFavouriteSong = async ({ songId, userId }) => {
     throw new Error(error.message);
   }
 };
-const getFilterSongByArtist = async ({ userId ,date, sort }) => {
+
+const getStreamSongbyId = async (userId) => {
+  try {
+    const song = await Song.aggregate([
+      [
+        {
+          $lookup: {
+            from: "SongStream",
+            localField: "_id",
+            foreignField: "song",
+            as: "songStream",
+          },
+        },
+        {
+          $unwind: {
+            path: "$songStream",
+          },
+        },
+        {
+          $match: {
+            "songStream.user": new mongoose.Types.ObjectId(userId),
+          },
+        },
+        {
+          $lookup: {
+            from: "Album",
+            localField: "album",
+            foreignField: "_id",
+            as: "album",
+          },
+        },
+        {
+          $unwind: {
+            path: "$album",
+          },
+        },
+        {
+          $lookup: {
+            from: "Artist",
+            localField: "artist",
+            foreignField: "_id",
+            as: "artist",
+          },
+        },
+        {
+          $unwind: {
+            path: "$artist",
+          },
+        },
+        {
+          $group: {
+            _id: "$_id",
+            cover_image: { $first: "$cover_image" },
+            duration: { $first: "$duration" },
+            song_name: { $first: "$song_name" },
+            artist: { $first: "$artist" },
+            album: { $first: "$album" },
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $match: {
+            count: { $gt: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            cover_image: 1,
+            duration: 1,
+            song_name: 1,
+            artist: 1,
+            "album.album_name": 1,
+            streamCount: { $sum: "$count" },
+          },
+        },
+        {
+          $sort: { streamCount: -1 },
+        },
+        {
+          $limit: 5
+        }
+      ]
+    ]);
+    return song;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const getFilterSongByArtist = async ({ userId, date, sort }) => {
   if (!userId) {
     throw new Error("userId is required");
   }
@@ -1504,6 +1591,87 @@ const getFilterSongByArtist = async ({ userId ,date, sort }) => {
     throw new Error(error.message);
   }
 };
+const getTrackPerformance = async (artist, span) => {
+  try {
+    let filter = {};
+    if (span === "weekly") {
+      const startOfWeek = moment().startOf("isoWeek").toDate();
+      const currentDate = moment().endOf("day").toDate();
+      filter.createdAt = {
+        $gte: startOfWeek,
+        $lt: currentDate,
+      };
+    } else if (span === "monthly") {
+      const startOfMonth = moment().startOf("month").toDate();
+      const currentDate = moment().endOf("day").toDate();
+      filter.createdAt = {
+        $gte: startOfMonth,
+        $lt: currentDate,
+      };
+    }
+    const result = await Song.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              artist: new mongoose.Types.ObjectId(artist._id),
+            },
+            // filter,
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "SongStream",
+          localField: "_id",
+          foreignField: "song",
+          as: "songStream",
+        },
+      },
+      {
+        $addFields: {
+          streamCount: {
+            $size: "$songStream",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "Transaction",
+          localField: "_id",
+          foreignField: "goodsId",
+          as: "purchase",
+        },
+      },
+      {
+        $addFields: {
+          purchaseCount: {
+            $size: "$purchase",
+          },
+        },
+      },
+      {
+        $sort: {
+          purchaseCount: -1,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          song_name: 1,
+          cover_image: 1,
+          participated_artist: 1,
+          is_exclusive: 1,
+          album: 1,
+          artist: 1,
+        },
+      },
+    ]);
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
 const disableEnableSong = async ({ songId }) => {
   try {
@@ -1518,6 +1686,107 @@ const disableEnableSong = async ({ songId }) => {
     );
 
     return updatedSong;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+const getRelevantSong = async ({ genres, artistIds }) => {
+  console.log(artistIds);
+  const genresConverted = genres.map((g) => new mongoose.Types.ObjectId(g));
+  const artistIdsConverted = artistIds.map(
+    (a) => new mongoose.Types.ObjectId(a)
+  );
+  try {
+    const result = await Song.aggregate([
+      {
+        $match: {
+          is_public: true,
+        },
+      },
+      {
+        $addFields: {
+          relevance: {
+            $sum: [
+              {
+                $cond: [
+                  {
+                    $in: ["$genre", genresConverted],
+                  },
+                  1,
+                  0,
+                ],
+              },
+              {
+                $cond: [
+                  {
+                    $in: ["$artist", artistIdsConverted],
+                  },
+                  1,
+                  0,
+                ],
+              },
+              {
+                $size: {
+                  $setIntersection: [
+                    {
+                      $ifNull: ["$participated_artist", []],
+                    },
+                    artistIdsConverted,
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+      {
+        $sort: {
+          relevance: -1,
+        },
+      },
+      {
+        $lookup: {
+          from: "Artist",
+          localField: "artist",
+          foreignField: "_id",
+          as: "artist",
+        },
+      },
+      {
+        $unwind: "$artist",
+      },
+      {
+        $lookup: {
+          from: "Album",
+          localField: "album",
+          foreignField: "_id",
+          as: "album",
+        },
+      },
+      {
+        $unwind: "$album",
+      },
+      {
+        $limit: 5,
+      },
+      {
+        $project: {
+          _id: 1,
+          song_name: 1,
+          price: 1,
+          is_exclusive: 1,
+          file_name: 1,
+          cover_image: 1,
+          "artist._id": 1,
+          "artist.artist_name": 1,
+          duration: 1,
+          "album._id": 1,
+          "album.album_name": 1,
+          relevance: 1,
+        },
+      },
+    ]);
+    return result;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -1544,7 +1813,10 @@ export default {
   getSongByGenre,
   checkFavouriteSong,
   hotestSongByDay1,
+  getStreamSongbyId,
   getFilterSongByArtist,
+  getTrackPerformance,
   disableEnableSong,
-  getSongByAlbumByArtist
+  getSongByAlbumByArtist,
+  getRelevantSong,
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import DefaultTemplate from "../template/DefaultTemplate";
-import PerformRequest from "../utilities/PerformRequest.js";
+import DefaultTemplate from "../../template/DefaultTemplate.js";
+import PerformRequest from "../../utilities/PerformRequest.js";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
 import { useDispatch } from "react-redux";
@@ -11,8 +11,7 @@ import { TbPlaylistOff, TbPlaylist } from "react-icons/tb";
 import {
   setCurrentSong,
   toogleIsPlaying,
-  addSongToQueue,
-} from "../redux/player.js";
+} from "../../redux/player.js";
 import { Link } from "react-router-dom";
 import {
   ListItemIcon,

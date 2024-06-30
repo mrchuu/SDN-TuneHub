@@ -3,6 +3,8 @@ import {
   TransactionRepository,
   SongStreamRepository,
 } from "../repository/index.js";
+import moment from "moment";
+
 const findByName = async (req, res) => {
   try {
     const decodedToken = req.decodedToken;
@@ -83,19 +85,21 @@ const getStatistic = async (req, res) => {
     }
     const span = req.params.span;
     const sale = await TransactionRepository.getSaleOfArtist(artist._id, span);
+    console.log(sale);
     const songStream = await SongStreamRepository.getArtistSongStream(
       artist._id,
       span
     );
-    console.log(songStream);
+
     return res.status(200).json({
       data: {
         sale: sale,
         followers: 10000,
-        streamTime: songStream[0]?.total || 0,
+        streamTime: songStream[0].total,
       },
     });
   } catch (error) {
+    console.log(error.message);
     return res.status(500).json({ error: error.message });
   }
 };
@@ -124,6 +128,77 @@ const getSongStreamOrRevenueTrend = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+const getTopGenre = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const artistId = artist._id;
+    const topGenre = await ArtistRepository.topGenre(artistId);
+    return res.status(200).json({ data: topGenre });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const getStreamFavouritePurchase = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const artistId = artist._id;
+    const topGenre = await ArtistRepository.topStreamFavouritePurchase(artistId);
+    return res.status(200).json({ data: topGenre });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const getTopDonateUser = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const artistId = artist._id;
+    const topGenre = await ArtistRepository.topDonateUser(artistId);
+    return res.status(200).json({ data: topGenre });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+const getCountFollower = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const artistId = artist._id;
+    const topGenre = await ArtistRepository.topFollower(artistId);
+    return res.status(200).json({ data: topGenre });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 const getRevenueRatio = async (req, res) => {
   try {
     const decodedToken = req.decodedToken;
@@ -143,6 +218,7 @@ const getRevenueRatio = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 const getArtist5MostStreamSongs = async (req, res) => {
   try {
     const decodedToken = req.decodedToken;
@@ -162,6 +238,26 @@ const getArtist5MostStreamSongs = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+const getTrackPerformance = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    const artist = await ArtistRepository.findArtistByUserId(
+      decodedToken.userId
+    );
+    if (!artist) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    const span = req.params.span || "weekly";
+    const result = await SongRepository.getTrackPerformance(
+      artist,
+      span
+    );
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
 export default {
   findByName,
   searchArtistByName,
@@ -170,6 +266,11 @@ export default {
   getArtistInfo,
   getStatistic,
   getSongStreamOrRevenueTrend,
+  getTopGenre,
+  getStreamFavouritePurchase,
+  getTopDonateUser,
+  getCountFollower,
   getRevenueRatio,
+  getTrackPerformance,
   getArtist5MostStreamSongs
 };

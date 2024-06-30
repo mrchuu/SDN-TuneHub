@@ -1,50 +1,45 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import DefaultTemplate from "../template/DefaultTemplate";
+import { useRef, useEffect } from "react";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 import PerformRequest from "../utilities/PerformRequest";
-import { List, ListItemDecorator } from "@mui/joy";
-import { FormControlLabel, ListItem, Radio, RadioGroup } from "@mui/material";
-import { FaPaypal } from "react-icons/fa6";
+import DefaultTemplate from "../template/DefaultTemplate";
 import TestRadioButton from "../component/TestRadioButton";
 import { useSelector } from "react-redux";
+import { TextField } from "@mui/material";
 
-export default function PurchaseSong() {
+export default function DonateArtist() {
   const { OriginalRequest } = PerformRequest();
-  const { songId } = useParams();
-  const [song, setSong] = useState(null);
-  const bank = useSelector((state) => state.purchase.bank);
+  const { artistId } = useParams();
+  const [artist, setArtist] = useState();
+  const hasMounted = useRef(false);
+  const [amount, setAmount] = useState(10000);
+  const bankCode = useSelector((state) => state.purchase.bank);
   useEffect(() => {
-    const fetchSong = async () => {
+    const fetchInfo = async () => {
       try {
-        const response = await OriginalRequest(
-          `songs/detailSong/${songId}`,
+        const artist = await OriginalRequest(
+          `artists/getArtistInfo/${artistId}`,
           "GET"
         );
-        if (response && response.data && response.data.length > 0) {
-          setSong(response.data[0]);
-        }
+        setArtist(artist.data);
       } catch (error) {
-        console.error("Error fetching song:", error);
+        console.log(error);
       }
     };
-    fetchSong();
-  }, [songId]);
-
+    if (hasMounted.current) {
+      fetchInfo();
+    } else {
+      hasMounted.current = true;
+    }
+  }, [hasMounted, artistId]);
   const handlePayment = async () => {
     try {
-      if (!song) {
-        return;
-      }
-      const vnpayUrl = await OriginalRequest(
-        "payment/create_payment_url",
-        "POST",
-        {
-          amount: song.price,
-          bankCode: bank,
-          songId: song._id,
-          language: "en",
-        }
-      );
+      const vnpayUrl = await OriginalRequest("payment/donateArtist", "POST", {
+        amount: amount,
+        bankCode: bankCode,
+        artistId: artist._id,
+        language: "en",
+      });
       if (vnpayUrl) {
         window.location = vnpayUrl.data;
       }
@@ -52,21 +47,34 @@ export default function PurchaseSong() {
       console.error("Error creating payment URL:", error);
     }
   };
-
   return (
     <DefaultTemplate>
       <div className="min-h-screen w-full">
         <h1 className="text-lightText dark:text-darkText text-2xl font-semibold pl-6">
-          Purchase
+          Donate
         </h1>
         <hr style={{ height: "2px" }} className="bg-neutral-600/50 my-2 mx-6" />
-        {song ? (
+        {artist ? (
           <div className="mx-6 flex">
             <div className="w-9/12 bg-light5 dark:bg-dark30 shadow-lg mr-1 rounded-md py-2 px-3 relative">
+              <h4 className="font-semibold text-lg">Amount</h4>
+              <TextField
+              className="w-full"
+                type="number"
+                variant="outlined"
+                value={amount}
+                inputProps={{ step: 10000, min: 10000 }}
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                }}
+                
+              />
+              
               <h4 className="font-semibold text-lg">Select Payment Method</h4>
-              <div>
+              <div className="mt-5">
                 <TestRadioButton />
               </div>
+              <div className="h-20 w-full"></div>
               <div className="absolute bottom-5 w-full px-5 left-1/2 transform -translate-x-1/2">
                 <button
                   className="w-full bg-light10 dark:bg-dark10 rounded-md text-darkText py-2 mt-2 text-lg font-medium"
@@ -82,28 +90,26 @@ export default function PurchaseSong() {
               <h4 className="font-semibold text-lg">Your Cart</h4>
               <div className="bg-black/50 mb-2" style={{ height: "1px" }}></div>
               <img
-                src={song.cover_image}
+                src={artist.userId.profile_picture}
                 className="aspect-square object-cover object-center w-12/12 mx-auto rounded-md"
               />
               <div className="bg-black/50 my-2" style={{ height: "1px" }}></div>
               <div className="flex justify-between">
                 <div className="w-6/12 flex-col font-medium text-lightTextSecondary dark:text-darkTextSecondary">
-                  <p>Item</p>
                   <p>Transaction Type</p>
-                  <p>Owned By</p>
+                  <p>To</p>
                   <p>Value</p>
                 </div>
                 <div className="w-6/12 flex-col text-lightTextSecondary dark:text-darkTextSecondary text-end">
-                  <p>{song.song_name}</p>
-                  <p>Song Purchase</p>
-                  <p>{song.artist.artist_name}</p>
-                  <p>{song.price} đ</p>
+                  <p>Donation</p>
+                  <p>{artist.artist_name}</p>
+                  <p>100.000 đ</p>
                 </div>
               </div>
               <div className="bg-black/50 my-2" style={{ height: "1px" }}></div>
               <div className="flex justify-between text-lightText dark:text-darkText font-medium">
                 <p className="">Total</p>
-                <p className="text-end">{song.price} đ</p>
+                <p className="text-end">100.000 đ</p>
               </div>
             </div>
           </div>

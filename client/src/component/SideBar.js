@@ -192,7 +192,7 @@ export default function SideBar() {
             </div>
           </div>
           <div
-            className={`max-h-44 overflow-hidden transition-all ${expanded ? "w-full" : "w-0 hidden"
+            className={`max-h-40 overflow-hidden transition-all ${expanded ? "w-full" : "w-0 hidden"
               }`}
             style={{ overflowY: "auto" }}
           >
